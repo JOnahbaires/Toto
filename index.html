@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pensalo vos 🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #141829;
+    --surface2: #1c2137;
+    --surface3: #242a42;
+    --accent: #7c6fff;
+    --accent-glow: rgba(124,111,255,0.25);
+    --pink: #ff6b8a;
+    --pink-glow: rgba(255,107,138,0.2);
+    --green: #3de8a0;
+    --green-glow: rgba(61,232,160,0.2);
+    --orange: #ffb347;
+    --orange-glow: rgba(255,179,71,0.2);
+    --cyan: #5ce0d8;
+    --text: #edf0ff;
+    --text-mid: #b0b5d0;
+    --text-dim: #6b7194;
+    --border: rgba(124,111,255,0.15);
+    --radius: 22px;
+    --radius-sm: 14px;
+    --radius-xs: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 15% 10%, rgba(124,111,255,0.1) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 60% at 85% 85%, rgba(255,107,138,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 50% 60%, rgba(61,232,160,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+    padding: 20px 16px 100px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    padding: 24px 0 16px;
+    animation: fadeDown .5s ease both;
+  }
+  .logo {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #7c6fff 0%, #ff6b8a 50%, #ffb347 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .tagline {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 6px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── XP ── */
+  .xp-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin: 12px 0 18px;
+    animation: fadeDown .6s ease both;
+  }
+  .xp-stars { font-size: 1.05rem; letter-spacing: 2px; }
+  .xp-label { font-size: 0.72rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; flex: 1; }
+  .xp-count { font-family: 'Baloo 2', cursive; font-size: 1.25rem; font-weight: 800; color: var(--orange); }
+
+  /* ── Streak ── */
+  .streak-banner {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, rgba(124,111,255,0.1), rgba(255,107,138,0.08));
+    border: 1px solid rgba(124,111,255,0.2);
+    border-radius: var(--radius-xs);
+    margin-bottom: 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-mid);
+    animation: fadeUp .3s ease both;
+  }
+  .streak-banner.visible { display: flex; }
+
+  /* ── Section label ── */
+  .slabel {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+
+  /* ── MODE SELECTOR ── */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+    animation: fadeUp .35s ease both;
+  }
+  .mode-btn {
+    background: var(--surface);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all .2s ease;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+  }
+  .mode-btn:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-1px); }
+  .mode-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 22px var(--accent-glow); }
+  .mode-btn.active.tarea { border-color: var(--green); box-shadow: 0 0 22px var(--green-glow); }
+  .mode-btn.active.tema { border-color: var(--cyan); box-shadow: 0 0 22px rgba(92,224,216,0.2); }
+  .mode-icon { font-size: 1.9rem; margin-top: 2px; }
+  .mode-name { font-weight: 800; font-size: 0.97rem; }
+  .mode-desc { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; font-weight: 600; line-height: 1.35; }
+
+  /* ── Subject grid ── */
+  .subject-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+    animation: fadeUp .4s ease both;
+  }
+  .subject-btn {
+    background: var(--surface);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: all .2s ease;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+  }
+  .subject-btn:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-1px); }
+  .subject-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 20px var(--accent-glow); }
+  .subject-btn.active[data-s="mat"] { border-color: var(--green); box-shadow: 0 0 20px var(--green-glow); }
+  .subject-btn.active[data-s="len"] { border-color: var(--orange); box-shadow: 0 0 20px var(--orange-glow); }
+  .subject-btn.active[data-s="cs"]  { border-color: var(--cyan); box-shadow: 0 0 16px rgba(92,224,216,0.15); }
+  .subj-icon { font-size: 1.8rem; }
+  .subj-name { font-weight: 800; font-size: 0.95rem; }
+  .subj-desc { font-size: 0.7rem; color: var(--text-dim); margin-top: 1px; font-weight: 600; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+    animation: fadeUp .45s ease both;
+  }
+  .card textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-xs);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 14px;
+    resize: none;
+    outline: none;
+    transition: border-color .2s;
+    line-height: 1.5;
+  }
+  .card textarea:focus { border-color: var(--accent); }
+  .card textarea::placeholder { color: var(--text-dim); font-weight: 600; }
+
+  /* ── File upload zone ── */
+  .upload-zone {
+    border: 2px dashed rgba(124,111,255,0.25);
+    border-radius: var(--radius-xs);
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    background: rgba(124,111,255,0.04);
+    margin-top: 12px;
+    position: relative;
+  }
+  .upload-zone:hover { border-color: var(--accent); background: rgba(124,111,255,0.08); }
+  .upload-zone.has-file { border-color: var(--green); background: rgba(61,232,160,0.06); border-style: solid; }
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .upload-icon { font-size: 1.6rem; margin-bottom: 6px; }
+  .upload-label { font-size: 0.82rem; font-weight: 700; color: var(--text-dim); }
+  .upload-label strong { color: var(--accent); }
+  .upload-preview {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: var(--surface2);
+    border-radius: var(--radius-xs);
+    padding: 8px 12px;
+  }
+  .upload-preview.visible { display: flex; }
+  .preview-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .preview-info { flex: 1; }
+  .preview-name { font-size: 0.8rem; font-weight: 800; color: var(--text); }
+  .preview-size { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; }
+  .preview-remove {
+    background: none;
+    border: none;
+    color: var(--pink);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+  .preview-remove:hover { background: rgba(255,107,138,0.12); }
+
+  /* ── Attempt gate ── */
+  .attempt-gate {
+    background: linear-gradient(135deg, rgba(124,111,255,0.06), rgba(255,107,138,0.06));
+    border: 1.5px solid rgba(124,111,255,0.25);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+    display: none;
+    animation: fadeUp .3s ease both;
+  }
+  .attempt-gate.visible { display: block; }
+  .ag-title { font-weight: 800; font-size: 0.92rem; color: var(--accent); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .ag-sub { font-size: 0.82rem; color: var(--text-dim); font-weight: 600; margin-bottom: 10px; line-height: 1.4; }
+  .attempt-gate textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(124,111,255,0.18);
+    border-radius: var(--radius-xs);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 12px 14px;
+    resize: none;
+    outline: none;
+    min-height: 70px;
+    transition: border-color .2s;
+  }
+  .attempt-gate textarea:focus { border-color: var(--accent); }
+  .attempt-gate textarea::placeholder { color: var(--text-dim); }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 24px;
+    border-radius: var(--radius-xs);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: all .15s ease;
+    letter-spacing: 0.2px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-go {
+    background: linear-gradient(135deg, #7c6fff, #9b6dff);
+    color: white;
+    box-shadow: 0 4px 18px var(--accent-glow);
+    width: 100%;
+  }
+  .btn-go:hover { box-shadow: 0 6px 28px rgba(124,111,255,0.45); transform: translateY(-1px); }
+  .btn-go:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none; }
+  .btn-sm { font-size: 0.82rem; padding: 9px 16px; border-radius: var(--radius-xs); }
+  .btn-hint { background: rgba(255,179,71,0.1); color: var(--orange); border: 1.5px solid rgba(255,179,71,0.25); }
+  .btn-hint:hover { background: rgba(255,179,71,0.18); }
+  .btn-new { background: rgba(61,232,160,0.08); color: var(--green); border: 1.5px solid rgba(61,232,160,0.25); }
+  .btn-new:hover { background: rgba(61,232,160,0.15); }
+
+  /* ── Chat ── */
+  .chat-zone { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+
+  .bubble {
+    max-width: 90%;
+    padding: 13px 16px;
+    border-radius: 18px;
+    font-size: 0.93rem;
+    font-weight: 600;
+    line-height: 1.6;
+    animation: popIn .3s cubic-bezier(.175,.885,.32,1.275) both;
+    word-wrap: break-word;
+  }
+  .bubble.tutor {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 5px;
+    align-self: flex-start;
+  }
+  .bubble.tutor .bname { font-size: 0.7rem; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .bubble.kid {
+    background: linear-gradient(135deg, rgba(124,111,255,0.12), rgba(155,109,255,0.08));
+    border: 1px solid rgba(124,111,255,0.2);
+    border-bottom-right-radius: 5px;
+    align-self: flex-end;
+  }
+  .bubble.kid .bname { font-size: 0.7rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; text-align: right; }
+  .bubble-img {
+    max-width: 200px;
+    border-radius: 10px;
+    margin-top: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: block;
+  }
+
+  /* ── Reply box ── */
+  .reply-box {
+    display: none;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-top: 6px;
+    animation: fadeUp .3s ease both;
+  }
+  .reply-box.visible { display: block; }
+  .reply-box-label { font-size: 0.78rem; font-weight: 800; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .reply-row { display: flex; gap: 8px; }
+  .reply-row textarea {
+    flex: 1;
+    background: var(--surface2);
+    border: 1.5px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-xs);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 10px 12px;
+    resize: none;
+    outline: none;
+    min-height: 48px;
+    max-height: 120px;
+    transition: border-color .2s;
+    line-height: 1.4;
+  }
+  .reply-row textarea:focus { border-color: var(--accent); }
+  .reply-row textarea::placeholder { color: var(--text-dim); font-weight: 600; }
+  .reply-send {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #7c6fff, #9b6dff);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xs);
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .reply-send:hover { box-shadow: 0 4px 16px var(--accent-glow); }
+  .reply-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── Hint strip ── */
+  .hint-strip {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+  .hint-strip.visible { display: flex; }
+  .hdots { display: flex; gap: 5px; }
+  .hdot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.12); transition: all .3s; }
+  .hdot.used { background: var(--orange); border-color: var(--orange); }
+  .hdot.alert { background: var(--pink); border-color: var(--pink); }
+
+  /* ── Parent checkpoint ── */
+  .parent-ck {
+    background: linear-gradient(135deg, rgba(255,107,138,0.1), rgba(255,107,138,0.05));
+    border: 2px solid rgba(255,107,138,0.4);
+    border-radius: var(--radius);
+    padding: 22px;
+    text-align: center;
+    display: none;
+    animation: shake .5s ease, fadeUp .4s ease both;
+  }
+  .parent-ck.visible { display: block; }
+  .pck-icon { font-size: 2.4rem; margin-bottom: 8px; }
+  .pck-title { font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800; color: var(--pink); margin-bottom: 6px; }
+  .pck-text { font-size: 0.85rem; color: var(--text-mid); font-weight: 600; line-height: 1.5; }
+
+  /* ── Celebration ── */
+  .celeb {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(61,232,160,0.08), rgba(61,232,160,0.03));
+    border: 2px solid rgba(61,232,160,0.35);
+    border-radius: var(--radius);
+    display: none;
+    animation: popIn .4s cubic-bezier(.175,.885,.32,1.275) both;
+    margin-bottom: 14px;
+  }
+  .celeb.visible { display: block; }
+  .celeb-icon { font-size: 2.6rem; margin-bottom: 6px; }
+  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 1.3rem; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+  .celeb-xp { display: inline-block; background: rgba(255,179,71,0.12); color: var(--orange); border: 1px solid rgba(255,179,71,0.35); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; font-weight: 800; margin-top: 6px; }
+
+  /* ── Loading ── */
+  .loading-bubble {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    border-bottom-left-radius: 5px;
+    align-self: flex-start;
+    max-width: 90%;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .ldots span { display: inline-block; width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: bounce 1s infinite; margin: 0 2px; }
+  .ldots span:nth-child(2) { animation-delay: .15s; }
+  .ldots span:nth-child(3) { animation-delay: .3s; }
+
+  /* ── Error ── */
+  .err { background: rgba(255,107,138,0.08); border: 1px solid rgba(255,107,138,0.25); color: #ff8fa3; border-radius: var(--radius-xs); padding: 11px 14px; font-size: 0.85rem; font-weight: 700; display: none; margin-bottom: 10px; }
+  .err.visible { display: block; }
+
+  /* ── Setup lock ── */
+  .setup-area { transition: opacity .3s, filter .3s; }
+  .setup-area.locked { opacity: 0.35; pointer-events: none; filter: grayscale(0.3); }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 6px 0 16px; display: none; }
+  .divider.visible { display: block; }
+
+  /* ── Actions ── */
+  .actions { display: none; gap: 8px; margin-top: 8px; margin-bottom: 10px; }
+  .actions.visible { display: flex; }
+
+  @keyframes fadeDown  { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp    { from { opacity: 0; transform: translateY(14px);  } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn     { from { opacity: 0; transform: scale(0.88); }       to { opacity: 1; transform: scale(1); } }
+  @keyframes bounce    { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
+  @keyframes shake     { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(124,111,255,0.25); border-radius: 3px; }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 14px 12px 90px; }
+    .logo { font-size: 2rem; }
+    .mode-grid, .subject-grid { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">🧠 Pensalo vos</div>
+    <div class="tagline">Tu tutor que te ayuda a pensar, no a copiar</div>
+  </div>
+
+  <!-- XP -->
+  <div class="xp-bar">
+    <div class="xp-stars" id="stars">⭐</div>
+    <div class="xp-label">Estrellas ganadas</div>
+    <div class="xp-count" id="xpCount">0</div>
+  </div>
+
+  <!-- Streak -->
+  <div class="streak-banner" id="streakBanner">
+    🔥 <span id="streakText"></span>
+  </div>
+
+  <!-- ══ SETUP AREA (se bloquea cuando empieza) ══ -->
+  <div class="setup-area" id="setupArea">
+
+    <!-- MODO -->
+    <div class="slabel">¿Qué querés hacer?</div>
+    <div class="mode-grid">
+      <button class="mode-btn tarea active" onclick="pickMode(this,'tarea')">
+        <div class="mode-icon">📝</div>
+        <div>
+          <div class="mode-name">Tengo una tarea</div>
+          <div class="mode-desc">Quiero resolver un ejercicio o pregunta con ayuda</div>
+        </div>
+      </button>
+      <button class="mode-btn tema" onclick="pickMode(this,'tema')">
+        <div class="mode-icon">💡</div>
+        <div>
+          <div class="mode-name">Quiero entender algo</div>
+          <div class="mode-desc">Quiero que me expliquen un tema que no entiendo</div>
+        </div>
+      </button>
+    </div>
+
+    <!-- MATERIA -->
+    <div class="slabel">¿Qué materia?</div>
+    <div class="subject-grid">
+      <button class="subject-btn active" data-s="mat" onclick="pickSubject(this,'matematica')">
+        <div class="subj-icon">🔢</div>
+        <div><div class="subj-name">Matemática</div><div class="subj-desc">Cuentas, problemas...</div></div>
+      </button>
+      <button class="subject-btn" data-s="len" onclick="pickSubject(this,'lengua')">
+        <div class="subj-icon">📖</div>
+        <div><div class="subj-name">Lengua</div><div class="subj-desc">Textos, comprensión...</div></div>
+      </button>
+      <button class="subject-btn" data-s="cs" onclick="pickSubject(this,'ciencias')">
+        <div class="subj-icon">🔬</div>
+        <div><div class="subj-name">Ciencias</div><div class="subj-desc">Naturales y Sociales</div></div>
+      </button>
+      <button class="subject-btn" data-s="otro" onclick="pickSubject(this,'otro')">
+        <div class="subj-icon">✏️</div>
+        <div><div class="subj-name">Otra materia</div><div class="subj-desc">Geografía, Historia...</div></div>
+      </button>
+    </div>
+
+    <!-- PREGUNTA / TAREA -->
+    <div class="card">
+      <div class="slabel" id="taskLabel" style="margin-bottom:8px">Escribí tu tarea o pregunta</div>
+      <textarea id="taskInput" placeholder="Ej: ¿Cuánto es 7 × 8?  /  ¿Qué es la fotosíntesis?" rows="3"></textarea>
+
+      <!-- SUBIR IMAGEN -->
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)" />
+        <div class="upload-icon">📷</div>
+        <div class="upload-label">
+          <strong>Subí una foto</strong> de tu hoja de tarea<br>
+          <span style="font-size:0.72rem">(opcional — JPG, PNG, hasta 5MB)</span>
+        </div>
+      </div>
+
+      <!-- Preview imagen -->
+      <div class="upload-preview" id="uploadPreview">
+        <img id="previewThumb" class="preview-thumb" src="" alt="preview" />
+        <div class="preview-info">
+          <div class="preview-name" id="previewName"></div>
+          <div class="preview-size" id="previewSize"></div>
+        </div>
+        <button class="preview-remove" onclick="removeFile()" title="Sacar imagen">✕</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <button class="btn btn-go" id="startBtn" onclick="startSession()">¡Quiero resolver esto! 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attempt gate (solo en modo tarea) -->
+  <div class="attempt-gate" id="attemptGate">
+    <div class="ag-title">✍️ Primero mostrá lo que pensaste</div>
+    <div class="ag-sub">Escribí tu intento antes de que te ayude. ¡No importa si está mal! Lo que vale es intentarlo.</div>
+    <textarea id="attemptInput" placeholder="Creo que... / Mi idea es... / Yo intenté..."></textarea>
+    <div style="margin-top:12px">
+      <button class="btn btn-go" onclick="submitAttempt()">Listo, esto intenté 💪</button>
+    </div>
+  </div>
+
+  <div class="divider" id="chatDivider"></div>
+
+  <!-- Hint strip -->
+  <div class="hint-strip" id="hintStrip">
+    <span>Pistas:</span>
+    <div class="hdots">
+      <div class="hdot" id="hd1"></div>
+      <div class="hdot" id="hd2"></div>
+      <div class="hdot" id="hd3"></div>
+    </div>
+    <span id="hintLabel" style="margin-left:4px;font-size:0.75rem"></span>
+  </div>
+
+  <!-- Error -->
+  <div class="err" id="errMsg"></div>
+
+  <!-- Celebration -->
+  <div class="celeb" id="celeb">
+    <div class="celeb-icon">🎉</div>
+    <div class="celeb-title" id="celebTitle">¡Bien ahí, crack!</div>
+    <div class="celeb-sub" style="color:var(--text-mid);font-size:0.85rem;font-weight:600;margin-bottom:4px;">Estás pensando por tu cuenta. Eso vale ORO.</div>
+    <div class="celeb-xp">+1 ⭐ estrella</div>
+  </div>
+
+  <!-- Chat zone -->
+  <div class="chat-zone" id="chatZone"></div>
+
+  <!-- Parent checkpoint -->
+  <div class="parent-ck" id="parentCk">
+    <div class="pck-icon">👨‍👩‍👧</div>
+    <div class="pck-title">¡Momento! Llamá a mamá o papá 🔔</div>
+    <div class="pck-text">
+      Usaste todas las pistas.<br>
+      Es un buen momento para pedirle ayuda a alguien de tu familia.<br>
+      <strong>¡Mostrales lo que intentaste — van a estar re orgullosos!</strong>
+    </div>
+  </div>
+
+  <!-- Reply box -->
+  <div class="reply-box" id="replyBox">
+    <div class="reply-box-label">💬 Tu respuesta</div>
+    <div class="reply-row">
+      <textarea id="replyInput" placeholder="Escribí tu respuesta..." rows="2"></textarea>
+      <button class="reply-send" id="replySend" onclick="sendReply()">➤</button>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="actions" id="actionRow">
+    <button class="btn btn-sm btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
+    <button class="btn btn-sm btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════
+   SYSTEM PROMPTS
+════════════════════════════════════════════════════ */
+const PROMPT_TAREA = `Sos "Pensalo vos", un tutor socrático para chicos de 6to grado (11-12 años) de CABA, Argentina.
+Tu personalidad es cálida, divertida y re copada — como un hermano mayor que sabe mucho y te banca.
+
+═══ REGLAS ABSOLUTAS ═══
+1. JAMÁS des la respuesta final. Si el chico la pide directamente, decís: "¡Eso lo tenés que descubrir vos! 😎" y hacés UNA pregunta guía.
+2. JAMÁS resolvés el ejercicio completo, ni escribís redacciones, ni das textos terminados.
+3. UNA sola pregunta o pista por mensaje. Nunca múltiples preguntas juntas.
+4. Máximo 3 oraciones por respuesta. Sé breve y claro.
+5. Si el intento tiene errores, PRIMERO celebrás que lo intentó, DESPUÉS hacés la pregunta que lo guíe.
+6. Cuando está cerca: "¡Uy, casi! 🔥 ¿Y si...?"
+7. Los errores son geniales — significan que está pensando.
+8. Usás español rioplatense: "vos", "dale", "genial", "re bien", "crack", "piola".
+9. Emojis con moderación (1-2 por mensaje máximo).
+10. Siempre terminás con UNA pregunta o invitación a seguir pensando.
+11. Si detectás frustración, bajás un cambio: "Tranqui, vamos de a poco 💪"
+12. NUNCA mencionás que sos una IA. Sos "tu tutor" y punto.
+13. Si hay una imagen de la tarea, la analizás y usás ese contexto para guiar al chico.
+
+MATERIA: {SUBJECT} | TAREA: {TASK} | INTENTO: {ATTEMPT} | PISTAS USADAS: {HINTS}/3
+
+Respondé siempre en español rioplatense, con calidez y entusiasmo. ¡Dale que vos podés! 🚀`;
+
+const PROMPT_TEMA = `Sos "Pensalo vos", un tutor socrático para chicos de 6to grado (11-12 años) de CABA, Argentina.
+El chico quiere ENTENDER un tema, no resolver un ejercicio específico.
+Tu misión: explicar de forma simple, con ejemplos de la vida cotidiana, y chequeando que entendió.
+
+═══ REGLAS ABSOLUTAS ═══
+1. Explicás con ejemplos concretos y cotidianos que un chico de 12 años entienda.
+2. Después de cada explicación, hacés UNA pregunta para chequear que entendió.
+3. Si no entiende, buscás OTRA forma de explicar (con otra analogía, ejemplo distinto).
+4. Máximo 4 oraciones por respuesta. Sé claro y concreto.
+5. Usás español rioplatense: "vos", "dale", "genial", "re bien", "crack".
+6. Emojis con moderación (1-2 por mensaje máximo).
+7. NUNCA copiás definiciones de libro de texto — todo tiene que sonar natural y cercano.
+8. Siempre terminás verificando si entendió o con una pregunta disparadora.
+9. NUNCA mencionás que sos una IA. Sos "tu tutor" y punto.
+10. Si hay una imagen, la usás como referencia para enriquecer la explicación.
+
+MATERIA: {SUBJECT} | TEMA A EXPLICAR: {TASK}
+
+Respondé siempre en español rioplatense, con calidez y entusiasmo.`;
+
+/* ════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════ */
+let S = {
+  mode: 'tarea',        // 'tarea' | 'tema'
+  subject: 'matematica',
+  task: '',
+  attempt: '',
+  history: [],
+  hints: 0,
+  xp: 0,
+  streak: 0,
+  imageBase64: null,    // base64 de la imagen subida
+  imageType: null,      // mime type
+  phase: 'setup'
+};
+
+const SUBJ_MAP = {
+  matematica: 'Matemática',
+  lengua: 'Lengua y Literatura',
+  ciencias: 'Ciencias (Naturales y Sociales)',
+  otro: 'Otra materia'
+};
+
+/* ════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const show = (el, cls='visible') => { if(el) el.classList.add(cls); };
+const hide = (el, cls='visible') => { if(el) el.classList.remove(cls); };
+
+function showErr(msg) { const e=$('errMsg'); e.textContent=msg; show(e); }
+function hideErr()    { hide($('errMsg')); }
+
+/* ════════════════════════════════════════════════════
+   MODE / SUBJECT PICKERS
+════════════════════════════════════════════════════ */
+function pickMode(btn, mode) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  S.mode = mode;
+  // Cambiar placeholder según modo
+  const ta = $('taskInput');
+  const lbl = $('taskLabel');
+  if (mode === 'tema') {
+    ta.placeholder = 'Ej: No entiendo qué es la fotosíntesis  /  ¿Cómo funcionan las fracciones?';
+    lbl.textContent = 'Escribí el tema que no entendés';
+  } else {
+    ta.placeholder = 'Ej: ¿Cuánto es 7 × 8?  /  ¿Qué quiere decir el poema?';
+    lbl.textContent = 'Escribí tu tarea o pregunta';
+  }
+}
+
+function pickSubject(btn, subj) {
+  document.querySelectorAll('.subject-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  S.subject = subj;
+}
+
+/* ════════════════════════════════════════════════════
+   FILE UPLOAD
+════════════════════════════════════════════════════ */
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    showErr('La imagen es muy grande. Máximo 5MB 📷');
+    return;
+  }
+  if (!file.type.startsWith('image/')) {
+    showErr('Solo se aceptan imágenes (JPG, PNG, etc.) 🖼️');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const result = e.target.result; // data:image/jpeg;base64,...
+    const [header, data] = result.split(',');
+    S.imageBase64 = data;
+    S.imageType = file.type;
+
+    // Show preview
+    $('previewThumb').src = result;
+    $('previewName').textContent = file.name;
+    $('previewSize').textContent = (file.size / 1024).toFixed(0) + ' KB';
+    show($('uploadPreview'));
+    $('uploadZone').classList.add('has-file');
+    hideErr();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeFile() {
+  S.imageBase64 = null;
+  S.imageType = null;
+  $('fileInput').value = '';
+  hide($('uploadPreview'));
+  $('uploadZone').classList.remove('has-file');
+}
+
+/* ════════════════════════════════════════════════════
+   SESSION FLOW
+════════════════════════════════════════════════════ */
+function startSession() {
+  const task = $('taskInput').value.trim();
+  if (!task) { showErr('¡Escribí tu tarea o pregunta primero! 😊'); return; }
+  S.task = task;
+  $('setupArea').classList.add('locked');
+  hideErr();
+
+  if (S.mode === 'tarea') {
+    // Modo tarea: pedir intento primero
+    S.phase = 'attempt';
+    show($('attemptGate'));
+    $('attemptInput').focus();
+  } else {
+    // Modo tema: ir directo al chat
+    S.phase = 'chat';
+    S.attempt = '';
+    S.hints = 0;
+    S.history = [];
+    show($('chatDivider'));
+    show($('replyBox'));
+    show($('actionRow'));
+    // Ocultar pistas en modo tema
+    hide($('hintStrip'));
+    hide($('hintBtn') ? $('hintBtn').parentElement : null);
+    startChat(`Quiero entender este tema: ${S.task}`, true);
+  }
+}
+
+async function submitAttempt() {
+  const att = $('attemptInput').value.trim();
+  if (!att) { showErr('Dale, contame aunque sea una idea cortita 🙏'); return; }
+  S.attempt = att;
+  S.phase = 'chat';
+  S.hints = 0;
+  S.history = [];
+
+  $('attemptGate').style.display = 'none';
+  show($('chatDivider'));
+  show($('hintStrip'));
+  show($('actionRow'));
+  show($('replyBox'));
+  updateHintDots();
+  hideErr();
+
+  addBubble('kid', att, null);
+  await startChat(`Mi intento: ${att}`, true);
+}
+
+/* ════════════════════════════════════════════════════
+   REPLY
+════════════════════════════════════════════════════ */
+let _sending = false; // lock para evitar doble envío
+
+async function sendReply() {
+  if (_sending) return; // bloquear si ya está enviando
+  const input = $('replyInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  _sending = true;
+  input.value = '';
+  addBubble('kid', msg, null);
+
+  if (msg.length > 8) {
+    S.streak++;
+    if (S.streak % 3 === 0) { gainXP(); showCeleb('🔥 ¡Racha de pensador!', '¡Seguís dándole, genio!'); }
+    updateStreak();
+  }
+  await callTutor(msg, false);
+  _sending = false;
+}
+
+// Solo Enter en desktop (no mobile — en mobile el teclado ya tiene su botón)
+document.addEventListener('keydown', e => {
+  if (e.target.id === 'replyInput' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    sendReply();
+  }
+});
+
+/* ════════════════════════════════════════════════════
+   HINT
+════════════════════════════════════════════════════ */
+async function requestHint() {
+  if (S.hints >= 3) return;
+  S.hints++;
+  updateHintDots();
+  if (S.hints >= 3) {
+    show($('parentCk'));
+    const hb = $('hintBtn');
+    if (hb) { hb.disabled = true; hb.style.opacity = '0.35'; }
+  }
+  addBubble('kid', '💡 Necesito una pista...', null);
+  await callTutor('Necesito una pista para avanzar.', false);
+}
+
+/* ════════════════════════════════════════════════════
+   CORE API — llama al proxy de Vercel
+════════════════════════════════════════════════════ */
+async function startChat(firstMsg, isFirst) {
+  addBubble('kid', firstMsg.replace('Mi intento: ', ''), null);
+  await callTutor(firstMsg, isFirst);
+}
+
+async function callTutor(userMsg, isFirst) {
+  const chatZone = $('chatZone');
+  disableInputs(true);
+
+  // Loading bubble
+  const loader = document.createElement('div');
+  loader.className = 'loading-bubble';
+  loader.innerHTML = `<span>Pensando</span><div class="ldots"><span></span><span></span><span></span></div>`;
+  chatZone.appendChild(loader);
+  scrollDown();
+
+  // Build system prompt
+  const template = S.mode === 'tema' ? PROMPT_TEMA : PROMPT_TAREA;
+  const sys = template
+    .replace('{SUBJECT}', SUBJ_MAP[S.subject] || 'General')
+    .replace('{TASK}', S.task)
+    .replace('{ATTEMPT}', S.attempt || 'No proporcionado')
+    .replace('{HINTS}', String(S.hints));
+
+  // Build messages — si hay imagen, la incluimos en el PRIMER mensaje
+  let firstContent;
+  if (isFirst && S.imageBase64) {
+    firstContent = [
+      {
+        type: 'image',
+        source: { type: 'base64', media_type: S.imageType, data: S.imageBase64 }
+      },
+      { type: 'text', text: userMsg }
+    ];
+  } else {
+    firstContent = userMsg;
+  }
+
+  const msgs = [
+    ...S.history,
+    { role: 'user', content: firstContent }
+  ];
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: sys, messages: msgs })
+    });
+
+    const data = await res.json();
+    loader.remove();
+
+    if (!res.ok || data.error) {
+      const msg = data.error?.message || 'Error del servidor';
+      // Mostrar el error real para debug
+      if (msg.includes('credit')) {
+        showErr('Sin crédito en la API. Recargá saldo en console.anthropic.com 💳');
+      } else {
+        showErr(`Error: ${msg} — ¿Probás de nuevo? 🙏`);
+      }
+      // Sacar el último mensaje del historial si falló (evita mensajes huérfanos)
+      disableInputs(false);
+      return;
+    }
+
+    const reply = data.content?.[0]?.text || 'Hmm, algo falló. Probá de nuevo 😅';
+
+    // Guardar en historial — solo strings para evitar duplicados con contenido imagen
+    S.history.push({ role: 'user', content: userMsg });
+    S.history.push({ role: 'assistant', content: reply });
+
+    // Limitar historial a últimos 16 mensajes (8 intercambios) para no romper la API
+    if (S.history.length > 16) S.history = S.history.slice(-16);
+
+    addBubble('tutor', reply, null);
+
+    if (isFirst) {
+      gainXP();
+      showCeleb(
+        S.mode === 'tema' ? '💡 ¡Vamos a aprender juntos!' : '🎉 ¡Bien ahí, crack!',
+        S.mode === 'tema' ? 'Preguntar es el primer paso para entender.' : 'Estás pensando por tu cuenta. Eso vale ORO.'
+      );
+    }
+
+  } catch (err) {
+    loader.remove();
+    showErr('Error de red. Revisá tu conexión a internet 🌐');
+    console.error(err);
+  }
+
+  disableInputs(false);
+  $('replyInput')?.focus();
+}
+
+/* ════════════════════════════════════════════════════
+   UI UTILS
+════════════════════════════════════════════════════ */
+function disableInputs(off) {
+  const rs = $('replySend'), hb = $('hintBtn'), ri = $('replyInput');
+  if (rs) rs.disabled = off;
+  if (hb) hb.disabled = off || S.hints >= 3;
+  if (ri) off ? ri.setAttribute('disabled','') : ri.removeAttribute('disabled');
+}
+
+function addBubble(who, text, _unused) {
+  const zone = $('chatZone');
+  const div = document.createElement('div');
+  div.className = `bubble ${who}`;
+  const label = who === 'tutor'
+    ? '<div class="bname">🧠 Tutor</div>'
+    : '<div class="bname">Vos</div>';
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  div.innerHTML = label + `<div>${formatted}</div>`;
+  zone.appendChild(div);
+  scrollDown();
+}
+
+function scrollDown() {
+  setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 60);
+}
+
+function updateHintDots() {
+  for (let i=1; i<=3; i++) {
+    const d = $(`hd${i}`);
+    if (!d) continue;
+    d.classList.remove('used','alert');
+    if (i <= S.hints) d.classList.add(S.hints >= 3 ? 'alert' : 'used');
+  }
+  const lbl = $('hintLabel');
+  if (!lbl) return;
+  if (S.hints === 0) lbl.textContent = '';
+  else if (S.hints === 1) lbl.textContent = '1 usada';
+  else if (S.hints === 2) lbl.textContent = '2 — ¡ojo!';
+  else lbl.textContent = '3 — llamá a mamá/papá 👨‍👩‍👧';
+}
+
+function gainXP() {
+  S.xp++;
+  $('xpCount').textContent = S.xp;
+  $('stars').textContent = '⭐'.repeat(Math.min(S.xp, 10)) || '⭐';
+}
+
+function updateStreak() {
+  if (S.streak >= 3) {
+    show($('streakBanner'));
+    $('streakText').textContent = `Racha de ${S.streak} respuestas — ¡seguí así!`;
+  }
+}
+
+function showCeleb(title, sub) {
+  const c = $('celeb');
+  $('celebTitle').textContent = title || '🎉 ¡Bien ahí!';
+  const s = c.querySelector('.celeb-sub');
+  if (s && sub) s.textContent = sub;
+  show(c);
+  setTimeout(() => hide(c), 3500);
+}
+
+function resetSession() {
+  S = { ...S, mode: S.mode, subject: S.subject, xp: S.xp, phase: 'setup',
+        task:'', attempt:'', history:[], hints:0, streak:0, imageBase64:null, imageType:null };
+
+  $('taskInput').value = '';
+  $('attemptInput').value = '';
+  const ri = $('replyInput'); if (ri) ri.value = '';
+  $('chatZone').innerHTML = '';
+  $('attemptGate').style.display = '';
+  hide($('attemptGate'));
+  hide($('chatDivider'));
+  hide($('hintStrip'));
+  hide($('actionRow'));
+  hide($('replyBox'));
+  hide($('parentCk'));
+  hide($('celeb'));
+  hide($('streakBanner'));
+  $('setupArea').classList.remove('locked');
+  removeFile();
+  const hb = $('hintBtn');
+  if (hb) { hb.disabled = false; hb.style.opacity = '1'; }
+  updateHintDots();
+  hideErr();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
