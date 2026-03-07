@@ -382,30 +382,6 @@
   .upload-icon { font-size: 1.6rem; margin-bottom: 6px; }
   .upload-label { font-size: 0.82rem; font-weight: 700; color: var(--text-dim); }
   .upload-label strong { color: var(--accent); }
-  /* ── Task header row (label + photo btn) ── */
-  .task-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .setup-img-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    font-size: 1rem;
-    background: var(--surface2);
-    border: 1.5px solid rgba(255,255,255,0.08);
-    border-radius: var(--radius-xs);
-    cursor: pointer;
-    transition: all .15s;
-    flex-shrink: 0;
-    color: var(--text-dim);
-  }
-  .setup-img-btn:hover { background: rgba(124,111,255,0.12); border-color: var(--accent); }
-  .setup-img-btn.has-img { background: rgba(61,232,160,0.08); border-color: var(--green); }
-
   .upload-preview {
     display: none;
     align-items: center;
@@ -559,7 +535,7 @@
   .reply-send:hover { box-shadow: 0 4px 16px var(--accent-glow); }
   .reply-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ── Reply image upload button — mismo tamaño que reply-send ── */
+  /* ── Reply image upload button ── */
   .reply-img-btn {
     align-self: flex-end;
     background: var(--surface2);
@@ -794,16 +770,20 @@
 
       <!-- PREGUNTA / TAREA -->
       <div class="card">
-        <div class="task-header">
-          <div class="slabel" id="taskLabel" style="margin-bottom:0">Escribí tu tarea o pregunta</div>
-          <label class="setup-img-btn" id="setupImgBtn" title="Subir foto de la tarea">
-            📷
-            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)" />
-          </label>
-        </div>
-        <textarea id="taskInput" placeholder="Ej: ¿Cuánto es 7 × 8?  /  ¿Qué es la fotosíntesis?" rows="3" style="margin-top:8px"></textarea>
+        <div class="slabel" id="taskLabel" style="margin-bottom:8px">Escribí tu tarea o pregunta</div>
+        <textarea id="taskInput" placeholder="Ej: ¿Cuánto es 7 × 8?  /  ¿Qué es la fotosíntesis?" rows="3"></textarea>
 
-        <!-- Preview imagen setup -->
+        <!-- SUBIR IMAGEN -->
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)" />
+          <div class="upload-icon">📷</div>
+          <div class="upload-label">
+            <strong>Subí una foto</strong> de tu hoja de tarea<br>
+            <span style="font-size:0.72rem">(opcional — JPG, PNG, hasta 5MB)</span>
+          </div>
+        </div>
+
+        <!-- Preview imagen -->
         <div class="upload-preview" id="uploadPreview">
           <img id="previewThumb" class="preview-thumb" src="" alt="preview" />
           <div class="preview-info">
@@ -1140,7 +1120,7 @@ function handleFile(event) {
     $('previewName').textContent = file.name;
     $('previewSize').textContent = (file.size / 1024).toFixed(0) + ' KB';
     show($('uploadPreview'));
-    $('setupImgBtn')?.classList.add('has-img');
+    $('uploadZone').classList.add('has-file');
     hideErr();
   };
   reader.readAsDataURL(file);
@@ -1150,7 +1130,7 @@ function removeFile() {
   S.imageBase64 = null; S.imageType = null;
   $('fileInput').value = '';
   hide($('uploadPreview'));
-  $('setupImgBtn')?.classList.remove('has-img');
+  $('uploadZone').classList.remove('has-file');
 }
 
 /* ════════════════════════════════════════════════════
