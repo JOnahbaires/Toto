@@ -655,8 +655,26 @@
   .divider.visible { display: block; }
 
   /* ── Actions ── */
-  .actions { display: none; gap: 8px; margin-top: 8px; margin-bottom: 10px; }
+  .actions { display: none; gap: 8px; margin-top: 8px; margin-bottom: 10px; flex-wrap: wrap; }
   .actions.visible { display: flex; }
+
+  /* ── Download reminder ── */
+  .download-reminder {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(124,111,255,0.08), rgba(61,232,160,0.06));
+    border: 1.5px solid rgba(124,111,255,0.2);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .2s;
+    animation: fadeUp .3s ease both;
+  }
+  .download-reminder.visible { display: flex; }
+  .download-reminder:hover { background: linear-gradient(135deg, rgba(124,111,255,0.14), rgba(61,232,160,0.1)); }
 
   @keyframes fadeDown  { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeUp    { from { opacity: 0; transform: translateY(14px);  } to { opacity: 1; transform: translateY(0); } }
@@ -861,9 +879,29 @@
     <div class="actions" id="actionRow">
       <button class="btn btn-sm btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
       <button class="btn btn-sm btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
+      <button class="btn btn-sm" style="background:rgba(124,111,255,0.08);color:var(--accent);border:1.5px solid rgba(124,111,255,0.25)" onclick="downloadSummary()">📥 Descargar resumen</button>
+    </div>
+
+    <!-- Download reminder -->
+    <div id="downloadReminder" class="download-reminder" onclick="downloadSummary();hide(this)">
+      <span style="font-size:0.8rem;font-weight:700;color:var(--text-mid)">📥 ¡Podés descargar un resumen de lo que hablamos hasta ahora!</span>
     </div>
 
   </div><!-- /mainApp -->
+
+  <!-- Admin toggle (subtle - for Jonah) -->
+  <div style="text-align:center;margin-top:30px;padding:10px">
+    <button onclick="toggleAdmin()" style="background:none;border:none;color:var(--text-dim);font-size:0.65rem;cursor:pointer;opacity:0.4;font-family:'Nunito',sans-serif" title="Panel Admin">⚙️ Admin</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" style="display:none;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;animation:fadeUp .3s ease both">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--accent)">⚙️ Panel Admin — Sesiones</div>
+      <button onclick="toggleAdmin()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1.1rem">✕</button>
+    </div>
+    <div id="adminContent"></div>
+  </div>
 
 </div><!-- /wrap -->
 
@@ -933,12 +971,18 @@ MATERIA DETECTADA: {SUBJECT}
 TAREA: {TASK}
 INTENTO INICIAL: {ATTEMPT}
 PISTAS USADAS: {HINTS}/3
+{IMAGE_CONTEXT}
 
 ═══ REGLA PARA EL PRIMER MENSAJE (cuando recibís el intento) ═══
 Tu PRIMER mensaje SIEMPRE sigue esta estructura:
 1. Saludá usando el nombre: "Dale {NAME}," o "Che {NAME},"
 2. Reconocé el tema específico que trajo: "qué bueno que trajiste esto de [tema concreto]."
-3. Preguntá desde dónde parte: usá EXACTAMENTE esta pregunta de apertura: "{FIRST_Q}"
+3. Ofrecé DOS opciones claras al alumno:
+   - Opción A: Si el alumno dijo que está "más o menos" o "mal", ofrecé charlar un toque sobre cómo se siente antes de arrancar.
+   - Opción B: Ir directo a la tarea.
+   Ejemplo: "Antes de meternos de lleno, ¿querés que charlemos un toque sobre cómo estás hoy, o preferís ir directo a la tarea?"
+   Si el mood es "bien", podés ir directo a la pregunta de apertura sin ofrecer la opción.
+4. Preguntá desde dónde parte: usá esta pregunta de apertura: "{FIRST_Q}"
 NUNCA arranques con una pregunta genérica. NUNCA repitas la misma apertura en sesiones seguidas.
 
 ═══ REGLAS ABSOLUTAS ═══
@@ -954,8 +998,13 @@ NUNCA arranques con una pregunta genérica. NUNCA repitas la misma apertura en s
 10. Siempre terminás con UNA pregunta o invitación a seguir pensando.
 11. Frustración detectada → "Tranqui, vamos de a poco 💪"
 12. NUNCA mencionás que sos una IA. Sos Toto, el tutor.
-13. Si hay imagen de la tarea, la analizás y usás ese contexto para guiar.
+13. Si hay imagen de la tarea, la analizás y usás ese contexto para guiar. SIEMPRE recordás el contenido de la imagen durante toda la conversación.
 14. Si la tarea es en inglés, respondé en inglés con el mismo tono cálido.
+
+═══ REGLA DE UNA TAREA POR VEZ ═══
+15. Procesás UNA SOLA tarea o tema a la vez. Si el alumno parece querer cambiar de tema o tarea sin haber concluido la actual, preguntá PRIMERO:
+   "Ey {NAME}, todavía estamos con [tema actual]. ¿Querés pausar esto y arrancar con otra cosa, o seguimos con lo que veníamos?"
+   Solo cambiás si el alumno confirma explícitamente.
 
 Respondé siempre con calidez y entusiasmo. ¡Dale que vos podés! 🚀`;
 
@@ -966,12 +1015,17 @@ El alumno se llama {NAME}.
 ESTADO EMOCIONAL HOY: {MOOD_CONTEXT}
 MATERIA DETECTADA: {SUBJECT}
 TEMA: {TASK}
+{IMAGE_CONTEXT}
 
 ═══ REGLA PARA EL PRIMER MENSAJE ═══
 Tu PRIMER mensaje SIEMPRE sigue esta estructura:
 1. Saludá usando el nombre: "Dale {NAME}," o "Buenísimo {NAME},"
 2. Reconocé el tema específico: "re interesante lo de [tema]."
-3. Preguntá qué sabe: usá EXACTAMENTE esta pregunta: "{FIRST_Q}"
+3. Ofrecé DOS opciones claras al alumno:
+   - Si el alumno dijo que está "más o menos" o "mal", ofrecé charlar un toque sobre cómo se siente antes de arrancar.
+   - Si está "bien", podés ir directo.
+   Ejemplo: "Antes de arrancar, ¿querés contarme un poco más de cómo venís hoy, o vamos directo al tema?"
+4. Preguntá qué sabe: usá esta pregunta: "{FIRST_Q}"
 NUNCA arranques con una explicación sin antes chequear qué sabe el alumno.
 
 ═══ REGLAS ABSOLUTAS ═══
@@ -984,7 +1038,12 @@ NUNCA arranques con una explicación sin antes chequear qué sabe el alumno.
 7. NUNCA copiás definiciones de libro — todo suena natural y cercano.
 8. NUNCA mencionás que sos una IA. Sos Toto, el tutor.
 9. Si la tarea es en inglés, respondé en inglés con el mismo tono cálido.
-10. Si hay imagen, la usás para enriquecer la explicación.
+10. Si hay imagen, la usás para enriquecer la explicación. SIEMPRE recordás el contenido de la imagen durante toda la conversación.
+
+═══ REGLA DE UN TEMA POR VEZ ═══
+11. Trabajás UN SOLO tema a la vez. Si el alumno parece querer cambiar de tema sin haber concluido el actual, preguntá PRIMERO:
+   "Ey {NAME}, todavía estamos viendo [tema actual]. ¿Querés pausar esto y pasar a otra cosa, o seguimos?"
+   Solo cambiás si el alumno confirma explícitamente.
 
 Respondé siempre con calidez y entusiasmo.`;
 
@@ -1004,7 +1063,11 @@ let S = {
   streak: 0,
   imageBase64: null,
   imageType: null,
-  phase: 'warmup'
+  phase: 'warmup',
+  messageCount: 0,
+  sessionId: null,
+  sessionStartTime: null,
+  initialImageContext: null
 };
 
 // Recuperar nombre guardado si existe
@@ -1144,6 +1207,10 @@ function startSession() {
   S.attempt = '';
   S.hints = 0;
   S.history = [];
+  S.messageCount = 0;
+  S.sessionId = 'ses_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+  S.sessionStartTime = new Date().toISOString();
+  S.initialImageContext = null;
   $('setupArea').classList.add('locked');
   hideErr();
   S.phase = 'chat';
@@ -1154,6 +1221,10 @@ function startSession() {
     show($('hintStrip'));
     updateHintDots();
   }
+
+  // Initialize session log
+  initSessionLog();
+
   // Toto arranca solo — sin mensaje del alumno primero
   const opener = S.mode === 'tema'
     ? `Quiero entender este tema: ${S.task}`
@@ -1206,6 +1277,9 @@ async function sendReply() {
   // Build bubble text
   const bubbleText = msg || '📷 [imagen]';
   addBubble('kid', bubbleText, replyImage.base64 ? replyImage : null);
+
+  // Log student message
+  logSessionMessage('kid', bubbleText);
 
   // Build content for API
   let userContent;
@@ -1277,6 +1351,13 @@ async function callTutor(userMsg, isFirst) {
 
   const template = S.mode === 'tema' ? PROMPT_TEMA : PROMPT_TAREA;
   const firstQ = isFirst ? getFirstQuestion(S.subject, S.mood) : '';
+
+  // Build image context string for the prompt
+  let imageContextStr = '';
+  if (S.initialImageContext) {
+    imageContextStr = `\nCONTEXTO DE IMAGEN SUBIDA AL INICIO: El alumno subió una foto de su tarea al comienzo de la sesión. Recordá siempre este contexto visual durante toda la conversación. Si el alumno pregunta sobre "la foto", "la imagen" o "lo que subí", referite a esa imagen inicial.`;
+  }
+
   const sys = template
     .replace('{NAME}', S.name || 'amigo')
     .replace(/\{NAME\}/g, S.name || 'amigo')
@@ -1285,7 +1366,8 @@ async function callTutor(userMsg, isFirst) {
     .replace('{TASK}', S.task)
     .replace('{ATTEMPT}', S.attempt || 'No especificado')
     .replace('{HINTS}', String(S.hints))
-    .replace('{FIRST_Q}', firstQ);
+    .replace('{FIRST_Q}', firstQ)
+    .replace('{IMAGE_CONTEXT}', imageContextStr);
 
   // userMsg puede ser string (normal) o array (con imagen)
   // Si es el primer mensaje y hay imagen del setup, la combinamos
@@ -1295,10 +1377,13 @@ async function callTutor(userMsg, isFirst) {
       { type: 'image', source: { type: 'base64', media_type: S.imageType, data: S.imageBase64 } },
       { type: 'text', text: typeof userMsg === 'string' ? userMsg : (userMsg.find?.(x=>x.type==='text')?.text || '') }
     ];
+    // Mark that we have initial image context for future messages
+    S.initialImageContext = true;
   } else {
     msgContent = userMsg; // puede ser string o array (imagen en reply)
   }
 
+  // Build messages: keep image in first history entry if it exists
   const msgs = [...S.history, { role: 'user', content: msgContent }];
 
   try {
@@ -1323,14 +1408,31 @@ async function callTutor(userMsg, isFirst) {
     }
 
     const reply = data.content?.[0]?.text || 'Hmm, algo falló. Probá de nuevo 😅';
-    // Para el historial guardamos string plano (evita payload enorme con imágenes repetidas)
-    const historyText = typeof userMsg === 'string' ? userMsg
-      : (Array.isArray(userMsg) ? userMsg.find(x=>x.type==='text')?.text || '[imagen]' : String(userMsg));
-    S.history.push({ role: 'user', content: historyText });
+
+    // Para el historial: si fue el primer mensaje con imagen, guardamos la imagen en history
+    // para que el modelo la "recuerde" en siguientes llamadas
+    if (isFirst && S.imageBase64) {
+      S.history.push({ role: 'user', content: msgContent });
+    } else {
+      const historyText = typeof userMsg === 'string' ? userMsg
+        : (Array.isArray(userMsg) ? userMsg.find(x=>x.type==='text')?.text || '[imagen]' : String(userMsg));
+      S.history.push({ role: 'user', content: historyText });
+    }
     S.history.push({ role: 'assistant', content: reply });
-    if (S.history.length > 16) S.history = S.history.slice(-16);
+    if (S.history.length > 20) S.history = S.history.slice(-20);
 
     addBubble('tutor', reply, null);
+
+    // Incrementar contador de mensajes
+    S.messageCount++;
+
+    // Cada 4 mensajes del tutor, ofrecer descarga
+    if (S.messageCount > 0 && S.messageCount % 4 === 0) {
+      showDownloadReminder();
+    }
+
+    // Log session data
+    logSessionMessage('tutor', reply);
 
     if (isFirst) {
       gainXP();
@@ -1422,9 +1524,11 @@ function showCeleb(title, sub) {
 }
 
 function resetSession() {
+  // Finalize session log before reset
+  finalizeSessionLog();
   S = { ...S, mode: S.mode, subject: S.subject, xp: S.xp, name: S.name, mood: S.mood,
         phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0,
-        imageBase64:null, imageType:null };
+        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, initialImageContext:null };
   replyImage = { base64: null, type: null };
   $('taskInput').value = '';
   const ri = $('replyInput'); if (ri) ri.value = '';
@@ -1437,6 +1541,7 @@ function resetSession() {
   hide($('celeb'));
   hide($('streakBanner'));
   hide($('replyImgPreview'));
+  hide($('downloadReminder'));
   $('replyImgBtn')?.classList.remove('has-img');
   $('setupArea').classList.remove('locked');
   removeFile();
@@ -1445,6 +1550,198 @@ function resetSession() {
   updateHintDots();
   hideErr();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+/* ════════════════════════════════════════════════════
+   DOWNLOAD CONVERSATION SUMMARY
+════════════════════════════════════════════════════ */
+function downloadSummary() {
+  const lines = [];
+  const now = new Date();
+  lines.push('═══════════════════════════════════════════');
+  lines.push('  TOTO EL TUTOR — Resumen de sesión');
+  lines.push('═══════════════════════════════════════════');
+  lines.push(`Alumno: ${S.name || 'Sin nombre'}`);
+  lines.push(`Fecha: ${now.toLocaleDateString('es-AR')} ${now.toLocaleTimeString('es-AR')}`);
+  lines.push(`Materia: ${SUBJ_MAP[S.subject] || 'General'}`);
+  lines.push(`Modo: ${S.mode === 'tema' ? 'Quiero entender algo' : 'Tengo una tarea'}`);
+  lines.push(`Tarea/Tema: ${S.task}`);
+  lines.push(`Estrellas ganadas: ${S.xp}`);
+  lines.push(`Pistas usadas: ${S.hints}/3`);
+  lines.push('');
+  lines.push('───────── Conversación ─────────');
+  lines.push('');
+
+  const bubbles = document.querySelectorAll('#chatZone .bubble');
+  bubbles.forEach(b => {
+    const who = b.classList.contains('tutor') ? 'Toto' : (S.name || 'Alumno');
+    const textEl = b.querySelector('div:not(.bname)');
+    const text = textEl ? textEl.textContent.trim() : '';
+    if (text) {
+      lines.push(`[${who}]: ${text}`);
+      lines.push('');
+    }
+  });
+
+  lines.push('───────────────────────────────');
+  lines.push('¡Seguí pensando, crack! 🚀');
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `toto-sesion-${S.name || 'alumno'}-${now.toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ════════════════════════════════════════════════════
+   DOWNLOAD REMINDER (each 4 tutor messages)
+════════════════════════════════════════════════════ */
+function showDownloadReminder() {
+  const rem = $('downloadReminder');
+  if (rem) {
+    show(rem);
+    setTimeout(() => hide(rem), 8000);
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   SESSION LOGGING (localStorage-based admin log)
+════════════════════════════════════════════════════ */
+function initSessionLog() {
+  const session = {
+    id: S.sessionId,
+    name: S.name,
+    mood: S.mood,
+    mode: S.mode,
+    subject: S.subject,
+    task: S.task,
+    startTime: S.sessionStartTime,
+    endTime: null,
+    messages: [],
+    xp: 0,
+    hints: 0
+  };
+  try {
+    const logs = JSON.parse(localStorage.getItem('toto_sessions') || '[]');
+    logs.push(session);
+    // Keep last 100 sessions
+    if (logs.length > 100) logs.splice(0, logs.length - 100);
+    localStorage.setItem('toto_sessions', JSON.stringify(logs));
+  } catch(e) { console.warn('Session log error:', e); }
+}
+
+function logSessionMessage(who, text) {
+  if (!S.sessionId) return;
+  try {
+    const logs = JSON.parse(localStorage.getItem('toto_sessions') || '[]');
+    const session = logs.find(s => s.id === S.sessionId);
+    if (session) {
+      session.messages.push({
+        who,
+        text: text.substring(0, 500), // truncate for storage
+        time: new Date().toISOString()
+      });
+      session.xp = S.xp;
+      session.hints = S.hints;
+      localStorage.setItem('toto_sessions', JSON.stringify(logs));
+    }
+  } catch(e) { console.warn('Session log error:', e); }
+}
+
+function finalizeSessionLog() {
+  if (!S.sessionId) return;
+  try {
+    const logs = JSON.parse(localStorage.getItem('toto_sessions') || '[]');
+    const session = logs.find(s => s.id === S.sessionId);
+    if (session) {
+      session.endTime = new Date().toISOString();
+      session.xp = S.xp;
+      session.hints = S.hints;
+      session.messageCount = S.messageCount;
+      localStorage.setItem('toto_sessions', JSON.stringify(logs));
+    }
+  } catch(e) { console.warn('Session log error:', e); }
+}
+
+/* ════════════════════════════════════════════════════
+   ADMIN PANEL
+════════════════════════════════════════════════════ */
+function toggleAdmin() {
+  const panel = $('adminPanel');
+  if (!panel) return;
+  if (panel.style.display === 'block') {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+  renderAdminSessions();
+}
+
+function renderAdminSessions() {
+  const container = $('adminContent');
+  if (!container) return;
+  let logs = [];
+  try { logs = JSON.parse(localStorage.getItem('toto_sessions') || '[]'); } catch(e) {}
+
+  if (logs.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:20px">No hay sesiones registradas todavía.</p>';
+    return;
+  }
+
+  // Reverse to show newest first
+  const reversed = [...logs].reverse();
+  let html = `<div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:12px">
+    ${logs.length} sesión(es) registrada(s)
+    <button onclick="exportAllSessions()" style="margin-left:8px;background:var(--accent);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Exportar todo</button>
+    <button onclick="clearSessions()" style="margin-left:4px;background:var(--pink);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Borrar todo</button>
+  </div>`;
+
+  reversed.forEach((s, i) => {
+    const startDate = s.startTime ? new Date(s.startTime).toLocaleString('es-AR') : '?';
+    const msgCount = s.messages ? s.messages.length : 0;
+    const moodEmoji = s.mood === 'bien' ? '😊' : (s.mood === 'masomenos' ? '😐' : '😓');
+    html += `<details style="margin-bottom:8px;background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border)">
+      <summary style="cursor:pointer;font-weight:700;font-size:0.82rem;color:var(--text)">
+        ${moodEmoji} <strong>${s.name || 'Anón'}</strong> — ${s.task ? s.task.substring(0,40) + (s.task.length > 40 ? '...' : '') : 'Sin tarea'}
+        <span style="color:var(--text-dim);font-weight:600;font-size:0.72rem;margin-left:6px">${startDate} · ${msgCount} msgs · ⭐${s.xp || 0} · 💡${s.hints || 0}/3</span>
+      </summary>
+      <div style="margin-top:8px;max-height:300px;overflow-y:auto;font-size:0.78rem;line-height:1.6">`;
+
+    if (s.messages) {
+      s.messages.forEach(m => {
+        const color = m.who === 'tutor' ? 'var(--accent)' : 'var(--text-mid)';
+        const label = m.who === 'tutor' ? 'Toto' : s.name || 'Alumno';
+        html += `<div style="margin-bottom:4px"><strong style="color:${color}">[${label}]</strong> ${m.text}</div>`;
+      });
+    }
+    html += `</div></details>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function exportAllSessions() {
+  let logs = [];
+  try { logs = JSON.parse(localStorage.getItem('toto_sessions') || '[]'); } catch(e) {}
+  const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `toto-admin-sessions-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function clearSessions() {
+  if (confirm('¿Seguro que querés borrar todas las sesiones registradas?')) {
+    localStorage.removeItem('toto_sessions');
+    renderAdminSessions();
+  }
 }
 </script>
 </body>
