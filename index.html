@@ -272,7 +272,7 @@
   /* ── MODE SELECTOR ── */
   .mode-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     margin-bottom: 18px;
     animation: fadeUp .35s ease both;
@@ -824,6 +824,13 @@
             <div class="mode-desc">Quiero que me expliquen un tema que no entiendo</div>
           </div>
         </button>
+        <button class="mode-btn practica" onclick="pickMode(this,'practica')">
+          <div class="mode-icon">🎯</div>
+          <div>
+            <div class="mode-name">Practicar para un examen</div>
+            <div class="mode-desc">Quiero prepararme con preguntas tipo prueba</div>
+          </div>
+        </button>
       </div>
 
       <!-- PREGUNTA / TAREA -->
@@ -1319,6 +1326,9 @@ function pickMode(btn, mode) {
   if (mode === 'tema') {
     ta.placeholder = 'Ej: No entiendo qué es la fotosíntesis  /  ¿Cómo funcionan las fracciones?';
     lbl.textContent = 'Escribí el tema que no entendés';
+  } else if (mode === 'practica') {
+    ta.placeholder = 'Ej: Fracciones, Sistema solar, Revolución de Mayo...';
+    lbl.textContent = 'Escribí el tema o temario del examen';
   } else {
     ta.placeholder = 'Ej: ¿Cuánto es 7 × 8?  /  ¿Qué quiere decir el poema?';
     lbl.textContent = 'Escribí tu tarea o pregunta';
@@ -1519,7 +1529,7 @@ async function callTutor(userMsg, isFirst) {
   chatZone.appendChild(loader);
   scrollDown();
 
-  const template = S.mode === 'tema' ? PROMPT_TEMA : PROMPT_TAREA;
+  const template = S.mode === 'tema' ? PROMPT_TEMA : S.mode === 'practica' ? PROMPT_TAREA : PROMPT_TAREA;
   const firstQ = isFirst ? getFirstQuestion(S.subject, S.mood) : '';
 
   // Build image context string for the prompt
