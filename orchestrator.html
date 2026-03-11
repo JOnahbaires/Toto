@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toto Orchestrator</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      background: #0c0f1a; color: #e2e8f0;
+      min-height: 100vh;
+    }
+    textarea:focus, button:focus, input:focus { outline: none; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(14,165,233,0.15); } 50% { box-shadow: 0 0 40px rgba(14,165,233,0.3); } }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+
+    /* ——— LOGIN SCREEN ——— */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; animation: fadeIn 0.4s ease-out;
+    }
+    .login-card {
+      background: #111827; border: 1px solid #1e293b; border-radius: 20px;
+      padding: 48px 40px; text-align: center; max-width: 380px; width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .login-logo {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700; color: white;
+      margin: 0 auto 20px; box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+    }
+    .login-title { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+    .login-subtitle { font-size: 14px; color: #64748b; margin-bottom: 28px; }
+    .login-input {
+      width: 100%; background: #0c0f1a; border: 1px solid #1e293b;
+      border-radius: 10px; padding: 14px 18px; color: #e2e8f0;
+      font-size: 16px; font-family: 'DM Sans', sans-serif;
+      text-align: center; letter-spacing: 4px;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: #6366f1; }
+    .login-input::placeholder { letter-spacing: 0; color: #475569; }
+    .login-btn {
+      width: 100%; margin-top: 16px; padding: 14px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+      transition: opacity 0.2s;
+    }
+    .login-btn:hover { opacity: 0.9; }
+    .login-btn:disabled { background: #1e293b; color: #475569; cursor: not-allowed; box-shadow: none; }
+    .login-error { color: #fca5a5; font-size: 13px; margin-top: 12px; }
+
+    /* ——— MAIN APP (hidden until auth) ——— */
+    #app { display: none; }
+    .app-header {
+      border-bottom: 1px solid #1e293b; padding: 20px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(180deg, #111827 0%, #0c0f1a 100%);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 700; color: white;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+    }
+    .header-title { font-size: 18px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.02em; }
+    .header-desc { font-size: 12px; color: #64748b; margin-top: 1px; }
+    .tab-bar { display: flex; gap: 4px; background: #1e293b; border-radius: 10px; padding: 3px; }
+    .tab-btn {
+      background: transparent; border: none; border-radius: 8px;
+      padding: 8px 16px; font-size: 13px; font-weight: 400;
+      color: #64748b; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .tab-btn.active { background: #334155; font-weight: 600; color: #f1f5f9; }
+    .content { max-width: 900px; margin: 0 auto; padding: 28px 24px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: slideIn 0.3s ease-out; }
+
+    /* ——— SHARED STYLES ——— */
+    .card {
+      background: #111827; border: 1px solid #1e293b; border-radius: 16px;
+      padding: 24px; margin-bottom: 24px;
+    }
+    .card.glowing { animation: glow 2s ease-in-out infinite; }
+    .label-sm {
+      font-size: 13px; font-weight: 600; color: #94a3b8;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+    }
+    .input-text, .input-area {
+      width: 100%; background: #0c0f1a; border: 1px solid #1e293b;
+      border-radius: 10px; padding: 14px 16px; color: #e2e8f0;
+      font-size: 14px; font-family: 'DM Sans', sans-serif;
+      line-height: 1.6; transition: border-color 0.2s;
+    }
+    .input-area { resize: vertical; }
+    .input-text:focus, .input-area:focus { border-color: #6366f1; }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; border: none; border-radius: 10px;
+      padding: 10px 28px; font-size: 14px; font-weight: 600;
+      cursor: pointer; box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+    }
+    .btn-primary:disabled { background: #1e293b; color: #475569; cursor: not-allowed; box-shadow: none; }
+    .btn-secondary {
+      background: #1e293b; color: #94a3b8; border: none;
+      border-radius: 10px; padding: 10px 20px; font-size: 14px;
+      font-weight: 600; cursor: pointer;
+    }
+    .btn-copy {
+      background: #1e293b; border: none; border-radius: 6px;
+      padding: 5px 12px; font-size: 12px; color: #94a3b8; cursor: pointer;
+    }
+    .agent-card {
+      background: #111827; border-radius: 14px; margin-bottom: 14px;
+      overflow: hidden; animation: slideIn 0.3s ease-out; transition: border-color 0.3s;
+    }
+    .agent-header {
+      padding: 14px 20px; display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .agent-header.clickable { cursor: pointer; }
+    .agent-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .agent-body {
+      padding: 16px 20px; max-height: 500px; overflow-y: auto; background: #0e1525;
+    }
+    .spinner {
+      width: 14px; height: 14px; border: 2px solid transparent;
+      border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite;
+    }
+    .status-ok { color: #22c55e; font-size: 12px; }
+    .status-processing { font-size: 12px; animation: pulse 1.5s ease-in-out infinite; }
+    .status-error { color: #ef4444; font-size: 12px; }
+
+    /* Info banners */
+    .info-banner {
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 20px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .info-banner .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .info-banner .body { font-size: 13px; color: #94a3b8; line-height: 1.6; width: 100%; }
+
+    /* Dashboard mini bars */
+    .mini-bar-track { height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; }
+    .mini-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+    /* Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .flex-row { display: flex; align-items: center; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .gap-8 { gap: 8px; }
+    .gap-10 { gap: 10px; }
+    .gap-12 { gap: 12px; }
+    .mt-14 { margin-top: 14px; }
+    .mb-12 { margin-bottom: 12px; }
+    .mb-18 { margin-bottom: 18px; }
+
+    /* Tab-specific btn colors */
+    .btn-feedback {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+    }
+    .btn-review {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      box-shadow: 0 4px 12px rgba(245,158,11,0.3);
+    }
+    .btn-greg {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .app-header { flex-direction: column; gap: 12px; padding: 16px 20px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .content { padding: 20px 16px; }
+      .dashboard-grid { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">T</div>
+    <div class="login-title">Toto Orchestrator</div>
+    <div class="login-subtitle">Herramienta interna — ingresá tu PIN</div>
+    <input type="password" id="pin-input" class="login-input" placeholder="PIN" maxlength="20"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+    <div id="login-error" class="login-error" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN APP ═══════════════ -->
+<div id="app">
+  <div class="app-header">
+    <div class="header-left">
+      <div class="header-logo">T</div>
+      <div>
+        <div class="header-title">Toto Orchestrator</div>
+        <div class="header-desc" id="header-desc">PM → Dev → QA</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn" data-tab="dev" onclick="switchTab('dev')">⚡ Dev Pipeline</button>
+      <button class="tab-btn active" data-tab="feedback" onclick="switchTab('feedback')">📥 Feedback</button>
+      <button class="tab-btn" data-tab="review" onclick="switchTab('review')">🧠 Review</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- ═══════ TAB: DEV PIPELINE ═══════ -->
+    <div class="tab-content" id="tab-dev">
+      <div class="card" id="dev-card">
+        <div class="label-sm">Describí la iniciativa</div>
+        <textarea id="dev-initiative" class="input-area" rows="4"
+          placeholder="Ej: Fix del encoding en la descarga de sesión..."></textarea>
+        <div class="flex-between mt-14">
+          <span id="dev-status" style="font-size:12px;color:#475569">Sonnet 4 para los 3 agentes</span>
+          <button class="btn-primary" id="dev-run-btn" onclick="runDevPipeline()">Lanzar Pipeline</button>
+        </div>
+      </div>
+      <div id="dev-agents"></div>
+      <div id="dev-greg" style="display:none"></div>
+      <div id="dev-history"></div>
+    </div>
+
+    <!-- ═══════ TAB: FEEDBACK ═══════ -->
+    <div class="tab-content active" id="tab-feedback">
+      <div class="info-banner" style="background:#0ea5e910;border:1px solid #0ea5e930">
+        <span class="icon">💡</span>
+        <div class="body">
+          <strong style="color:#0ea5e9">Setup inicial:</strong> Creá un Google Sheet nuevo. Copiá los headers de abajo y pegalos en la fila 1. Después, cada feedback procesado genera una fila lista para copiar y pegar.
+          <div style="margin-top:8px">
+            <button onclick="toggleHeaders()" id="headers-toggle-btn"
+              style="background:#0ea5e920;border:1px solid #0ea5e940;border-radius:6px;padding:6px 14px;font-size:12px;color:#0ea5e9;cursor:pointer;font-weight:600">
+              ▸ Mostrar headers para el Sheet
+            </button>
+          </div>
+          <textarea id="headers-area" style="display:none;width:100%;margin-top:8px;background:#0c0f1a;border:1px solid #0ea5e940;border-radius:6px;padding:8px 10px;color:#e2e8f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;line-height:1.5;cursor:text" rows="2" readonly
+            onclick="this.select()" onfocus="this.select()"></textarea>
+        </div>
+      </div>
+
+      <div class="card" id="fb-card">
+        <div class="flex-between mb-18">
+          <div class="label-sm" style="margin-bottom:0">Cargar feedback individual</div>
+          <span id="fb-count" style="display:none;font-size:12px;color:#22c55e;background:#22c55e15;padding:3px 10px;border-radius:20px;font-weight:500"></span>
+        </div>
+        <div class="grid-2 mb-12">
+          <div>
+            <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Alumno</label>
+            <input type="text" id="fb-alumno" class="input-text" placeholder="Nombre del alumno" style="border-radius:8px;padding:10px 14px">
+          </div>
+          <div>
+            <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Padre / Fuente</label>
+            <input type="text" id="fb-padre" class="input-text" placeholder="Nombre del padre o fuente" style="border-radius:8px;padding:10px 14px">
+          </div>
+        </div>
+        <div class="mb-12">
+          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>💬</span> WhatsApp Texto <span id="fb-wa-check" style="color:#22c55e;font-size:11px;display:none">✓</span>
+          </label>
+          <textarea id="fb-whatsapp" class="input-area" rows="3" placeholder="Pegá el mensaje de WhatsApp acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+        </div>
+        <div class="mb-12">
+          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>🎙️</span> WhatsApp Audio (transcripción) <span id="fb-audio-check" style="color:#22c55e;font-size:11px;display:none">✓</span>
+          </label>
+          <textarea id="fb-audio" class="input-area" rows="3" placeholder="Transcribí o pegá el contenido del audio acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+        </div>
+        <div class="mb-12">
+          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:6px">
+            <span>📧</span> Email (reporte EmailJS) <span id="fb-email-check" style="color:#22c55e;font-size:11px;display:none">✓</span>
+          </label>
+          <textarea id="fb-email" class="input-area" rows="3" placeholder="Pegá el contenido del email de reporte acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+        </div>
+        <div class="flex-between">
+          <span id="fb-status" style="font-size:12px;color:#475569">Intake → Analyst → Metrics</span>
+          <div class="flex-row gap-8">
+            <button class="btn-secondary" id="fb-reset-btn" style="display:none" onclick="resetFeedback()">+ Nuevo feedback</button>
+            <button class="btn-primary btn-feedback" id="fb-run-btn" onclick="runFeedbackPipeline()">Procesar feedback</button>
+          </div>
+        </div>
+      </div>
+      <div id="fb-agents"></div>
+      <div id="fb-clipboard" style="display:none"></div>
+    </div>
+
+    <!-- ═══════ TAB: REVIEW ═══════ -->
+    <div class="tab-content" id="tab-review">
+      <div class="info-banner" style="background:#f59e0b10;border:1px solid #f59e0b30">
+        <span class="icon">📋</span>
+        <div class="body">
+          <strong style="color:#f59e0b">Cómo usar:</strong> Abrí tu Google Sheet de feedback, seleccioná todas las filas con datos (podés incluir la fila de headers, se ignora automáticamente), copiá con Ctrl+C y pegá acá abajo.
+        </div>
+      </div>
+      <div class="card" id="review-card">
+        <div class="flex-between mb-12">
+          <div class="label-sm" style="margin-bottom:0">Pegá las filas del Sheet</div>
+          <span id="review-row-count" style="display:none;font-size:12px;color:#f59e0b;background:#f59e0b15;padding:3px 10px;border-radius:20px;font-weight:500"></span>
+        </div>
+        <textarea id="review-data" class="input-area" rows="6"
+          placeholder="Copiá las filas de tu Google Sheet y pegalas acá (Ctrl+V).&#10;Podés incluir la fila de headers — se detecta y se ignora automáticamente."
+          style="font-family:'JetBrains Mono',monospace;font-size:13px"
+          oninput="updateReviewCount()"></textarea>
+        <div class="flex-between mt-14">
+          <span id="review-status" style="font-size:12px;color:#475569">Sonnet 4 — dos análisis en paralelo</span>
+          <div class="flex-row gap-8">
+            <button class="btn-secondary" id="review-reset-btn" style="display:none" onclick="resetReview()">Nuevo análisis</button>
+            <button class="btn-primary btn-review" id="review-run-btn" onclick="runReview()">Analizar feedback</button>
+          </div>
+        </div>
+      </div>
+      <div id="review-dashboard"></div>
+      <div id="review-view-toggle" style="display:none"></div>
+      <div id="review-output"></div>
+      <div id="review-brief" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════
+let AUTH_PIN = null; // guardado en memoria tras login exitoso
+let fbProcessedCount = 0;
+let devHistory = [];
+
+// ═══════════════════════════════════════════
+// CONSTANTES — AGENTES
+// ═══════════════════════════════════════════
+
+const AGENTS = {
+  pm: {
+    name: "PM", emoji: "📋", color: "#2563eb", borderColor: "#bfdbfe",
+    system: `Sos el Product Manager de "Toto el Tutor", una app educativa para niños de primaria deployada en toto-rust.vercel.app (v0.1.0).
+
+CONTEXTO DEL PRODUCTO:
+- App de tutoría con IA. El niño ingresa nombre, estado emocional y su tarea/duda. Toto guía con pistas sin dar respuestas directas.
+- Sistema de estrellas y gamificación. Panel admin de sesiones.
+- Stack: Single-file index.html + api/chat.js (proxy serverless) + Vercel. Sin DB todavía (localStorage).
+- Usuarios: niños de primaria (10-12 años), padres, docentes, admin.
+- AI: claude-haiku-4-5 via Anthropic API (max_tokens: 600, 2 retries)
+- Email: EmailJS para reportes de sesión
+
+TU ROL:
+Recibís briefs del Orquestador y los convertís en documentos de requerimientos que el Dev puede ejecutar sin ambigüedades.
+
+DADO UN BRIEF, PRODUCÍS:
+1. User Stories: "Como [usuario], quiero [acción] para [beneficio]"
+2. Criterios de aceptación concretos y verificables por story
+3. Prioridad: Must Have / Should Have / Nice to Have
+4. Dependencias con otras features o sistemas
+5. Riesgos identificados
+6. Alcance: qué SÍ y qué NO incluye
+
+REGLAS:
+- Si el brief tiene ambigüedades, señalalas pero intentá resolverlas con tu mejor criterio.
+- Cada user story debe completarse en máximo 1 semana de desarrollo.
+- Si una story es muy grande, partila en stories más chicas.
+- El output debe pasarse directamente al Dev sin más aclaraciones.
+- Español rioplatense, claro y sin jerga innecesaria.`
+  },
+  dev: {
+    name: "Dev", emoji: "💻", color: "#059669", borderColor: "#a7f3d0",
+    system: `Sos el Desarrollador Senior de "Toto el Tutor", una app educativa deployada en Vercel (toto-rust.vercel.app, v0.1.0).
+
+CONTEXTO TÉCNICO:
+- Stack: Single-file index.html (TODA la app: frontend + lógica + estilos + logo base64)
+- Backend: api/chat.js (proxy serverless hacia Anthropic API, claude-haiku-4-5, max_tokens: 600, 2 retries con delays 3s/6s)
+- Config: vercel.json
+- Hosting: Vercel, repo: github.com/JOnahbaires/Toto (público, rama main)
+- Storage: localStorage (solo nombre del estudiante persiste entre sesiones)
+- Email: EmailJS (service_kudmo6n, template_ji0mjoo, key KG28xVpC7Fq4vVJfa) → jonah.baires@gmail.com
+- Fotos: base64 en primer mensaje, luego solo resumen textual
+- Jonah no sabe programar. Todas las instrucciones deben ser paso a paso, con copy-paste exacto.
+
+RESTRICCIONES:
+- Single-file constraint: TODOS los cambios van en index.html
+- Simple > complejo: localStorage sobre DB, inline sobre pipelines
+- HTML edits: Usar Python str.replace() para bloques multilínea (no sed)
+- Mobile: triggers de click poco confiables; usar signals conversacionales
+
+TU ROL:
+1. Analizás los requerimientos del PM
+2. Proponés la solución técnica más simple que funcione
+3. Escribís el código completo con comentarios en español
+4. Dás instrucciones de implementación paso a paso para Jonah
+5. Listás qué hay que testear después
+
+FORMATO DE RESPUESTA:
+- Primero: qué vas a hacer y por qué (2-3 líneas en simple)
+- Luego: el código completo o el cambio exacto (antes/después)
+- Finalmente: instrucciones de deploy paso a paso
+
+REGLAS:
+- Código siempre completo, nunca fragmentos sueltos sin contexto.
+- Preferí soluciones que no requieran cambiar la arquitectura.
+- Nunca sobre-ingenierices. La solución más simple que funcione.
+- Español rioplatense en comentarios y explicaciones.`
+  },
+  qa: {
+    name: "QA", emoji: "🧪", color: "#d97706", borderColor: "#fde68a",
+    system: `Sos el QA Tester de "Toto el Tutor", una app educativa para niños de primaria en toto-rust.vercel.app.
+
+CONTEXTO DEL PRODUCTO:
+- App de tutoría con IA. El niño ingresa nombre, estado emocional y su tarea/duda. Toto guía con pistas sin dar respuestas directas.
+- Sistema de estrellas y gamificación. Panel admin de sesiones.
+- Stack: Single-file index.html, Vercel, localStorage, EmailJS, claude-haiku-4-5
+- Usuarios reales: niños de primaria (10-12 años), padres, docentes, admin.
+
+TU ROL:
+Recibís el output del Dev (qué se cambió y por qué) y producís:
+1. Test plan específico para el cambio realizado
+2. Casos de prueba en formato tabla:
+   - Happy path (flujo ideal)
+   - Edge cases (límites y casos extremos)
+   - Casos trampa (lo que haría un niño que no sigue instrucciones)
+3. Casos de regresión (features existentes que podrían romperse)
+4. Criterio de aprobación: qué tiene que pasar para dar PASS
+5. Instrucciones para Greg (ejecutor web con Claude in Chrome) si aplica
+
+FORMATO DE REPORTE:
+| Test ID | Caso | Pasos | Resultado esperado | Severidad si falla |
+
+SEVERIDADES:
+- 🔴 Crítico: Feature principal rota
+- 🟡 Medio: Funciona parcialmente o en algunos browsers
+- 🟢 Bajo: Cosmético o edge case menor
+
+REGLAS:
+- Siempre testear desde la perspectiva del usuario real (especialmente el niño).
+- Un bug no encontrado en QA es un bug que llega al niño.
+- Si algo es ambiguo (¿bug o feature?), reportalo igual con la pregunta.
+- Español rioplatense en los reportes.`
+  }
+};
+
+const FEEDBACK_AGENTS = {
+  intake: {
+    name: "Intake", emoji: "📥", color: "#0ea5e9", borderColor: "#7dd3fc",
+    system: `Sos el agente de Intake de feedback de "Toto el Tutor", una app de tutoría socrática con IA para niños de primaria (10-12 años) en Buenos Aires.
+
+CONTEXTO DEL PRODUCTO:
+- El niño ingresa nombre, estado emocional y su tarea/duda. Toto guía con pistas sin dar respuestas directas (método socrático).
+- Sistema de estrellas/XP, gamificación, hints (máx 3), Parent Checkpoint Mode.
+- Voz rioplatense auténtica ("posta", "che", "dale", vos).
+- Stack: Single-file index.html + Vercel. Sin DB (localStorage).
+- Usuarios: niños de primaria, padres, docentes.
+
+TU ROL:
+Recibís feedback crudo de un usuario (padre o niño) y lo estructurás en una ficha limpia.
+
+FORMATO DE RESPUESTA:
+Respondé SOLO en este formato exacto:
+
+RESUMEN: [texto]
+CITA_CLAVE: [texto entre comillas]
+EMOCION: [positiva/negativa/neutra/mixta]
+TEMA: [tema principal]
+SUBTEMAS: [subtema1, subtema2]
+CONTEXTO_USO: [texto]
+
+REGLAS:
+- Si el feedback es ambiguo, usá tu mejor criterio pero marcá con "(inferido)" lo que no sea explícito.
+- Si no hay suficiente info para un campo, poné "No determinado".
+- Español rioplatense. Sé conciso.`
+  },
+  analyst: {
+    name: "Analyst", emoji: "🔍", color: "#8b5cf6", borderColor: "#c4b5fd",
+    system: `Sos el agente Analista de feedback de "Toto el Tutor", una app de tutoría socrática con IA para niños de primaria (10-12 años) en Buenos Aires.
+
+CONTEXTO DEL PRODUCTO:
+- Método socrático: nunca dar respuesta directa, siempre preguntas guía.
+- Esfuerzo > corrección: XP por intentar, no por acertar.
+- 3-hint limit → Parent Checkpoint Mode.
+- Voz rioplatense auténtica.
+- Stack: Single-file index.html + Vercel. MVP en validación con ~5 familias.
+- Roadmap: Fase 1 (validación MVP), Fase 2 (dashboard padres + Google Classroom), Fase 3 (monetización).
+
+TU ROL:
+Recibís la ficha del Intake Agent y producís análisis accionable.
+
+FORMATO DE RESPUESTA:
+Respondé SOLO en este formato exacto:
+
+CATEGORIA: [bug / UX_issue / feature_request / insight_pedagógico / feedback_positivo / feedback_negativo]
+PRIORIDAD: [crítica / alta / media / baja]
+ACCIONABLE: [sí / no]
+ACCION_SUGERIDA: [texto]
+FASE_ROADMAP: [Fase 1 / Fase 2 / Fase 3 / Backlog]
+FEATURE_RELACIONADA: [feature]
+IMPACTO_METRICA: [positivo / negativo / neutro / no determinado]
+SEÑAL_ALERTA: [sí/no — explicación breve]
+
+REGLAS:
+- Priorizá todo lo que impacte la métrica paramount ("¿El niño vuelve mañana?").
+- Si el feedback menciona frustración del niño, siempre es prioridad alta mínimo.
+- Si el feedback es positivo, igual categorizalo — sirve para saber qué NO cambiar.
+- Español rioplatense.`
+  },
+  metrics: {
+    name: "Metrics", emoji: "📊", color: "#ec4899", borderColor: "#f9a8d4",
+    system: `Sos el agente de Métricas de feedback de "Toto el Tutor", una app de tutoría socrática con IA para niños de primaria (10-12 años) en Buenos Aires.
+
+CONTEXTO:
+- MVP en validación con ~5 familias.
+- Métrica paramount: "¿El niño vuelve mañana a hacer tarea con Toto?"
+- Métricas secundarias: engagement, efectividad pedagógica, satisfacción.
+
+TU ROL:
+Recibís el feedback original + ficha Intake + análisis Analyst, y producís métricas.
+
+FORMATO:
+TAGS_METRICAS: [tag1, tag2]
+SEÑAL_CUANTIFICABLE: [texto o "No cuantificable"]
+COMPARACION_TEMPORAL: [texto o "Sin datos previos para comparar"]
+HIPOTESIS: [texto]
+RECOMENDACION_SEGUIMIENTO: [texto]
+
+REGLAS:
+- Sé específico en las señales cuantificables.
+- La recomendación debe ser UNA pregunta concreta que Jonah pueda hacer por WhatsApp.
+- Español rioplatense.`
+  }
+};
+
+const STRATEGIST_SYSTEM = `Sos el Estratega de producto de "Toto el Tutor", una app de tutoría socrática con IA para niños de primaria (10-12 años) en Buenos Aires.
+
+CONTEXTO: MVP en validación con ~5 familias. Meta: 70 familias pagando. Métrica paramount: "¿El niño vuelve mañana?"
+Roadmap: Fase 1 (validación), Fase 2 (dashboard padres + Google Classroom), Fase 3 (monetización).
+
+PRINCIPIOS NO NEGOCIABLES: Método socrático inviolable. Scope freeze hasta validar core loop. Simple > complejo.
+
+PRODUCÍS: 1) Patrones detectados, 2) Top 3 iteraciones sugeridas, 3) Señales de alerta, 4) Brief listo para Dev Pipeline.
+Español rioplatense, directo y sin relleno.`;
+
+const SHEET_COLUMNS = [
+  "Fecha","Alumno","Padre/Fuente","Canal(es)","Feedback crudo",
+  "Resumen","Cita clave","Emoción","Tema","Subtemas","Contexto de uso",
+  "Categoría","Prioridad","Accionable","Acción sugerida","Fase roadmap",
+  "Feature relacionada","Impacto métrica paramount","Señal de alerta",
+  "Tags métricas","Señal cuantificable","Comparación temporal","Hipótesis","Recomendación seguimiento"
+];
+
+// ═══════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════
+
+async function doLogin() {
+  const pin = document.getElementById('pin-input').value.trim();
+  if (!pin) return;
+
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  errEl.style.display = 'none';
+
+  try {
+    // Verificar PIN haciendo una llamada mínima al proxy
+    const res = await fetch('/api/orchestrator', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pin: pin,
+        system: 'Respondé solo "ok".',
+        messages: [{ role: 'user', content: 'ping' }],
+        model: 'claude-sonnet-4-20250514'
+      })
+    });
+
+    if (res.status === 401) {
+      errEl.textContent = 'PIN incorrecto. Intentá de nuevo.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Entrar';
+      return;
+    }
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Error ${res.status}`);
+    }
+
+    // Login exitoso
+    AUTH_PIN = pin;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('headers-area').value = SHEET_COLUMNS.join('\t');
+
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Entrar';
+}
+
+// ═══════════════════════════════════════════
+// API CALL (via proxy)
+// ═══════════════════════════════════════════
+
+async function callAgent(agentOrSystem, prompt) {
+  const system = typeof agentOrSystem === 'string' ? agentOrSystem : agentOrSystem.system;
+
+  const res = await fetch('/api/orchestrator', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pin: AUTH_PIN,
+      system: system,
+      messages: [{ role: 'user', content: prompt }],
+      model: 'claude-sonnet-4-20250514'
+    })
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `Error ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+}
+
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+
+const TAB_DESCS = { dev: 'PM → Dev → QA', feedback: 'Intake → Analyst → Metrics', review: 'Análisis estratégico del feedback acumulado' };
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+  document.getElementById('header-desc').textContent = TAB_DESCS[tabId];
+}
+
+// ═══════════════════════════════════════════
+// MARKDOWN RENDERER (simplified for vanilla JS)
+// ═══════════════════════════════════════════
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  let html = '';
+  const lines = text.split('\n');
+  let inCode = false, codeLines = [];
+  let inTable = false, tableLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (line.startsWith('```')) {
+      if (!inCode) { inCode = true; codeLines = []; }
+      else {
+        html += `<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:13px;overflow-x:auto;margin:10px 0;font-family:'JetBrains Mono',monospace;line-height:1.6"><code>${escHtml(codeLines.join('\n'))}</code></pre>`;
+        inCode = false; codeLines = [];
+      }
+      continue;
+    }
+    if (inCode) { codeLines.push(line); continue; }
+
+    // Table
+    if (line.startsWith('|') && line.endsWith('|')) {
+      tableLines.push(line);
+      if (i + 1 >= lines.length || !lines[i + 1]?.startsWith('|')) {
+        html += renderTable(tableLines);
+        tableLines = [];
+      }
+      continue;
+    }
+
+    if (line.startsWith('### ')) html += `<h4 style="margin:18px 0 8px;font-size:14px;font-weight:700;color:#f1f5f9">${inlineFormat(line.slice(4))}</h4>`;
+    else if (line.startsWith('## ')) html += `<h3 style="margin:20px 0 10px;font-size:16px;font-weight:700;color:#f8fafc">${inlineFormat(line.slice(3))}</h3>`;
+    else if (line.startsWith('# ')) html += `<h2 style="margin:22px 0 12px;font-size:18px;font-weight:800;color:#f8fafc">${inlineFormat(line.slice(2))}</h2>`;
+    else if (line.startsWith('- ') || line.startsWith('* '))
+      html += `<div style="display:flex;gap:8px;margin:3px 0;padding-left:4px"><span style="color:#94a3b8;flex-shrink:0">•</span><span style="color:#cbd5e1;font-size:14px;line-height:1.6">${inlineFormat(line.slice(2))}</span></div>`;
+    else if (/^\d+\.\s/.test(line)) {
+      const num = line.match(/^(\d+)\./)[1];
+      html += `<div style="display:flex;gap:8px;margin:3px 0;padding-left:4px"><span style="color:#64748b;font-weight:600;flex-shrink:0;font-size:13px">${num}.</span><span style="color:#cbd5e1;font-size:14px;line-height:1.6">${inlineFormat(line.replace(/^\d+\.\s/, ''))}</span></div>`;
+    }
+    else if (line.trim() === '') html += '<div style="height:8px"></div>';
+    else html += `<p style="margin:4px 0;color:#cbd5e1;font-size:14px;line-height:1.7">${inlineFormat(line)}</p>`;
+  }
+  return html;
+}
+
+function inlineFormat(text) {
+  return escHtml(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight:700;color:#f1f5f9">$1</strong>')
+    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:0.9em;color:#7c3aed;font-family:\'JetBrains Mono\',monospace">$1</code>');
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderTable(rows) {
+  if (rows.length < 3) return '';
+  const header = rows[0].split('|').filter(c => c.trim());
+  const data = rows.slice(2);
+  let h = '<div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>';
+  header.forEach(c => h += `<th style="padding:8px 12px;border-bottom:2px solid #e2e8f0;text-align:left;font-weight:600;color:#334155;background:#f8fafc;white-space:nowrap">${escHtml(c.trim())}</th>`);
+  h += '</tr></thead><tbody>';
+  data.forEach((row, ri) => {
+    h += `<tr style="background:${ri % 2 ? '#f8fafc' : 'white'}">`;
+    row.split('|').filter(c => c.trim()).forEach(cell =>
+      h += `<td style="padding:7px 12px;border-bottom:1px solid #e2e8f0;color:#475569;font-size:13px">${escHtml(cell.trim())}</td>`
+    );
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+// ═══════════════════════════════════════════
+// PARSER
+// ═══════════════════════════════════════════
+
+function parseAgentOutput(text, fields) {
+  const result = {};
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
+    const nextFields = fields.slice(i + 1);
+    let pattern;
+    if (nextFields.length > 0) {
+      const nextPat = nextFields.map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+      pattern = new RegExp(field + ':\\s*([\\s\\S]*?)(?=(?:' + nextPat + '):|$)', 'i');
+    } else {
+      pattern = new RegExp(field + ':\\s*([\\s\\S]*)$', 'i');
+    }
+    const match = text.match(pattern);
+    result[field] = match ? match[1].replace(/\n/g, ' ').replace(/\s+/g, ' ').trim() : '—';
+  }
+  return result;
+}
+
+// ═══════════════════════════════════════════
+// AGENT CARD RENDERER
+// ═══════════════════════════════════════════
+
+function renderAgentCard(containerId, agentId, agent, output, error, isActive, isExpanded) {
+  const container = document.getElementById(containerId);
+  let card = document.getElementById('card-' + agentId);
+
+  if (!output && !isActive && !error) {
+    if (card) card.remove();
+    return;
+  }
+
+  const isDone = !!output;
+  const borderColor = isDone ? agent.borderColor + '40' : isActive ? agent.color + '60' : '#1e293b';
+
+  const html = `
+    <div class="agent-card" id="card-${agentId}" style="border:1px solid ${borderColor}">
+      <div class="agent-header ${isDone ? 'clickable' : ''}" onclick="${isDone ? `toggleAgent('${agentId}')` : ''}">
+        <div class="flex-row gap-12">
+          <div class="agent-icon" style="background:${agent.color}20">${agent.emoji}</div>
+          <div>
+            <span style="font-weight:600;font-size:14px;color:#f1f5f9">${agent.name}</span>
+            ${isActive ? `<span style="margin-left:10px" class="status-processing" style="color:${agent.color}">Procesando...</span>` : ''}
+            ${isDone ? '<span style="margin-left:10px" class="status-ok">✓ Listo</span>' : ''}
+            ${error ? '<span style="margin-left:10px" class="status-error">✗ Error</span>' : ''}
+          </div>
+        </div>
+        <div class="flex-row gap-8">
+          ${isDone ? `<button class="btn-copy" onclick="event.stopPropagation();copyText(agentOutputs['${agentId}'], this)">Copiar</button>` : ''}
+          ${isDone ? `<span style="color:#475569;font-size:18px;transform:${isExpanded ? 'rotate(180deg)' : 'rotate(0)'};transition:transform 0.2s;display:inline-block">▾</span>` : ''}
+        </div>
+      </div>
+      ${isExpanded && isDone ? `<div class="agent-body" style="border-top:1px solid #1e293b">${renderMarkdown(output)}</div>` : ''}
+      ${error ? `<div style="padding:12px 20px;color:#fca5a5;font-size:13px;background:#1c111180">${escHtml(error)}</div>` : ''}
+    </div>`;
+
+  if (card) {
+    card.outerHTML = html;
+  } else {
+    container.insertAdjacentHTML('beforeend', html);
+  }
+}
+
+// Agent outputs almacenados para copy
+let agentOutputs = {};
+
+function toggleAgent(agentId) {
+  const card = document.getElementById('card-' + agentId);
+  if (!card) return;
+  const body = card.querySelector('.agent-body');
+  const arrow = card.querySelector('span[style*="transform"]');
+  if (body) {
+    body.remove();
+    if (arrow) arrow.style.transform = 'rotate(0)';
+  } else {
+    const header = card.querySelector('.agent-header');
+    header.insertAdjacentHTML('afterend', `<div class="agent-body" style="border-top:1px solid #1e293b">${renderMarkdown(agentOutputs[agentId] || '')}</div>`);
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+function copyText(text, btnEl) {
+  if (!text) return;
+
+  // Intento 1: Clipboard API moderna
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showCopyFeedback(btnEl, true);
+    }).catch(() => {
+      // Intento 2: fallback con textarea
+      doFallbackCopy(text, btnEl);
+    });
+  } else {
+    doFallbackCopy(text, btnEl);
+  }
+}
+
+function doFallbackCopy(text, btnEl) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) {
+      showCopyFeedback(btnEl, true);
+    } else {
+      showCopyModal(text);
+    }
+  } catch (e) {
+    showCopyModal(text);
+  }
+}
+
+function showCopyFeedback(btnEl, success) {
+  if (!btnEl) return;
+  const original = btnEl.textContent;
+  btnEl.textContent = success ? '✓ Copiado' : '✗ Error';
+  btnEl.style.color = success ? '#22c55e' : '#ef4444';
+  setTimeout(() => { btnEl.textContent = original; btnEl.style.color = ''; }, 1500);
+}
+
+function showCopyModal(text) {
+  // Último recurso: mostrar un modal con el texto para copiar manualmente
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:24px;max-width:600px;width:100%;max-height:80vh;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:14px;color:#f1f5f9;font-weight:600">Seleccioná todo y copiá manualmente (Ctrl+A → Ctrl+C)</div>
+      <textarea readonly style="width:100%;height:300px;background:#0c0f1a;border:1px solid #22c55e40;border-radius:8px;padding:12px;color:#e2e8f0;font-size:12px;font-family:'JetBrains Mono',monospace;resize:none">${text.replace(/</g,'&lt;')}</textarea>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="background:#1e293b;color:#94a3b8;border:none;border-radius:8px;padding:10px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif">Cerrar</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const ta = overlay.querySelector('textarea');
+  ta.focus(); ta.select();
+}
+
+// ═══════════════════════════════════════════
+// DEV PIPELINE
+// ═══════════════════════════════════════════
+
+async function runDevPipeline() {
+  const initiative = document.getElementById('dev-initiative').value.trim();
+  if (!initiative) return;
+
+  const btn = document.getElementById('dev-run-btn');
+  const statusEl = document.getElementById('dev-status');
+  const agentsEl = document.getElementById('dev-agents');
+  const gregEl = document.getElementById('dev-greg');
+
+  btn.disabled = true; btn.textContent = 'Ejecutando...';
+  document.getElementById('dev-card').classList.add('glowing');
+  agentsEl.innerHTML = ''; gregEl.style.display = 'none';
+  agentOutputs = {};
+
+  const agents = ['pm', 'dev', 'qa'];
+  const outputs = {};
+
+  try {
+    // PM
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${AGENTS.pm.color}"></span>${AGENTS.pm.emoji} PM está trabajando...</span>`;
+    renderAgentCard('dev-agents', 'pm', AGENTS.pm, null, null, true, true);
+    outputs.pm = await callAgent(AGENTS.pm, `BRIEF DEL ORQUESTADOR:\n\n${initiative}\n\nProducí el documento de requerimientos completo.`);
+    agentOutputs.pm = outputs.pm;
+    renderAgentCard('dev-agents', 'pm', AGENTS.pm, outputs.pm, null, false, false);
+
+    // Dev
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${AGENTS.dev.color}"></span>${AGENTS.dev.emoji} Dev está trabajando...</span>`;
+    renderAgentCard('dev-agents', 'dev', AGENTS.dev, null, null, true, true);
+    outputs.dev = await callAgent(AGENTS.dev, `REQUERIMIENTOS DEL PM:\n\n${outputs.pm}\n\nAnalizá estos requerimientos y producí tu solución técnica completa.`);
+    agentOutputs.dev = outputs.dev;
+    renderAgentCard('dev-agents', 'dev', AGENTS.dev, outputs.dev, null, false, true);
+
+    // QA
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${AGENTS.qa.color}"></span>${AGENTS.qa.emoji} QA está trabajando...</span>`;
+    renderAgentCard('dev-agents', 'qa', AGENTS.qa, null, null, true, true);
+    outputs.qa = await callAgent(AGENTS.qa, `CONTEXTO DE LA INICIATIVA:\n${initiative}\n\nOUTPUT DEL DEV:\n${outputs.dev}\n\nProducí el test plan completo.`);
+    agentOutputs.qa = outputs.qa;
+    renderAgentCard('dev-agents', 'qa', AGENTS.qa, outputs.qa, null, false, true);
+
+    // Greg prompt
+    gregEl.style.display = 'block';
+    gregEl.innerHTML = `
+      <div class="card" style="margin-top:10px">
+        <div class="flex-row gap-10" style="margin-bottom:12px">
+          <div class="agent-icon" style="background:#7c3aed20">🖱️</div>
+          <span style="font-weight:600;font-size:14px;color:#f1f5f9">Prompt para Greg</span>
+          <span style="font-size:12px;color:#7c3aed;background:#7c3aed15;padding:2px 8px;border-radius:4px">Claude in Chrome</span>
+        </div>
+        <button class="btn-primary btn-greg" onclick="copyGregPrompt()">Copiar prompt de Greg al clipboard</button>
+      </div>`;
+
+    statusEl.innerHTML = '<span class="status-ok">✓ Pipeline completo</span>';
+
+    // Historial
+    devHistory.unshift({ date: new Date().toLocaleString(), initiative: initiative.slice(0, 80), outputs });
+    if (devHistory.length > 10) devHistory.pop();
+    renderDevHistory();
+
+  } catch (err) {
+    statusEl.innerHTML = `<span class="status-error">Error: ${escHtml(err.message)}</span>`;
+  }
+  btn.disabled = false; btn.textContent = 'Lanzar Pipeline';
+  document.getElementById('dev-card').classList.remove('glowing');
+}
+
+function copyGregPrompt() {
+  const initiative = document.getElementById('dev-initiative').value.trim();
+  const qaOut = agentOutputs.qa || '';
+  const prompt = `Necesito que verifiques un cambio reciente en producción de Toto el Tutor.\n\nCONTEXTO: ${initiative.slice(0, 200)}\n\nTEST PLAN DEL QA:\n${qaOut.slice(0, 2000)}\n\nINSTRUCCIONES:\n1. Andá a https://toto-rust.vercel.app\n2. Ejecutá los casos de prueba\n3. Para cada caso: PASS o FAIL con evidencia\n4. Resumen final: cuántos PASS, cuántos FAIL`;
+  copyText(prompt, document.querySelector('#dev-greg button'));
+}
+
+function renderDevHistory() {
+  const el = document.getElementById('dev-history');
+  if (devHistory.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div style="margin-top:32px"><h3 style="font-size:13px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px">Historial</h3>${
+    devHistory.map((item, i) => `<div style="padding:10px 16px;background:#111827;border:1px solid #1e293b;border-radius:10px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="loadDevHistory(${i})"><span style="font-size:13px;color:#cbd5e1">${escHtml(item.initiative)}...</span><span style="font-size:11px;color:#475569">${item.date}</span></div>`).join('')
+  }</div>`;
+}
+
+function loadDevHistory(idx) {
+  const item = devHistory[idx];
+  if (!item) return;
+  document.getElementById('dev-initiative').value = item.initiative;
+  document.getElementById('dev-agents').innerHTML = '';
+  agentOutputs = { ...item.outputs };
+  ['pm', 'dev', 'qa'].forEach(id => {
+    if (item.outputs[id]) renderAgentCard('dev-agents', id, AGENTS[id], item.outputs[id], null, false, id === 'pm');
+  });
+}
+
+// ═══════════════════════════════════════════
+// FEEDBACK PIPELINE
+// ═══════════════════════════════════════════
+
+function toggleHeaders() {
+  const area = document.getElementById('headers-area');
+  const btn = document.getElementById('headers-toggle-btn');
+  if (area.style.display === 'none') {
+    area.style.display = 'block';
+    btn.textContent = '▾ Ocultar headers';
+    btn.style.background = '#22c55e20'; btn.style.borderColor = '#22c55e40'; btn.style.color = '#22c55e';
+  } else {
+    area.style.display = 'none';
+    btn.textContent = '▸ Mostrar headers para el Sheet';
+    btn.style.background = '#0ea5e920'; btn.style.borderColor = '#0ea5e940'; btn.style.color = '#0ea5e9';
+  }
+}
+
+// Checkmarks para campos con contenido
+['fb-whatsapp', 'fb-audio', 'fb-email'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', function() {
+    const checkId = id.replace('fb-', 'fb-') + '-check';
+    const map = { 'fb-whatsapp': 'fb-wa-check', 'fb-audio': 'fb-audio-check', 'fb-email': 'fb-email-check' };
+    const checkEl = document.getElementById(map[id]);
+    if (checkEl) checkEl.style.display = this.value.trim() ? 'inline' : 'none';
+  });
+});
+
+async function runFeedbackPipeline() {
+  const alumno = document.getElementById('fb-alumno').value.trim();
+  const padre = document.getElementById('fb-padre').value.trim();
+  const whatsapp = document.getElementById('fb-whatsapp').value.trim();
+  const audio = document.getElementById('fb-audio').value.trim();
+  const email = document.getElementById('fb-email').value.trim();
+
+  if (!alumno || !padre || (!whatsapp && !audio && !email)) return;
+
+  const btn = document.getElementById('fb-run-btn');
+  const statusEl = document.getElementById('fb-status');
+  const agentsEl = document.getElementById('fb-agents');
+  const clipEl = document.getElementById('fb-clipboard');
+
+  btn.disabled = true; btn.textContent = 'Procesando...';
+  document.getElementById('fb-card').classList.add('glowing');
+  agentsEl.innerHTML = ''; clipEl.style.display = 'none';
+  agentOutputs = {};
+
+  // Build context
+  const parts = []; const canales = [];
+  if (whatsapp) { parts.push(`[WhatsApp Texto]\n${whatsapp}`); canales.push('WhatsApp Texto'); }
+  if (audio) { parts.push(`[WhatsApp Audio — transcripción]\n${audio}`); canales.push('WhatsApp Audio'); }
+  if (email) { parts.push(`[Email / Reporte EmailJS]\n${email}`); canales.push('Email'); }
+  const canalesStr = canales.join(' + ');
+  const contenido = parts.join('\n\n');
+  const contenidoPlano = [whatsapp, audio, email].filter(Boolean).join(' | ');
+
+  const feedbackContext = `ALUMNO: ${alumno}\nPADRE/FUENTE: ${padre}\nCANALES: ${canalesStr}\nFECHA: ${new Date().toLocaleDateString('es-AR')}\n\nFEEDBACK CRUDO:\n${contenido}`;
+
+  try {
+    // Intake
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${FEEDBACK_AGENTS.intake.color}"></span>${FEEDBACK_AGENTS.intake.emoji} Intake procesando...</span>`;
+    renderAgentCard('fb-agents', 'intake', FEEDBACK_AGENTS.intake, null, null, true, true);
+    const intakeOut = await callAgent(FEEDBACK_AGENTS.intake, `Procesá este feedback individual:\n\n${feedbackContext}`);
+    agentOutputs.intake = intakeOut;
+    renderAgentCard('fb-agents', 'intake', FEEDBACK_AGENTS.intake, intakeOut, null, false, false);
+
+    // Analyst
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${FEEDBACK_AGENTS.analyst.color}"></span>${FEEDBACK_AGENTS.analyst.emoji} Analyst procesando...</span>`;
+    renderAgentCard('fb-agents', 'analyst', FEEDBACK_AGENTS.analyst, null, null, true, true);
+    const analystOut = await callAgent(FEEDBACK_AGENTS.analyst, `FEEDBACK ORIGINAL:\n${feedbackContext}\n\nFICHA DEL INTAKE AGENT:\n${intakeOut}\n\nProducí tu análisis.`);
+    agentOutputs.analyst = analystOut;
+    renderAgentCard('fb-agents', 'analyst', FEEDBACK_AGENTS.analyst, analystOut, null, false, false);
+
+    // Metrics
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${FEEDBACK_AGENTS.metrics.color}"></span>${FEEDBACK_AGENTS.metrics.emoji} Metrics procesando...</span>`;
+    renderAgentCard('fb-agents', 'metrics', FEEDBACK_AGENTS.metrics, null, null, true, true);
+    const metricsOut = await callAgent(FEEDBACK_AGENTS.metrics, `FEEDBACK ORIGINAL:\n${feedbackContext}\n\nFICHA DEL INTAKE:\n${intakeOut}\n\nANÁLISIS DEL ANALYST:\n${analystOut}\n\nProducí la capa de métricas.`);
+    agentOutputs.metrics = metricsOut;
+    renderAgentCard('fb-agents', 'metrics', FEEDBACK_AGENTS.metrics, metricsOut, null, false, false);
+
+    // Parse y armar fila
+    const ip = parseAgentOutput(intakeOut, ["RESUMEN","CITA_CLAVE","EMOCION","TEMA","SUBTEMAS","CONTEXTO_USO"]);
+    const ap = parseAgentOutput(analystOut, ["CATEGORIA","PRIORIDAD","ACCIONABLE","ACCION_SUGERIDA","FASE_ROADMAP","FEATURE_RELACIONADA","IMPACTO_METRICA","SEÑAL_ALERTA"]);
+    const mp = parseAgentOutput(metricsOut, ["TAGS_METRICAS","SEÑAL_CUANTIFICABLE","COMPARACION_TEMPORAL","HIPOTESIS","RECOMENDACION_SEGUIMIENTO"]);
+
+    const clean = v => (v||'—').replace(/[\t\n\r]/g,' ').replace(/\s+/g,' ').trim();
+    const row = [
+      new Date().toLocaleDateString('es-AR'), clean(alumno), clean(padre), clean(canalesStr), clean(contenidoPlano),
+      clean(ip.RESUMEN), clean(ip.CITA_CLAVE), clean(ip.EMOCION), clean(ip.TEMA), clean(ip.SUBTEMAS), clean(ip.CONTEXTO_USO),
+      clean(ap.CATEGORIA), clean(ap.PRIORIDAD), clean(ap.ACCIONABLE), clean(ap.ACCION_SUGERIDA), clean(ap.FASE_ROADMAP),
+      clean(ap.FEATURE_RELACIONADA), clean(ap.IMPACTO_METRICA), clean(ap.SEÑAL_ALERTA),
+      clean(mp.TAGS_METRICAS), clean(mp.SEÑAL_CUANTIFICABLE), clean(mp.COMPARACION_TEMPORAL), clean(mp.HIPOTESIS), clean(mp.RECOMENDACION_SEGUIMIENTO)
+    ].join('\t');
+
+    clipEl.style.display = 'block';
+    clipEl.innerHTML = `
+      <div class="info-banner" style="background:#0ea5e910;border:1px solid #0ea5e930;margin-top:10px">
+        <span class="icon">📋</span>
+        <div class="body">
+          <strong style="color:#22c55e">Feedback procesado.</strong> Hacé click en el campo de abajo, seleccioná todo con <strong style="color:#e2e8f0">Ctrl+A</strong> (o ⌘A) y después <strong style="color:#e2e8f0">Ctrl+C</strong> (o ⌘C). Pegá en tu Google Sheet.
+          <textarea readonly onclick="this.select()" onfocus="this.select()" rows="3"
+            style="width:100%;margin-top:8px;background:#0c0f1a;border:1px solid #22c55e40;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;line-height:1.5;cursor:text">${escHtml(row)}</textarea>
+        </div>
+      </div>`;
+
+    copyText(row, null);
+    fbProcessedCount++;
+    const countEl = document.getElementById('fb-count');
+    countEl.style.display = 'inline';
+    countEl.textContent = `${fbProcessedCount} procesado${fbProcessedCount > 1 ? 's' : ''} en esta sesión`;
+
+    statusEl.innerHTML = '<span class="status-ok">✓ Feedback procesado y copiado al clipboard</span>';
+    document.getElementById('fb-reset-btn').style.display = 'inline-block';
+
+  } catch (err) {
+    statusEl.innerHTML = `<span class="status-error">Error: ${escHtml(err.message)}</span>`;
+  }
+  btn.disabled = false; btn.textContent = 'Procesar feedback';
+  document.getElementById('fb-card').classList.remove('glowing');
+}
+
+function resetFeedback() {
+  // Mantener alumno y padre
+  document.getElementById('fb-whatsapp').value = '';
+  document.getElementById('fb-audio').value = '';
+  document.getElementById('fb-email').value = '';
+  document.getElementById('fb-agents').innerHTML = '';
+  document.getElementById('fb-clipboard').style.display = 'none';
+  document.getElementById('fb-reset-btn').style.display = 'none';
+  document.getElementById('fb-status').innerHTML = '<span style="color:#475569">Intake → Analyst → Metrics</span>';
+  ['fb-wa-check','fb-audio-check','fb-email-check'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  agentOutputs = {};
+}
+
+// ═══════════════════════════════════════════
+// REVIEW TAB
+// ═══════════════════════════════════════════
+
+function updateReviewCount() {
+  const raw = document.getElementById('review-data').value.trim();
+  const el = document.getElementById('review-row-count');
+  if (!raw) { el.style.display = 'none'; return; }
+  const lines = raw.split('\n').filter(l => l.trim());
+  const count = lines[0]?.startsWith('Fecha') ? lines.length - 1 : lines.length;
+  el.style.display = 'inline';
+  el.textContent = `${count} fila${count > 1 ? 's' : ''} detectada${count > 1 ? 's' : ''}${count < 3 ? ' — análisis preliminar' : ''}`;
+}
+
+async function runReview() {
+  const raw = document.getElementById('review-data').value.trim();
+  if (!raw) return;
+
+  const lines = raw.split('\n').filter(l => l.trim());
+  const dataLines = lines[0]?.startsWith('Fecha') ? lines.slice(1) : lines;
+  if (dataLines.length === 0) return;
+
+  const HEADERS = SHEET_COLUMNS;
+  const rows = dataLines.map(line => {
+    const cells = line.split('\t');
+    const row = {};
+    HEADERS.forEach((h, i) => { row[h] = cells[i]?.trim() || '—'; });
+    return row;
+  });
+
+  const btn = document.getElementById('review-run-btn');
+  const statusEl = document.getElementById('review-status');
+  const outputEl = document.getElementById('review-output');
+  const dashEl = document.getElementById('review-dashboard');
+  const toggleEl = document.getElementById('review-view-toggle');
+  const briefEl = document.getElementById('review-brief');
+
+  btn.disabled = true; btn.textContent = 'Analizando...';
+  document.getElementById('review-card').classList.add('glowing');
+  outputEl.innerHTML = ''; dashEl.innerHTML = ''; toggleEl.style.display = 'none'; briefEl.style.display = 'none';
+  statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:#f59e0b"></span>🧠 Generando resumen ejecutivo + análisis estratégico...</span>`;
+
+  // Dashboard
+  renderDashboard(dashEl, rows);
+
+  // Build feedback summary
+  const summary = rows.map((r, i) => `--- FEEDBACK ${i+1} ---
+Fecha: ${r.Fecha} | Alumno: ${r.Alumno} | Fuente: ${r['Padre/Fuente']}
+Feedback crudo: ${r['Feedback crudo']}
+Resumen: ${r.Resumen}
+Emoción: ${r['Emoción']} | Tema: ${r.Tema} | Subtemas: ${r.Subtemas}
+Categoría: ${r['Categoría']} | Prioridad: ${r.Prioridad} | Accionable: ${r.Accionable}
+Acción sugerida: ${r['Acción sugerida']}
+Fase roadmap: ${r['Fase roadmap']} | Feature relacionada: ${r['Feature relacionada']}
+Impacto métrica paramount: ${r['Impacto métrica paramount']}
+Señal de alerta: ${r['Señal de alerta']}
+Hipótesis: ${r['Hipótesis']}`).join('\n\n');
+
+  try {
+    const [strategic, exec] = await Promise.all([
+      callAgent(STRATEGIST_SYSTEM, `Analizá el siguiente conjunto de ${rows.length} feedback(s) procesado(s) de Toto el Tutor y producí tu análisis estratégico completo.\n\nFEEDBACKS:\n${summary}`),
+      callAgent(STRATEGIST_SYSTEM, `Analizá este conjunto de ${rows.length} feedback(s) de Toto el Tutor y escribí un resumen ejecutivo para Jonah, el founder (no técnico).
+
+El resumen debe:
+1. Empezar con "Lo que te están diciendo los usuarios:" — 2-3 oraciones
+2. "Lo que está funcionando:" — máximo 3 puntos concretos
+3. "Lo que hay que mejorar:" — máximo 3 puntos, ordenados por urgencia
+4. "Mi recomendación:" — UNA acción concreta para esta semana
+
+NO uses jerga técnica. Escribí como un WhatsApp largo pero bien estructurado. Español rioplatense.
+
+FEEDBACKS:\n${summary}`)
+    ]);
+
+    agentOutputs.strategic = strategic;
+    agentOutputs.exec = exec;
+
+    // View toggle
+    toggleEl.style.display = 'block';
+    toggleEl.innerHTML = `
+      <div style="display:flex;gap:4px;background:#1e293b;border-radius:10px;padding:3px;margin-bottom:16px;width:fit-content">
+        <button class="tab-btn active" id="view-exec" onclick="switchReviewView('exec')" style="font-family:'DM Sans',sans-serif">📝 Para vos</button>
+        <button class="tab-btn" id="view-strategic" onclick="switchReviewView('strategic')" style="font-family:'DM Sans',sans-serif">🧠 Estratégico</button>
+      </div>`;
+
+    renderReviewOutput('exec', exec, strategic);
+
+    // Brief
+    const briefMatch = strategic.match(/BRIEF LISTO PARA DEV PIPELINE[\s\S]*$/i);
+    if (briefMatch) {
+      briefEl.style.display = 'block';
+      briefEl.innerHTML = `
+        <div class="info-banner" style="background:#6366f110;border:1px solid #6366f130;margin-top:10px">
+          <span style="font-size:18px">⚡</span>
+          <div style="flex:1">
+            <strong style="color:#818cf8;font-size:13px">Brief listo para Dev Pipeline</strong>
+            <p style="font-size:12px;color:#64748b;margin-top:2px">Copiá y pegalo en la tab "Dev Pipeline" para arrancar el sprint.</p>
+          </div>
+          <button class="btn-primary" style="white-space:nowrap;padding:8px 18px;font-size:13px" onclick="copyText(agentOutputs.strategic.match(/BRIEF LISTO PARA DEV PIPELINE[\\s\\S]*$/i)?.[0] || '', this)">Copiar brief</button>
+        </div>`;
+    }
+
+    statusEl.innerHTML = '<span class="status-ok">✓ Análisis completo</span>';
+    document.getElementById('review-reset-btn').style.display = 'inline-block';
+
+  } catch (err) {
+    statusEl.innerHTML = `<span class="status-error">Error: ${escHtml(err.message)}</span>`;
+  }
+  btn.disabled = false; btn.textContent = 'Analizar feedback';
+  document.getElementById('review-card').classList.remove('glowing');
+}
+
+function switchReviewView(view) {
+  document.getElementById('view-exec').classList.toggle('active', view === 'exec');
+  document.getElementById('view-strategic').classList.toggle('active', view === 'strategic');
+  renderReviewOutput(view, agentOutputs.exec, agentOutputs.strategic);
+}
+
+function renderReviewOutput(view, exec, strategic) {
+  const el = document.getElementById('review-output');
+  if (view === 'exec') {
+    el.innerHTML = `
+      <div class="agent-card" style="border:1px solid #22c55e40">
+        <div class="agent-header clickable" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <div class="flex-row gap-12">
+            <div class="agent-icon" style="background:#22c55e20">📝</div>
+            <div>
+              <span style="font-weight:600;font-size:14px;color:#f1f5f9">Resumen para vos</span>
+              <span style="margin-left:8px;font-size:12px;color:#64748b">en lenguaje simple</span>
+              <span style="margin-left:10px" class="status-ok">✓ Listo</span>
+            </div>
+          </div>
+          <div class="flex-row gap-8">
+            <button class="btn-copy" style="background:#22c55e20;border:1px solid #22c55e40;color:#22c55e;font-weight:600" onclick="event.stopPropagation();copyText(agentOutputs.exec, this)">📋 Copiar</button>
+          </div>
+        </div>
+        <div style="padding:20px 24px;background:#0f172a;border-top:1px solid #1e293b">${renderMarkdown(exec)}</div>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div class="agent-card" style="border:1px solid #f59e0b40">
+        <div class="agent-header clickable" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <div class="flex-row gap-12">
+            <div class="agent-icon" style="background:#f59e0b20">🧠</div>
+            <div>
+              <span style="font-weight:600;font-size:14px;color:#f1f5f9">Análisis estratégico</span>
+              <span style="margin-left:8px;font-size:12px;color:#64748b">patrones + brief para Dev Pipeline</span>
+              <span style="margin-left:10px" class="status-ok">✓ Listo</span>
+            </div>
+          </div>
+          <button class="btn-copy" onclick="event.stopPropagation();copyText(agentOutputs.strategic, this)">Copiar todo</button>
+        </div>
+        <div style="padding:16px 20px;max-height:600px;overflow-y:auto;background:#0e1525;border-top:1px solid #1e293b">${renderMarkdown(strategic)}</div>
+      </div>`;
+  }
+}
+
+function renderDashboard(container, rows) {
+  const total = rows.length;
+  if (!total) return;
+
+  const emo = { positiva: 0, negativa: 0, mixta: 0, neutra: 0 };
+  rows.forEach(r => {
+    const e = (r['Emoción'] || '').toLowerCase();
+    if (e.includes('positiv')) emo.positiva++;
+    else if (e.includes('negativ')) emo.negativa++;
+    else if (e.includes('mixt')) emo.mixta++;
+    else emo.neutra++;
+  });
+
+  const temas = {};
+  rows.forEach(r => { const t = (r.Tema || 'otro').trim(); temas[t] = (temas[t] || 0) + 1; });
+  const topTemas = Object.entries(temas).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  const prio = { crítica: 0, alta: 0, media: 0, baja: 0 };
+  rows.forEach(r => {
+    const p = (r.Prioridad || '').toLowerCase();
+    if (p.includes('crít')) prio.crítica++;
+    else if (p.includes('alta')) prio.alta++;
+    else if (p.includes('media')) prio.media++;
+    else if (p.includes('baja')) prio.baja++;
+  });
+
+  const imp = { positivo: 0, negativo: 0, neutro: 0, nd: 0 };
+  rows.forEach(r => {
+    const i = (r['Impacto métrica paramount'] || '').toLowerCase();
+    if (i.includes('positiv')) imp.positivo++;
+    else if (i.includes('negativ')) imp.negativo++;
+    else if (i.includes('neutr')) imp.neutro++;
+    else imp.nd++;
+  });
+
+  function bar(label, val, tot, color, emoji) {
+    const pct = tot > 0 ? Math.round((val / tot) * 100) : 0;
+    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13px;color:#cbd5e1">${emoji} ${escHtml(label)}</span><span style="font-size:12px;color:#64748b;font-weight:600">${val} <span style="color:#475569">(${pct}%)</span></span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+  }
+
+  const card = s => `<div style="background:#111827;border:1px solid #1e293b;border-radius:14px;padding:18px 20px;flex:1 1 200px;min-width:0">${s}</div>`;
+  const title = t => `<p style="font-size:12px;color:#64748b;font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.04em">${t}</p>`;
+
+  const temaColors = ["#6366f1","#0ea5e9","#8b5cf6","#ec4899","#14b8a6"];
+  const temaEmojis = ["🥇","🥈","🥉","4️⃣","5️⃣"];
+
+  container.innerHTML = `
+    <div style="margin-bottom:24px;animation:slideIn 0.4s ease-out">
+      <div class="flex-row gap-8" style="margin-bottom:14px">
+        <span style="font-size:16px">📊</span>
+        <h3 style="font-size:13px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em">Dashboard — ${total} feedback${total > 1 ? 's' : ''}</h3>
+      </div>
+      <div class="dashboard-grid" style="display:flex;flex-wrap:wrap;gap:12px">
+        ${card(title('Emoción') + bar('Positiva', emo.positiva, total, '#22c55e', '😊') + bar('Mixta', emo.mixta, total, '#f59e0b', '😐') + bar('Negativa', emo.negativa, total, '#ef4444', '😟') + bar('Neutra', emo.neutra, total, '#64748b', '😶'))}
+        ${card(title('Temas frecuentes') + topTemas.map(([t, c], i) => bar(t, c, total, temaColors[i], temaEmojis[i])).join(''))}
+        ${card(title('Prioridad') + bar('Crítica', prio.crítica, total, '#ef4444', '🔴') + bar('Alta', prio.alta, total, '#f97316', '🟠') + bar('Media', prio.media, total, '#f59e0b', '🟡') + bar('Baja', prio.baja, total, '#22c55e', '🟢'))}
+        ${card(title('Impacto en retención') + bar('Positivo', imp.positivo, total, '#22c55e', '⬆️') + bar('Negativo', imp.negativo, total, '#ef4444', '⬇️') + bar('Neutro', imp.neutro, total, '#64748b', '➡️') + bar('Sin dato', imp.nd, total, '#334155', '❓'))}
+      </div>
+    </div>`;
+}
+
+function resetReview() {
+  document.getElementById('review-data').value = '';
+  document.getElementById('review-output').innerHTML = '';
+  document.getElementById('review-dashboard').innerHTML = '';
+  document.getElementById('review-view-toggle').style.display = 'none';
+  document.getElementById('review-brief').style.display = 'none';
+  document.getElementById('review-reset-btn').style.display = 'none';
+  document.getElementById('review-row-count').style.display = 'none';
+  document.getElementById('review-status').innerHTML = '<span style="color:#475569">Sonnet 4 — dos análisis en paralelo</span>';
+}
+
+// Focus en el input de PIN al cargar
+window.addEventListener('load', () => document.getElementById('pin-input')?.focus());
+</script>
+</body>
+</html>
