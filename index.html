@@ -1314,6 +1314,7 @@ let S = {
   messageCount: 0,
   sessionId: null,
   sessionStartTime: null,
+  practiceQuestionCount: 0,
   initialImageContext: null
 };
 
@@ -1629,6 +1630,15 @@ async function callTutor(userMsg, isFirst) {
     .replace('{FIRST_Q}', firstQ)
     .replace('{IMAGE_CONTEXT}', imageContextStr);
 
+  // Practice Test Mode — contador de preguntas y trigger de checkpoint
+  if (S.mode === 'practica') {
+    S.practiceQuestionCount = (S.practiceQuestionCount || 0) + 1;
+  }
+  const checkpointReminder = (S.mode === 'practica' && S.practiceQuestionCount > 0 && S.practiceQuestionCount % 5 === 0)
+    ? "\n\n[SISTEMA: El alumno ya respondio " + S.practiceQuestionCount + " preguntas de practica. Es momento del CHECKPOINT OBLIGATORIO. Hace el mini-resumen de que salio bien y que no, y preguntale si quiere seguir practicando o parar aca.]"
+    : "";
+  const finalSys = sys + checkpointReminder;
+
   // userMsg puede ser string (normal) o array (con imagen)
   // Si es el primer mensaje y hay imagen del setup, la combinamos
   let msgContent;
@@ -1652,7 +1662,7 @@ async function callTutor(userMsg, isFirst) {
       res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system: sys, messages: msgs })
+        body: JSON.stringify({ system: finalSys, messages: msgs })
       });
       data = await res.json();
       // Si es error de overload, reintentamos hasta 2 veces con delay
@@ -1851,7 +1861,7 @@ function resetSession() {
   _emailSent = false;
   S = { ...S, mode: S.mode, subject: S.subject, xp: S.xp, name: S.name, mood: S.mood,
         phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0,
-        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, initialImageContext:null };
+        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null };
   replyImage = { base64: null, type: null };
   $('taskInput').value = '';
   const ri = $('replyInput'); if (ri) ri.value = '';
