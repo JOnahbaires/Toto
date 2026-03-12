@@ -299,6 +299,28 @@
   .mode-name { font-weight: 800; font-size: 0.97rem; }
   .mode-desc { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; font-weight: 600; line-height: 1.35; }
 
+  /* ── MODE SELECTOR — mobile ── */
+  @media (max-width: 480px) {
+    .mode-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .mode-btn {
+      flex-direction: row;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 14px;
+      border-radius: var(--radius-sm);
+    }
+    .mode-icon {
+      font-size: 1.7rem;
+      margin-top: 0;
+      flex-shrink: 0;
+    }
+    .mode-name { font-size: 0.95rem; }
+    .mode-desc { font-size: 0.71rem; margin-top: 2px; }
+  }
+
   /* ── Subject grid ── */
   .subject-grid {
     display: grid;
