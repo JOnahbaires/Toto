@@ -145,3 +145,4 @@ Hasta validar el core loop con familias, NO se agrega:
 - ❌ Expansión regional/idiomas
 
 **Razón:** Scope creep mata MVPs. Validar primero, escalar después.
+

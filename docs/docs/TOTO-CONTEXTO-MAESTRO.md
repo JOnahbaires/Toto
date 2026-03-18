@@ -1,4 +1,4 @@
-# 🎯 TOTO EL TUTOR — CONTEXTO MAESTRO (v2.1 Marzo 2026)
+# 🎯 TOTO EL TUTOR — CONTEXTO MAESTRO (v2.0 Marzo 2026)
 > Documento de arranque para nuevo proyecto Claude. Contiene todo lo que Claude necesita saber para trabajar en Toto sin contexto previo.
 
 ---
@@ -58,50 +58,6 @@ Logo:       Base64 PNG embebido directo en index.html
 - **HTML edits**: Usar Python `str.replace()` — más confiable que `sed` para bloques multilínea
 - **Overload fix**: Imágenes subidas → guardar solo resumen de texto después del primer mensaje (no reenviar base64)
 - **Mobile**: Triggers de click son poco confiables en mobile; usar conversational signals + inactivity timer
-
----
-
-## 🤝 EQUIPO DE AGENTES
-
-El desarrollo de Toto es ejecutado por un equipo de agentes especializados coordinados por el Orquestador. Cada agente tiene un rol claro y herramienta asignada.
-
-| Agente | Rol | Herramienta | Modelo recomendado |
-|--------|-----|-------------|-------------------|
-| **Orquestador** | Puente Jonah ↔ equipo. Briefing, coordinación, preguntas de contexto | Claude (Projects) | Opus |
-| **PM** | Requerimientos, priorización, métricas de éxito | Claude | Sonnet |
-| **Arquitecto** | Decisiones técnicas, stack, dependencias, trade-offs | Claude | Opus |
-| **Dev** | Implementación, código, edición de index.html | Claude | Sonnet |
-| **QA** | Casos de prueba, criterios de éxito, edge cases | Claude | Sonnet |
-| **Greg** 🆕 | Ejecutor web — interacción real con interfaces, navegación, clics | Claude in Chrome (extensión Anthropic) | — |
-
-### 🖱️ GREG — Perfil completo
-
-**Qué es Greg**: El agente ejecutor web del equipo. Usa la extensión Claude in Chrome para interactuar directamente con cualquier interfaz web que los otros agentes no puedan tocar programáticamente.
-
-**Cuándo entra Greg**:
-- Cuando otro agente (Dev, Arquitecto, QA) necesita una acción en una interfaz web y no puede hacerlo via código o API
-- Cuando detecta proactivamente que algo en la web necesita atención (deploy roto, config desactualizada, error visible)
-
-**Modo reactivo**: Recibe delegación de otro agente o del Orquestador. Ejecuta y reporta resultado.
-
-**Modo proactivo**: Si durante su trabajo detecta algo que necesita acción, lo ejecuta y avisa al Orquestador sin esperar instrucción.
-
-**Ejemplos de tareas de Greg**:
-- Configurar o verificar variables de entorno en Vercel
-- Revisar logs de deploy en Vercel dashboard
-- Navegar y verificar toto-rust.vercel.app después de un deploy
-- Crear recursos de prueba en Google Classroom
-- Revisar dashboards de EmailJS o Anthropic Console
-- Completar formularios o configuraciones en cualquier web app
-
-**Regla crítica**: Greg **ejecuta, no decide**. Si hay ambigüedad sobre qué hacer o el impacto es irreversible, escala al Orquestador antes de actuar.
-
-**Cómo delegar a Greg** (cualquier agente puede hacerlo):
-```
-→ Greg: [acción específica] en [URL o plataforma]
-   Contexto: [por qué se necesita]
-   Resultado esperado: [qué debe confirmar cuando termine]
-```
 
 ---
 
@@ -234,3 +190,4 @@ El desarrollo de Toto es ejecutado por un equipo de agentes especializados coord
 - Videollamadas, certificaciones (v3+)
 - Otros idiomas (v2)
 - Otras edades (secundario, primaria menor)
+

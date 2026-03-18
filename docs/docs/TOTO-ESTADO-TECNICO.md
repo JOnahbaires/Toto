@@ -53,12 +53,6 @@ github.com/JOnahbaires/Toto
       - Toto enseña via analogías y preguntas
       - Sin attempt gate
 
-   c) Analogías Contextuales ("Mundos") — ambos modos:
-      - Toto ofrece menú de 2-3 mundos + opción libre cuando detecta confusión
-      - Alumno elige → Toto sostiene ese mundo como marco socrático
-      - Una sola analogía activa por sesión
-      - Respeta rechazo sin insistir
-
 3. SESSION END
    - Trigger A: botón "Nueva tarea"
    - Trigger B: Toto envía señal [SESSION_END] conversacionalmente (strippada antes de mostrar)
@@ -99,7 +93,6 @@ localStorage.getItem('totoNombre')    // nombre del estudiante
 | Bug | Severidad | Estado |
 |-----|-----------|--------|
 | Descarga de sesión tiene encoding incorrecto con caracteres acentuados | Media | Propuesta pendiente de aprobación |
-| Toto decía "¡Uy, casi!" ante respuestas correctas (falso negativo) | Alta | ✅ Resuelto (Marzo 2026) — Regla 7 de PROMPT_TAREA reemplazada por VERIFICACIÓN DE RESPUESTA |
 
 ---
 
@@ -159,7 +152,4 @@ ANTHROPIC_API_KEY=<guardada en Vercel, NO en el repo>
 | EmailJS para reportes | Sin backend propio, fácil de implementar | Iteración 3 |
 | Señal [SESSION_END] conversacional | Triggers por click son poco confiables en mobile | Iteración 3 |
 | claude-haiku (no sonnet) en producción | Costo por token: haiku es ~15x más barato | Iteración 1 |
-| Analogías Contextuales ("Mundos") en system prompts | Feature pedagógica: Toto ofrece 2-3 mundos (series, videojuegos, etc.) cuando detecta confusión. El alumno elige y Toto sostiene ese mundo como marco socrático. Reemplaza regla "REFERENCIAS POP CULTURE" en ambos prompts | Iteración 4 |
-| Menú de mundos directivo (DEBÉS vs criterio) | Haiku no disparaba el menú con instrucciones opcionales — se cambió a obligatorio ante confusión | Iteración 4 |
-| Trigger temprano en PROMPT_TEMA | PROMPT_TEMA priorizaba pedir contexto sobre ofrecer mundos. Se agregó paso 2 explícito: confusión total → menú inmediato | Iteración 4 |
-| Verificación de respuesta antes de reaccionar | Toto evaluaba mal respuestas correctas (falso "casi"). Regla 7 ahora exige verificar correcto/cerca/incorrecto antes de reaccionar | Iteración 4 |
+

@@ -153,3 +153,4 @@ Si Toto funciona bien con familias como esta:
 - Qué features de Toto cierran cada pain point
 - Qué cambios de copy ayudan a la madre a "soltar" sin culpa
 - Cómo diseñar Parent Checkpoint para que sea intervención "específica, concreta y divertida"
+
