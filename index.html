@@ -2253,7 +2253,10 @@ function sendSessionEmail(trigger) {
     .catch(err => console.warn('[Toto] Error enviando email sesión:', err));
 
   // Enviar análisis post-sesión al backend (en paralelo, no bloquea)
-  if (transcript && S.messageCount >= 3) {
+  // Contar mensajes de Toto en el transcript para robustez (no depender de messageCount)
+  const totoMsgCount = transcript ? (transcript.match(/\[Toto\]/g) || []).length : 0;
+  console.log('[Toto] Análisis check:', { totoMsgCount, transcriptLen: transcript?.length, messageCount: S.messageCount });
+  if (transcript && totoMsgCount >= 2) {
     fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
