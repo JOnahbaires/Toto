@@ -13,6 +13,7 @@ export default async function handler(req, res) {
 
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   const resendKey = process.env.RESEND_API_KEY;
+  const githubToken = process.env.GITHUB_TOKEN;
   if (!anthropicKey || !resendKey) {
     return res.status(500).json({ error: { message: 'API keys not configured' } });
   }
@@ -88,6 +89,61 @@ Respondé en español argentino. Sé directo y específico — no genérico.`;
 
     const analysis = analysisData.content?.[0]?.text || 'No se pudo generar el análisis.';
 
+    // Guardar análisis en el repo via GitHub API
+    let githubSaved = false;
+    if (githubToken) {
+      try {
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10);
+        const timeStr = now.toISOString().slice(11, 19).replace(/:/g, '');
+        const safeName = (alumno_nombre || 'anonimo').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+        const fileName = `docs/analyses/${dateStr}_${timeStr}_${safeName}.md`;
+
+        const fileContent = `# Análisis Post-Sesión — ${fecha || dateStr}
+## status: pending
+
+## Datos de la sesión
+- **Alumno:** ${alumno_nombre || 'Sin nombre'}
+- **Mood:** ${mood || '?'}
+- **Materia:** ${materia || 'General'}
+- **Tarea:** ${tarea || 'Sin especificar'}
+- **Fecha:** ${fecha || dateStr}
+
+## Análisis
+
+${analysis}
+
+## Transcripción
+
+${transcript}
+`;
+
+        const contentB64 = Buffer.from(fileContent).toString('base64');
+        const ghRes = await fetch(`https://api.github.com/repos/JOnahbaires/Toto/contents/${fileName}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${githubToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github+json',
+          },
+          body: JSON.stringify({
+            message: `analysis: ${safeName} — ${materia || 'general'} (${dateStr})`,
+            content: contentB64,
+          }),
+        });
+
+        if (ghRes.ok) {
+          githubSaved = true;
+          console.log('[Toto] Análisis guardado en repo:', fileName);
+        } else {
+          const ghErr = await ghRes.json();
+          console.warn('[Toto] Error guardando en GitHub:', ghErr.message);
+        }
+      } catch (ghErr) {
+        console.warn('[Toto] GitHub save failed:', ghErr);
+      }
+    }
+
     // Enviar email con el análisis
     const htmlBody = `
 <!DOCTYPE html>
@@ -104,6 +160,7 @@ Respondé en español argentino. Sé directo y específico — no genérico.`;
         <tr><td style="padding:6px 0;color:#666;">Materia</td><td style="padding:6px 0;">${escapeHtml(materia)}</td></tr>
         <tr><td style="padding:6px 0;color:#666;">Tarea</td><td style="padding:6px 0;">${escapeHtml(tarea)}</td></tr>
         <tr><td style="padding:6px 0;color:#666;">Fecha</td><td style="padding:6px 0;">${escapeHtml(fecha)}</td></tr>
+        <tr><td style="padding:6px 0;color:#666;">Guardado en repo</td><td style="padding:6px 0;">${githubSaved ? '✅ Sí' : '❌ No (sin token o error)'}</td></tr>
       </table>
       <hr style="border:none;border-top:1px solid #eee;margin:16px 0;">
       <div style="font-size:0.9rem;line-height:1.7;color:#333;white-space:pre-wrap;">${escapeHtml(analysis)}</div>
@@ -135,7 +192,7 @@ Respondé en español argentino. Sé directo y específico — no genérico.`;
       return res.status(500).json({ error: { message: 'Analysis email failed' } });
     }
 
-    return res.status(200).json({ success: true, analysis_id: emailData.id });
+    return res.status(200).json({ success: true, analysis_id: emailData.id, github_saved: githubSaved });
   } catch (err) {
     if (err.name === 'AbortError') {
       console.error('Analysis timed out');
