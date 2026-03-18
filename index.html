@@ -844,11 +844,7 @@
   /* ═══════ FIN ONBOARDING MODAL ═══════ */
 
 </style>
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>
-    (function(){ emailjs.init({ publicKey: 'KG28xVpC7Fq4vVJfa' }); })();
-  </script>
+  <!-- Email: handled by backend /api/email and /api/analyze -->
 </head>
 <body>
 
@@ -1910,14 +1906,8 @@ async function callTutor(userMsg, isFirst) {
       reply = reply.replace(/\[SESSION_END\]/g, '').trim();
     }
 
-    // Detectar y extraer bloque de auto-diagnóstico
-    const autodiagMatch = reply.match(/\[AUTODIAG\]([\s\S]*?)\[\/AUTODIAG\]/);
-    if (autodiagMatch) {
-      const autodiagContent = autodiagMatch[1].trim();
-      reply = reply.replace(/\[AUTODIAG\][\s\S]*?\[\/AUTODIAG\]/g, '').trim();
-      // Enviar email de mejoras separado
-      sendAutodiagEmail(autodiagContent);
-    }
+    // Stripear bloque de auto-diagnóstico del chat (análisis ahora lo hace /api/analyze)
+    reply = reply.replace(/\[AUTODIAG\][\s\S]*?\[\/AUTODIAG\]/g, '').trim();
 
     // Para el historial: siempre guardamos texto plano para evitar reenviar imágenes
     // base64 pesadas en cada llamada (causa el error de overload).
@@ -2159,7 +2149,7 @@ function resetInactivityTimer() {
 
 function sendSessionEmail(trigger) {
   if (_emailSent) return;
-  if (!S.sessionId) return; // no hay sesión activa
+  if (!S.sessionId) return;
   _emailSent = true;
   clearTimeout(_inactivityTimer);
 
@@ -2171,9 +2161,8 @@ function sendSessionEmail(trigger) {
     : '?';
 
   const moodLabel = { bien: '😊 Bien', masomenos: '😐 Más o menos', mal: '😓 Mal' };
-  const modeLabel = S.mode === 'tema' ? 'Quiero entender algo' : 'Tengo una tarea';
 
-  // Armar resumen de la conversación (últimos 20 mensajes)
+  // Armar transcript completo
   const logs = (() => { try { return JSON.parse(localStorage.getItem('toto_sessions') || '[]'); } catch(e) { return []; } })();
   const session = logs.find(s => s.id === S.sessionId);
   let transcript = '';
@@ -2183,8 +2172,10 @@ function sendSessionEmail(trigger) {
       .join('\n\n');
   }
 
-  const params = {
+  const payload = {
     alumno_nombre:   S.name    || 'Sin nombre',
+    edad:            S.age     || '',
+    grado:           S.grade   || '',
     mood:            moodLabel[S.mood] || S.mood || '?',
     materia:         SUBJ_MAP[S.subject] || 'General',
     tarea:           S.task    || 'Sin tarea',
@@ -2198,36 +2189,34 @@ function sendSessionEmail(trigger) {
     conversacion:    transcript || '(sin mensajes registrados)'
   };
 
-  emailjs.send('service_kudmo6n', 'template_ji0mjoo', params)
-    .then(() => console.log('[Toto] Email enviado OK — trigger:', trigger))
-    .catch(err => console.warn('[Toto] Error enviando email:', err));
-}
+  // Enviar reporte de sesión al backend
+  fetch('/api/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(r => r.json())
+    .then(d => console.log('[Toto] Email sesión enviado OK —', trigger, d))
+    .catch(err => console.warn('[Toto] Error enviando email sesión:', err));
 
-/* ════════════════════════════════════════════════════
-   AUTO-DIAGNÓSTICO EMAIL (Bloque 4 — mejoras al prompt)
-════════════════════════════════════════════════════ */
-function sendAutodiagEmail(autodiagContent) {
-  const now = new Date();
-  const moodLabel = { bien: '😊 Bien', masomenos: '😐 Más o menos', mal: '😓 Mal' };
-
-  const params = {
-    alumno_nombre:   S.name    || 'Sin nombre',
-    mood:            moodLabel[S.mood] || S.mood || '?',
-    materia:         SUBJ_MAP[S.subject] || 'General',
-    tarea:           S.task    || 'Sin tarea',
-    fecha:           now.toLocaleString('es-AR'),
-    duracion_total:  '—',
-    tiempo_promedio: '—',
-    total_mensajes:  String(S.messageCount || 0),
-    pistas:          `${S.hints || 0}/5`,
-    xp:              String(S.xp || 0),
-    subio_foto:      S.initialImageContext ? 'Sí 📷' : 'No',
-    conversacion:    `═══ AUTO-DIAGNÓSTICO DE SESIÓN ═══\n\n${autodiagContent}\n\n═══════════════════════════════`
-  };
-
-  emailjs.send('service_kudmo6n', 'template_ji0mjoo', params)
-    .then(() => console.log('[Toto] Email auto-diagnóstico enviado OK'))
-    .catch(err => console.warn('[Toto] Error enviando email auto-diagnóstico:', err));
+  // Enviar análisis post-sesión al backend (en paralelo, no bloquea)
+  if (transcript && S.messageCount >= 3) {
+    fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        alumno_nombre: S.name || 'Sin nombre',
+        mood: moodLabel[S.mood] || S.mood || '?',
+        materia: SUBJ_MAP[S.subject] || 'General',
+        tarea: S.task || 'Sin tarea',
+        transcript: transcript,
+        fecha: now.toLocaleString('es-AR')
+      })
+    })
+      .then(r => r.json())
+      .then(d => console.log('[Toto] Análisis post-sesión enviado OK', d))
+      .catch(err => console.warn('[Toto] Error análisis post-sesión:', err));
+  }
 }
 
 /* ════════════════════════════════════════════════════
