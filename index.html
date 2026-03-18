@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e1a;hh
+    --bg: #0a0e1a;
     --surface: #141829;
-    --surface2: #1c2137;h
+    --surface2: #1c2137;
     --surface3: #242a42;
     --accent: #7c6fff;
     --accent-glow: rgba(124,111,255,0.25);
@@ -113,11 +113,8 @@
     z-index: 2;
   }
 
-  /* ── Wrap: no top padding (band is outside) ── */
-
   /* ── XP ── */
   .xp-bar {
-    display: flex;
     display: none;
     align-items: center;
     gap: 12px;
@@ -1121,20 +1118,22 @@ document.addEventListener('DOMContentLoaded', function initOnboardingModal() {
   // Bloquear scroll del body mientras está abierto
   document.body.style.overflow = 'hidden';
 
+  // Bloquear ESC para que no cierre el modal
+  function blockEsc(e) {
+    if (e.key === 'Escape' && !modal.hidden) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+  document.addEventListener('keydown', blockEsc, true);
+
   // Cerrar SOLO con el botón
   btn.addEventListener('click', function() {
     modal.hidden = true;
     document.body.style.overflow = '';
     localStorage.setItem('toto_onboarding_seen', 'true');
+    document.removeEventListener('keydown', blockEsc, true);
   });
-
-  // Bloquear ESC para que no cierre el modal
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !modal.hidden) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  }, true);
 });
 
 /* ════════════════════════════════════════════════════
@@ -1542,6 +1541,7 @@ function detectSubject(text) {
 const $ = id => document.getElementById(id);
 const show = (el, cls='visible') => { if(el) el.classList.add(cls); };
 const hide = (el, cls='visible') => { if(el) el.classList.remove(cls); };
+const escapeHtml = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 function showErr(msg) { const e=$('errMsg'); e.textContent=msg; show(e); }
 function hideErr()    { hide($('errMsg')); }
@@ -1560,7 +1560,7 @@ function finishWarmup() {
   const ageVal = $('ageInput').value.trim();
   const gradeVal = $('gradeInput').value.trim();
   S.name = nameVal || 'amigo';
-  S.age = ageVal || '';
+  S.age = /^\d+$/.test(ageVal) ? ageVal : '';
   S.grade = gradeVal || '';
   if (nameVal) localStorage.setItem('toto_nombre', nameVal);
   if (ageVal) localStorage.setItem('toto_edad', ageVal);
@@ -1726,37 +1726,40 @@ async function sendReply() {
   const msg = input.value.trim();
   if (!msg && !replyImage.base64) return;
   _sending = true;
-  input.value = '';
+  try {
+    input.value = '';
 
-  // Build bubble text
-  const bubbleText = msg || '📷 [imagen]';
-  addBubble('kid', bubbleText, replyImage.base64 ? replyImage : null);
+    // Build bubble text
+    const bubbleText = msg || '📷 [imagen]';
+    addBubble('kid', bubbleText, replyImage.base64 ? replyImage : null);
 
-  // Log student message
-  logSessionMessage('kid', bubbleText);
+    // Log student message
+    logSessionMessage('kid', bubbleText);
 
-  // Resetear timer de inactividad con cada mensaje
-  resetInactivityTimer();
+    // Resetear timer de inactividad con cada mensaje
+    resetInactivityTimer();
 
-  // Build content for API
-  let userContent;
-  if (replyImage.base64) {
-    userContent = [
-      { type: 'image', source: { type: 'base64', media_type: replyImage.type, data: replyImage.base64 } },
-      { type: 'text', text: msg || 'Te mando esta imagen de mi tarea.' }
-    ];
-    removeReplyFile();
-  } else {
-    userContent = msg;
+    // Build content for API
+    let userContent;
+    if (replyImage.base64) {
+      userContent = [
+        { type: 'image', source: { type: 'base64', media_type: replyImage.type, data: replyImage.base64 } },
+        { type: 'text', text: msg || 'Te mando esta imagen de mi tarea.' }
+      ];
+      removeReplyFile();
+    } else {
+      userContent = msg;
+    }
+
+    if (msg.length > 8) {
+      S.streak++;
+      if (S.streak % 3 === 0) { gainXP(); showCeleb('🔥 ¡Racha de pensador!', '¡Seguís dándole, genio!'); }
+      updateStreak();
+    }
+    await callTutor(userContent, false);
+  } finally {
+    _sending = false;
   }
-
-  if (msg.length > 8) {
-    S.streak++;
-    if (S.streak % 3 === 0) { gainXP(); showCeleb('🔥 ¡Racha de pensador!', '¡Seguís dándole, genio!'); }
-    updateStreak();
-  }
-  await callTutor(userContent, false);
-  _sending = false;
 }
 
 document.addEventListener('keydown', e => {
@@ -1806,12 +1809,6 @@ async function callTutorFirst(systemContext) {
   await callTutor(systemContext, true);
 }
 
-async function startChat(firstMsg, isFirst) {
-  document.querySelector('.xp-bar').style.display = 'flex';
-  addBubble('kid', firstMsg.replace('Mi intento: ', ''), null);
-  await callTutor(firstMsg, isFirst);
-}
-
 async function callTutor(userMsg, isFirst) {
   const chatZone = $('chatZone');
   disableInputs(true);
@@ -1832,7 +1829,6 @@ async function callTutor(userMsg, isFirst) {
   }
 
   const sys = template
-    .replace('{NAME}', S.name || 'amigo')
     .replace(/\{NAME\}/g, S.name || 'amigo')
     .replace('{AGE}', S.age || 'no especificada')
     .replace('{GRADE}', S.grade || 'no especificado')
@@ -1861,8 +1857,8 @@ async function callTutor(userMsg, isFirst) {
       { type: 'image', source: { type: 'base64', media_type: S.imageType, data: S.imageBase64 } },
       { type: 'text', text: typeof userMsg === 'string' ? userMsg : (userMsg.find?.(x=>x.type==='text')?.text || '') }
     ];
-    // Mark that we have initial image context for future messages
-    S.initialImageContext = true;
+    // Mark that we have initial image context — will be replaced with real description after first reply
+    S.initialImageContext = 'pending';
   } else {
     msgContent = userMsg; // puede ser string o array (imagen en reply)
   }
@@ -1932,17 +1928,17 @@ async function callTutor(userMsg, isFirst) {
           : String(userMsg));
     S.history.push({ role: 'user', content: historyText });
     S.history.push({ role: 'assistant', content: reply });
-    if (S.history.length > 20) S.history = S.history.slice(-20);
+    if (S.history.length > 20) {
+      S.history = S.history.slice(-20);
+      if (S.history[0]?.role !== 'user') S.history = S.history.slice(1);
+    }
 
     addBubble('tutor', reply, null);
 
     // Si fue el primer mensaje con imagen, guardamos el reply como contexto textual
     // Esto permite que el modelo "recuerde" la imagen sin reenviar base64 cada vez
-    if (isFirst && S.imageBase64 && !S.initialImageContext) {
-      // Guardar el reply inicial como contexto de la imagen
-      // El modelo describió/usó la imagen en su primer respuesta
+    if (isFirst && S.initialImageContext === 'pending') {
       S.initialImageContext = `Imagen de tarea del alumno (sesión iniciada). Contexto del primer análisis de Toto: ${reply.substring(0, 300)}`;
-      // Liberar el base64 de memoria (ya no lo necesitamos reenviar)
       S.imageBase64 = null;
       S.imageType = null;
     }
@@ -1988,11 +1984,11 @@ function disableInputs(off) {
 
 function addBubble(who, text, imgData) {
   const zone = $('chatZone');
-  const nameDisplay = S.name ? S.name : 'Vos';
+  const nameDisplay = escapeHtml(S.name ? S.name : 'Vos');
   const label = who === 'tutor'
     ? '<div class="bname">Toto</div>'
     : `<div class="bname">${nameDisplay}</div>`;
-  const formatted = text
+  const formatted = escapeHtml(text)
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>');
   let imgHTML = '';
@@ -2025,13 +2021,7 @@ function addBubble(who, text, imgData) {
 
 function scrollDown() {
   setTimeout(() => {
-    const msgs = document.querySelectorAll('.msg-toto');
-    if (msgs.length) {
-      const last = msgs[msgs.length - 1];
-      last.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }, 60);
 }
 
@@ -2097,7 +2087,6 @@ function resetSession() {
   hide($('celeb'));
   hide($('streakBanner'));
   hide($('replyImgPreview'));
-  hide($('downloadReminder'));
   $('replyImgBtn')?.classList.remove('has-img');
   $('setupArea').classList.remove('locked');
   removeFile();
@@ -2141,7 +2130,7 @@ function downloadSummary() {
   lines.push('───────────────────────────────');
   lines.push('¡Seguí pensando, crack! 🚀');
 
-  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -2150,17 +2139,6 @@ function downloadSummary() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-/* ════════════════════════════════════════════════════
-   DOWNLOAD REMINDER (each 4 tutor messages)
-════════════════════════════════════════════════════ */
-function showDownloadReminder() {
-  const rem = $('downloadReminder');
-  if (rem) {
-    show(rem);
-    setTimeout(() => hide(rem), 8000);
-  }
 }
 
 /* ════════════════════════════════════════════════════
@@ -2348,9 +2326,11 @@ function renderAdminSessions() {
     const startDate = s.startTime ? new Date(s.startTime).toLocaleString('es-AR') : '?';
     const msgCount = s.messages ? s.messages.length : 0;
     const moodEmoji = s.mood === 'bien' ? '😊' : (s.mood === 'masomenos' ? '😐' : '😓');
+    const safeName = escapeHtml(s.name || 'Anón');
+    const safeTask = escapeHtml(s.task ? s.task.substring(0,40) + (s.task.length > 40 ? '...' : '') : 'Sin tarea');
     html += `<details style="margin-bottom:8px;background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border)">
       <summary style="cursor:pointer;font-weight:700;font-size:0.82rem;color:var(--text)">
-        ${moodEmoji} <strong>${s.name || 'Anón'}</strong> — ${s.task ? s.task.substring(0,40) + (s.task.length > 40 ? '...' : '') : 'Sin tarea'}
+        ${moodEmoji} <strong>${safeName}</strong> — ${safeTask}
         <span style="color:var(--text-dim);font-weight:600;font-size:0.72rem;margin-left:6px">${startDate} · ${msgCount} msgs · ⭐${s.xp || 0} · 💡${s.hints || 0}/5</span>
       </summary>
       <div style="margin-top:8px;max-height:300px;overflow-y:auto;font-size:0.78rem;line-height:1.6">`;
@@ -2358,8 +2338,8 @@ function renderAdminSessions() {
     if (s.messages) {
       s.messages.forEach(m => {
         const color = m.who === 'tutor' ? 'var(--accent)' : 'var(--text-mid)';
-        const label = m.who === 'tutor' ? 'Toto' : s.name || 'Alumno';
-        html += `<div style="margin-bottom:4px"><strong style="color:${color}">[${label}]</strong> ${m.text}</div>`;
+        const msgLabel = m.who === 'tutor' ? 'Toto' : safeName;
+        html += `<div style="margin-bottom:4px"><strong style="color:${color}">[${msgLabel}]</strong> ${escapeHtml(m.text)}</div>`;
       });
     }
     html += `</div></details>`;
@@ -2396,7 +2376,7 @@ function clearSessions() {
   bottom: 8px;
   right: 12px;
   font-size: 10px;
-  color: rgba(0,0,0,0.2);
+  color: rgba(255,255,255,0.15);
   font-family: monospace;
   pointer-events: none;
   z-index: 9999;
