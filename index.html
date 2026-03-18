@@ -2271,8 +2271,14 @@ function sendSessionEmail(trigger) {
         fecha: now.toLocaleString('es-AR')
       })
     })
-      .then(r => r.json())
-      .then(d => console.log('[Toto] Análisis post-sesión enviado OK', d))
+      .then(r => {
+        const status = r.status;
+        return r.json().then(d => ({ status, data: d }));
+      })
+      .then(({ status, data }) => {
+        if (status === 200) console.log('[Toto] Análisis post-sesión OK', data);
+        else console.warn('[Toto] Análisis post-sesión ERROR', status, data);
+      })
       .catch(err => console.warn('[Toto] Error análisis post-sesión:', err));
   }
 }

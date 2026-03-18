@@ -63,7 +63,7 @@ ${transcript}
 Respondé en español argentino. Sé directo y específico — no genérico.`;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 50000);
+    const timeout = setTimeout(() => controller.abort(), 9000);
 
     const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -73,8 +73,8 @@ Respondé en español argentino. Sé directo y específico — no genérico.`;
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20241022',
-        max_tokens: 2000,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
         messages: [{ role: 'user', content: analysisPrompt }],
       }),
       signal: controller.signal,
@@ -83,8 +83,8 @@ Respondé en español argentino. Sé directo y específico — no genérico.`;
 
     const analysisData = await analysisRes.json();
     if (!analysisRes.ok) {
-      console.error('Anthropic analysis error:', analysisData);
-      return res.status(500).json({ error: { message: 'Analysis failed' } });
+      console.error('Anthropic analysis error:', JSON.stringify(analysisData));
+      return res.status(500).json({ error: { message: 'Analysis failed', detail: analysisData?.error?.message || 'Unknown' } });
     }
 
     const analysis = analysisData.content?.[0]?.text || 'No se pudo generar el análisis.';
