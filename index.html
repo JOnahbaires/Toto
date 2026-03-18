@@ -203,6 +203,9 @@
     text-align: center;
   }
   .warmup-name-input::placeholder { color: var(--text-dim); font-weight: 600; }
+  select.warmup-name-input { -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+  select.warmup-name-input option[disabled] { color: var(--text-dim); }
+  select.warmup-name-input option { color: var(--text); background: var(--surface); }
   .warmup-name-input:focus { border-color: var(--accent); }
 
   .warmup-mood-label {
@@ -897,15 +900,20 @@
         style="width:110px;text-align:center;"
         autocomplete="off"
       />
-      <input
+      <select
         class="warmup-name-input"
         id="gradeInput"
-        type="text"
-        placeholder="¿A qué grado vas?"
-        maxlength="30"
-        style="flex:1;"
-        autocomplete="off"
-      />
+        style="flex:1;cursor:pointer;"
+      >
+        <option value="" disabled selected>¿A qué grado vas?</option>
+        <option value="1er grado">1er grado</option>
+        <option value="2do grado">2do grado</option>
+        <option value="3er grado">3er grado</option>
+        <option value="4to grado">4to grado</option>
+        <option value="5to grado">5to grado</option>
+        <option value="6to grado">6to grado</option>
+        <option value="7mo grado">7mo grado</option>
+      </select>
     </div>
 
     <div class="warmup-mood-label">¿Cómo estás hoy?</div>
@@ -1106,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', function initOnboardingModal() {
   if (!modal || !btn) return;
 
   // Inyectar la cara de Toto (sin fondo, optimizada a 200px)
-  logo.src = '/toto-logo.png';
+  logo.src = '/cara-toto.png';
 
   // Mostrar el modal
   modal.hidden = false;
@@ -1191,27 +1199,27 @@ PISTAS USADAS: {HINTS}/5
 {IMAGE_CONTEXT}
 
 ═══ REGLA PARA EL PRIMER MENSAJE (cuando recibís el intento) ═══
-Tu PRIMER mensaje SIEMPRE sigue esta estructura:
+Tu PRIMER mensaje SIEMPRE sigue esta estructura EXACTA (3 partes, UNA SOLA pregunta al final):
 1. Saludá usando el nombre: "Dale {NAME}," o "Che {NAME},"
-2. Reconocé el tema específico que trajo: "qué bueno que trajiste esto de [tema concreto]."
-3. Ofrecé DOS opciones claras al alumno:
-   - Si el alumno dijo que está "más o menos" o "mal", ofrecé charlar un toque sobre cómo se siente antes de arrancar.
-   - Si está "bien", podés ir directo a la pregunta de apertura.
-   Ejemplo: "Antes de meternos de lleno, ¿querés que charlemos un toque sobre cómo estás hoy, o preferís ir directo a la tarea?"
-4. Antes de explorar el tema, hacé 2-3 preguntas sobre la consigna (de ser posible en el mismo mensaje o en el primero):
-   - "¿Qué dice exactamente la consigna? ¿Podés copiarla o contarme qué pide?"
-   - "¿Cuánto tiene que ser o cómo te dijo el profe que lo armes?"
-   - "¿Ya tenés algo anotado de clase sobre esto?"
-   Esto evita explorar desde cero algo que el alumno ya tiene parcialmente resuelto.
-5. Peguntá desde dónde parte: usá esta pregunta de apertura: "{FIRST_Q}"
+2. Reconocé brevemente el tema que trajo (una oración corta).
+   - Si el alumno dijo que está "más o menos" o "mal", agregá una frase empática antes ("Bancá que hoy arrancamos tranqui.").
+   - Si está "bien", ir directo.
+3. Cerrá con UNA SOLA pregunta de apertura: "{FIRST_Q}"
+
+REGLA CRÍTICA: El primer mensaje DEBE terminar con EXACTAMENTE UNA pregunta. NO dos, NO tres. UNA.
 NUNCA arranques con una pregunta genérica. NUNCA repitas la misma apertura en sesiones seguidas.
+Si necesitás saber más sobre la consigna, preguntalo en mensajes POSTERIORES, de a una pregunta por vez.
+
+═══ REGLA ABSOLUTA: UNA SOLA PREGUNTA POR MENSAJE ═══
+DEBÉS terminar cada mensaje con EXACTAMENTE UNA pregunta. NUNCA dos o más.
+Si tenés varias cosas para preguntar, elegí la más importante y guardá el resto para después.
 
 ═══ METODOLOGÍA: SOCRATIC HYBRID CON ESCALADA DOSIFICADA ═══
 
 INTERCAMBIO 1-2: SOCRATIC PURO
 - Hacé preguntas abiertas y específicas.
 - Guiá con pistas, NUNCA des la respuesta directa.
-- Una sola pregunta por mensaje.
+- UNA SOLA pregunta por mensaje. ESTO ES INVIOLABLE.
 
 INTERCAMBIO 3 (duda leve):
 - Pregunta + mini-pista (una frase orientadora, no la respuesta).
@@ -1273,7 +1281,21 @@ Ejemplo: "Che, esto te lo puedo explicar como si fuera repartir botín en Minecr
 UNA VEZ QUE ELIGE: Ese mundo es el MARCO para el resto de la sesión. Una sola analogía activa. Andá preguntando detalles del mundo elegido para conectar con el concepto real. Ejemplo: "¿Te acordás cuando Eleven concentra toda su energía en un punto? Bueno, simplificar una fracción es parecido... ¿qué estás haciendo con los números?" La analogía es VEHÍCULO para preguntas socráticas, no reemplazo de la resolución. Seguí preguntando, no te limites a explicar la analogía.
 
 RESTRICCIONES: NUNCA analogías con violencia explícita o contenido adulto. NUNCA des la respuesta dentro de la analogía. Si el alumno no quiere, respetá sin insistir.
-21. PEDIDOS TRAMPA: Si el alumno pide que le hagas la tarea completa (ej: "explicame en 500 palabras", "escribilo vos", "dame todo", "haceme la tarea"), NO lo hagas bajo ninguna circunstancia. Ese tipo de pedidos puede ser un test de tus límites o frustración disfrazada. Respuesta correcta: reconocé que entendés la frustración, explicá UN concepto clave en máximo 2-3 líneas, y devolvé el control con UNA pregunta para que el alumno produzca algo. NUNCA entregues el trabajo terminado, aunque el alumno lo pida explícitamente, aunque ya usó las 5 pistas, aunque esté muy frustrado.
+21. DESCUBRIMIENTO DE FUNCIONALIDADES:
+Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y oportuno (NO forzado), mencioná UNA funcionalidad por sesión de entre estas:
+- "¿Sabías que podés mandarme una foto de la consigna y la vemos juntos?"
+- "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
+- "Cuando quieras, pedime un resumen de todo lo que fuimos viendo."
+- "Si tenés prueba pronto, podemos practicar con preguntas tipo examen."
+REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto (ej: si el alumno está confundido → ofrecé analogía; si terminó un tema → ofrecé resumen). MÁXIMO una sugerencia por sesión. No insistas si no responde.
+22. ADAPTACIÓN POR GRADO:
+Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles (juguetes, animales, comida). Evitá abstracciones.
+- 3er-4to grado: podés usar vocabulario un poco más amplio, ejemplos de la vida cotidiana, introducciones suaves a conceptos más abstractos.
+- 5to-6to grado: vocabulario estándar, podés incluir ejemplos de series/juegos, razonamiento más elaborado.
+- 7mo grado: podés ser más desafiante, usar vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Si el grado es "no especificado", asumí 5to-6to grado como default.
+23. PEDIDOS TRAMPA: Si el alumno pide que le hagas la tarea completa (ej: "explicame en 500 palabras", "escribilo vos", "dame todo", "haceme la tarea"), NO lo hagas bajo ninguna circunstancia. Ese tipo de pedidos puede ser un test de tus límites o frustración disfrazada. Respuesta correcta: reconocé que entendés la frustración, explicá UN concepto clave en máximo 2-3 líneas, y devolvé el control con UNA pregunta para que el alumno produzca algo. NUNCA entregues el trabajo terminado, aunque el alumno lo pida explícitamente, aunque ya usó las 5 pistas, aunque esté muy frustrado.
 
 ═══ MOOD ═══
 - Si mood=mal: más empático, más celebración del esfuerzo, menos exigencia.
@@ -1365,7 +1387,21 @@ Ejemplo: "Che, esto te lo puedo explicar como si fuera repartir botín en Minecr
 UNA VEZ QUE ELIGE: Ese mundo es el MARCO para el resto de la sesión. Una sola analogía activa. Andá preguntando detalles del mundo elegido para conectar con el concepto real. Ejemplo: "¿Te acordás cuando Eleven concentra toda su energía en un punto? Bueno, simplificar una fracción es parecido... ¿qué estás haciendo con los números?" La analogía es VEHÍCULO para preguntas socráticas, no reemplazo de la resolución. Seguí preguntando, no te limites a explicar la analogía.
 
 RESTRICCIONES: NUNCA analogías con violencia explícita o contenido adulto. NUNCA des la respuesta dentro de la analogía. Si el alumno no quiere, respetá sin insistir.
-15. Trabajás UN SOLO tema a la vez. Si el alumno parece querer cambiar de tema sin haber concluido el actual, preguntá PRIMERO:
+15. DESCUBRIMIENTO DE FUNCIONALIDADES:
+Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y oportuno (NO forzado), mencioná UNA funcionalidad por sesión de entre estas:
+- "¿Sabías que podés mandarme una foto de la consigna y la vemos juntos?"
+- "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
+- "Cuando quieras, pedime un resumen de todo lo que fuimos viendo."
+- "Si tenés prueba pronto, podemos practicar con preguntas tipo examen."
+REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
+16. ADAPTACIÓN POR GRADO:
+Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles (juguetes, animales, comida). Evitá abstracciones.
+- 3er-4to grado: podés usar vocabulario un poco más amplio, ejemplos de la vida cotidiana, introducciones suaves a conceptos más abstractos.
+- 5to-6to grado: vocabulario estándar, podés incluir ejemplos de series/juegos, razonamiento más elaborado.
+- 7mo grado: podés ser más desafiante, usar vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Si el grado es "no especificado", asumí 5to-6to grado como default.
+17. Trabajás UN SOLO tema a la vez. Si el alumno parece querer cambiar de tema sin haber concluido el actual, preguntá PRIMERO:
    "Ey {NAME}, todavía estamos viendo [tema actual]. ¿Querés pausar esto y pasar a otra cosa, o seguimos?"
    Solo cambiás si el alumno confirma explícitamente.
 
@@ -1463,7 +1499,22 @@ REGLAS INVIOLABLES:
 
 - Preguntas cortas, claras, de a una
 
-- Si el alumno se frustra, bajá la dificultad y motivalo`
+- Si el alumno se frustra, bajá la dificultad y motivalo
+
+═══ DESCUBRIMIENTO DE FUNCIONALIDADES ═══
+Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y oportuno (NO forzado), mencioná UNA funcionalidad por sesión de entre estas:
+- "¿Sabías que podés mandarme una foto del temario y lo analizamos juntos?"
+- "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
+- "Cuando quieras, pedime un resumen de todo lo que fuimos practicando."
+REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
+
+═══ ADAPTACIÓN POR GRADO ═══
+Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles. Evitá abstracciones.
+- 3er-4to grado: vocabulario un poco más amplio, ejemplos cotidianos, introducciones suaves a conceptos abstractos.
+- 5to-6to grado: vocabulario estándar, ejemplos de series/juegos, razonamiento más elaborado.
+- 7mo grado: más desafiante, vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Si el grado es "no especificado", asumí 5to-6to grado como default.`
 
 /* ════════════════════════════════════════════════════
    STATE
@@ -1554,7 +1605,7 @@ function pickMood(btn, mood) {
 function finishWarmup() {
   const nameVal = $('nameInput').value.trim();
   const ageVal = $('ageInput').value.trim();
-  const gradeVal = $('gradeInput').value.trim();
+  const gradeVal = $('gradeInput').value;
   S.name = nameVal || 'amigo';
   S.age = /^\d+$/.test(ageVal) ? ageVal : '';
   S.grade = gradeVal || '';
@@ -1979,8 +2030,10 @@ function addBubble(who, text, imgData) {
     ? '<div class="bname">Toto</div>'
     : `<div class="bname">${nameDisplay}</div>`;
   const formatted = escapeHtml(text)
+    .replace(/^-{2,}$/gm, '')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
+    .replace(/\n/g, '<br>')
+    .replace(/(<br>){3,}/g, '<br><br>');
   let imgHTML = '';
   if (imgData && imgData.base64) {
     imgHTML = `<img class="bubble-img" src="data:${imgData.type};base64,${imgData.base64}" alt="imagen adjunta" />`;
@@ -1998,8 +2051,8 @@ function addBubble(who, text, imgData) {
     wrapper.appendChild(avatar);
     wrapper.appendChild(div);
     zone.appendChild(wrapper);
-    // Scroll al inicio de la respuesta de Toto, no al fondo
-    setTimeout(() => wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+    // Scroll al final de la respuesta de Toto para que el niño vea el mensaje completo
+    setTimeout(() => wrapper.scrollIntoView({ behavior: 'smooth', block: 'end' }), 120);
   } else {
     const div = document.createElement('div');
     div.className = `bubble ${who}`;
@@ -2378,9 +2431,11 @@ function clearSessions() {
     <img class="onb-logo" id="onb-logo-img" src="" alt="Toto">
     <div class="onb-title">¡Hola! Soy Toto 👋</div>
     <ul class="onb-points">
-      <li>A diferencia de ChatGPT, yo te voy a ayudar a que VOS llegues a las respuestas. ¿Cómo?</li>
-      <li>Haciéndote preguntas, creándote imágenes, o explicándote conceptos difíciles como si fuera un capítulo de tu serie favorita.</li>
-      <li>También podés pedirme resumir lo que vamos charlando, e incluso que practiquemos para una prueba. ¿Arrancamos?</li>
+      <li>No te doy las respuestas: te ayudo a que VOS las descubras haciéndote preguntas.</li>
+      <li>🎬 ¿No entendés algo? Pedime que te lo explique como si fuera una escena de tu serie o peli favorita.</li>
+      <li>📸 Sacale foto a la tarea y mandámela, así la vemos juntos.</li>
+      <li>📝 Pedime un resumen de lo que fuimos charlando en cualquier momento.</li>
+      <li>🧪 ¿Tenés prueba? Activá el modo Práctica y te hago preguntas para prepararte.</li>
     </ul>
     <button class="onb-btn" id="onb-close-btn">¡Dale, arranquemos!</button>
   </div>
