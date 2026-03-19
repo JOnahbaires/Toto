@@ -2417,7 +2417,7 @@ function showCeleb(title, sub, badgeText) {
     c.style.display = '';
     c.classList.remove('visible');
     _celebTimer = null;
-  }, 3500);
+  }, 3000);
 }
 
 /* ── Mapa de Logros ── */
@@ -2521,18 +2521,25 @@ async function smartSummary() {
   show(overlay);
 
   const summaryPrompt = `Sos Toto, un tutor socrático para chicos de 6° grado en Argentina.
-El alumno ${S.name || ''} estuvo trabajando sobre: "${S.task}" (materia: ${SUBJ_MAP[S.subject] || 'General'}).
+Tu ÚNICA tarea ahora es generar un RESUMEN CONSOLIDADO de la conversación que te paso abajo. NO hagas preguntas. NO continúes la conversación. Solo generá el resumen.
 
-Generá un RESUMEN CONSOLIDADO de la sesión en español argentino informal. El resumen debe:
+El resumen debe:
 1. Arrancar con "📝 Acá va lo que vimos hoy:"
-2. Listar los CONCEPTOS CLAVE que se trabajaron (máximo 5, con bullet points)
+2. Listar los CONCEPTOS CLAVE que se trabajaron (máximo 5, con bullet points usando •)
 3. Destacar lo que el alumno RAZONÓ BIEN (qué entendió, qué conexiones hizo)
 4. Si hubo errores, mencionar brevemente qué hay que repasar
 5. Cerrar con una frase motivacional corta
 
-IMPORTANTE: Usá lenguaje simple que un chico de 11-12 años entienda. Máximo 200 palabras. NO uses markdown con ##, usá emojis como separadores.`;
+IMPORTANTE: Usá lenguaje simple que un chico de 11-12 años entienda. Máximo 200 palabras. NO uses markdown con ##, usá emojis como separadores. NO hagas preguntas al alumno.`;
 
-  const msgs = [...S.history];
+  // Consolidar historial en un solo mensaje para que el modelo no lo interprete como conversación a continuar
+  const transcript = S.history.map(m => {
+    const who = m.role === 'user' ? (S.name || 'Alumno') : 'Toto';
+    const text = typeof m.content === 'string' ? m.content : (Array.isArray(m.content) ? m.content.find(x=>x.type==='text')?.text || '' : String(m.content));
+    return `[${who}]: ${text}`;
+  }).join('\n');
+
+  const msgs = [{ role: 'user', content: `Hacé un resumen de esta sesión de tutoría sobre "${S.task}" (materia: ${SUBJ_MAP[S.subject] || 'General'}, alumno: ${S.name || 'sin nombre'}):\n\n${transcript}` }];
 
   try {
     const res = await fetch('/api/chat', {
