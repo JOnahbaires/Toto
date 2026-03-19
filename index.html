@@ -293,15 +293,12 @@
   .mood-btn[data-mood="masomenos"].active { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
   .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
   .mood-toto-img {
-    width: 48px; height: 48px;
+    width: 60px; height: 60px;
     border-radius: 50%;
-    object-fit: contain;
+    object-fit: cover;
     transition: filter 0.3s ease, transform 0.2s ease;
   }
-  .mood-btn[data-mood="super"] .mood-toto-img  { filter: saturate(1.4) brightness(1.1) hue-rotate(-10deg); }
-  .mood-btn[data-mood="bien"] .mood-toto-img   { filter: saturate(1.2) brightness(1.05); }
-  .mood-btn[data-mood="masomenos"] .mood-toto-img { filter: saturate(0.5) sepia(0.3) brightness(0.9); }
-  .mood-btn[data-mood="mal"] .mood-toto-img    { filter: grayscale(0.7) hue-rotate(200deg) brightness(0.8); }
+  /* Mood faces use individual images — no CSS filters needed */
   .mood-btn.active .mood-toto-img { transform: scale(1.1); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
 
@@ -990,19 +987,19 @@
 
     <div class="mood-grid">
       <button class="mood-btn" data-mood="super" onclick="pickMood(this,'super')">
-        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto súper">
+        <img src="/toto-super.png" class="mood-toto-img" alt="Toto súper">
         <span class="mood-label">¡Súper!</span>
       </button>
       <button class="mood-btn active" data-mood="bien" onclick="pickMood(this,'bien')">
-        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto piola">
+        <img src="/toto-piola.png" class="mood-toto-img" alt="Toto piola">
         <span class="mood-label">Piola</span>
       </button>
       <button class="mood-btn" data-mood="masomenos" onclick="pickMood(this,'masomenos')">
-        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto maso">
+        <img src="/toto-maso.png" class="mood-toto-img" alt="Toto maso">
         <span class="mood-label">Maso</span>
       </button>
       <button class="mood-btn" data-mood="mal" onclick="pickMood(this,'mal')">
-        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto para atrás">
+        <img src="/toto-para-atras.png" class="mood-toto-img" alt="Toto para atrás">
         <span class="mood-label">Para atrás</span>
       </button>
     </div>
