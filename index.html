@@ -294,8 +294,10 @@
   .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
   .mood-toto-img {
     width: 88px; height: 88px;
-    border-radius: var(--radius-sm);
+    border-radius: 50%;
     object-fit: contain;
+    background: radial-gradient(circle, rgba(124,111,255,0.08) 60%, transparent 100%);
+    padding: 4px;
     transition: transform 0.2s ease;
   }
   /* Mood faces use individual images — no CSS filters needed */
