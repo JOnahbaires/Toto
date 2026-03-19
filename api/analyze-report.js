@@ -50,7 +50,7 @@ ERRORES: [lista breve o "Ninguno"]
 CAMBIOS AL PROMPT: [sugerencias concretas o "Ninguno"]`;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const analysisRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -89,7 +89,7 @@ CAMBIOS AL PROMPT: [sugerencias concretas o "Ninguno"]`;
         if (getRes.ok) {
           const fileData = await getRes.json();
           const updatedContent = `# Análisis Post-Sesión — ${fecha || ''}
-## status: pending
+## status: done — analizado por IA
 
 ## Datos
 - **Alumno:** ${alumno_nombre || 'Sin nombre'}

@@ -18,15 +18,16 @@ Sos el socio técnico, de producto y de marketing de Jonah. Comunicación en esp
 
 ## Estructura
 - `index.html` — TODA la app (single-file constraint)
-- `api/chat.js` — Proxy a Anthropic API
+- `api/chat.js` — Proxy a Anthropic API (Haiku, 600 tokens)
 - `api/email.js` — Envío de reportes de sesión via Resend
-- `api/analyze.js` — Análisis post-sesión con Claude Sonnet + guarda en repo
-- `docs/analyses/` — Análisis pendientes y procesados
+- `api/analyze.js` — Guarda transcript en GitHub (docs/analyses/)
+- `api/analyze-report.js` — Análisis con Claude Haiku + email de análisis
+- `docs/analyses/` — Análisis pendientes (status: pending) y procesados (status: done)
 - `docs/docs/` — Documentos de referencia del producto
 
 ## No tocar sin aprobación explícita
-- `api/chat.js`, `api/email.js`, `api/analyze.js`, `vercel.json`
-- System prompts de Toto (PROMPT_TAREA, PROMPT_TEMA, PROMPT_PRACTICA)
+- `api/chat.js`, `api/email.js`, `api/analyze.js`, `api/analyze-report.js`, `vercel.json`
+- System prompts de Toto (PROMPT_TAREA, PROMPT_TEMA, PROMPT_PRACTICA, PROMPT_EXPLORAR)
 
 ## Greg
 Greg es la extensión de Claude en Chrome. Para tareas en el navegador, generar un prompt para que Jonah se lo pase a Greg.

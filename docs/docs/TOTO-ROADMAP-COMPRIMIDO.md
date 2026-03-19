@@ -1,13 +1,17 @@
-# 🚀 TOTO EL TUTOR — ROADMAP PRIORIZADO (Marzo 2026)
-> Versión comprimida. El roadmap completo vive en toto-roadmap-features.md
+# 🚀 TOTO EL TUTOR (TotalTutor) — ROADMAP PRIORIZADO (Marzo 2026)
+> Versión comprimida. Actualizado: 19 marzo 2026.
 
 ---
 
 ## 📍 ESTADO HOY
 
 - ✅ MVP deployado en toto-rust.vercel.app
-- ✅ Testing con ~5 niños (incluye Ofek)
+- ✅ Branding definido: **TotalTutor** — dominio totaltutor.com.ar comprado + auditio+.com.ar conectado
+- ✅ Testing con ~5 niños (incluye Ofek, Nico, Emma)
 - ✅ Todos los features core del MVP implementados (ver TOTO-ESTADO-TECNICO.md)
+- ✅ Sistema de email migrado a Resend (`api/email.js`)
+- ✅ Análisis post-sesión automático con Claude Sonnet (`api/analyze.js` + `api/analyze-report.js`)
+- ✅ Warmup captura edad y grado (1er a 7mo)
 - 🔄 Validando core loop antes de agregar complejidad
 
 ---
@@ -19,10 +23,10 @@
 
 | Feature | Prioridad | Estado |
 |---------|-----------|--------|
-| Fix encoding descarga sesión | 🔴 Alta | Propuesta pendiente |
-| Pruebas de práctica (Practice Test Mode) | 🟡 Media | TODO |
-| Inglés como materia | 🟡 Media | TODO |
-| Modo exploración sin tarea específica (Explore Mode) | 🟡 Media | TODO |
+| Fix encoding descarga sesión | 🔴 Alta | Pendiente |
+| Pruebas de práctica (Practice Test Mode) | 🟡 Media | ✅ Done — PROMPT_PRACTICA + checkpoints cada 5 preguntas |
+| Inglés como materia | 🟡 Media | ✅ Done — detección por regex, pool de preguntas, responde en inglés |
+| Modo exploración sin tarea específica (Explore Mode) | 🟡 Media | Pendiente |
 
 ---
 
@@ -34,8 +38,8 @@
 | Login (child + parent account) | 🔴 Alta | Requiere backend |
 | Dashboard padres (sessions, XP, reportes) | 🔴 Alta | Requiere backend |
 | **Google Classroom integration** | 🔴 Alta | **MÁXIMA PRIORIDAD ESTRATÉGICA** — 1 teacher = ~35 alumnos automáticos |
-| Reportes mensuales automáticos (email) | 🟡 Media | EmailJS actual es base |
-| Alertas de frustración/patrones (NLP simple) | 🟡 Media | - |
+| Reportes mensuales automáticos (email) | 🟡 Media | Base lista: Resend backend implementado |
+| Alertas de frustración/patrones (NLP simple) | 🟡 Media | Base parcial: análisis post-sesión ya detecta patrones |
 
 ---
 
@@ -106,7 +110,7 @@ Tablas mínimas:
 - messages (message_id, session_id, role, content, timestamp)
 ```
 
-**NO antes de validar core loop** — localStorage es suficiente para MVP y Fase 1.
+**NO antes de validar core loop** — localStorage + serverless APIs (`api/email.js`, `api/analyze.js`) es suficiente para MVP y Fase 1.
 
 ---
 
@@ -125,11 +129,11 @@ Tablas mínimas:
 
 ## 💡 FEATURES PEDIDOS POR USUARIOS
 
-| Feature | Pedido por | Prioridad |
-|---------|-----------|-----------|
-| Inglés como materia | Ofek | 🟡 Media |
-| Practice tests para preparar examen | Ofek | 🟡 Media |
-| Modo exploración sin tarea | Insight de Ofek | 🟡 Media |
+| Feature | Pedido por | Prioridad | Estado |
+|---------|-----------|-----------|--------|
+| Inglés como materia | Ofek | 🟡 Media | ✅ Done |
+| Practice tests para preparar examen | Ofek | 🟡 Media | ✅ Done |
+| Modo exploración sin tarea | Insight de Ofek | 🟡 Media | Pendiente |
 
 ---
 

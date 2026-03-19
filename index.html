@@ -101,23 +101,23 @@
   }
   .logo-img:hover { transform: scale(1.04) rotate(-1deg); }
   .tagline {
-    font-size: 0.95rem;
+    font-size: 1.9rem;
     color: #7c6fff;
-    margin-top: -14px;
-    padding-bottom: 2px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
+    margin-top: -20px;
+    padding-bottom: 4px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
     font-style: normal;
-    font-family: 'Baloo 2', cursive;
+    font-family: 'Nunito', sans-serif;
     position: relative;
     z-index: 2;
   }
 
-  /* ── XP ── */
+  /* ── XP / Medallas / Nivel ── */
   .xp-bar {
     display: none;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -125,9 +125,46 @@
     margin: 12px 0 18px;
     animation: fadeDown .6s ease both;
   }
-  .xp-stars { font-size: 1.05rem; letter-spacing: 2px; }
-  .xp-label { font-size: 0.72rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; flex: 1; }
+  .xp-level-icon { font-size: 1.4rem; }
+  .xp-level-name { font-size: 0.72rem; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+  .xp-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .xp-progress-bar { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+  .xp-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 3px; transition: width 0.5s ease; }
+  .xp-badges { font-size: 1rem; letter-spacing: 2px; white-space: nowrap; overflow: hidden; }
   .xp-count { font-family: 'Baloo 2', cursive; font-size: 1.25rem; font-weight: 800; color: var(--orange); }
+
+  /* ── Mapa de Logros ── */
+  .achievements-overlay {
+    display: none;
+    text-align: center;
+    padding: 24px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    margin: 16px 0;
+    animation: fadeUp .4s ease both;
+  }
+  .achievements-overlay.visible { display: block; }
+  .achievements-title { font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .achievement-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--surface3);
+    font-size: 0.88rem; font-weight: 700;
+    color: var(--text-mid);
+    transition: all 0.3s ease;
+  }
+  .achievement-item.earned { border-color: var(--green); color: var(--text); background: rgba(61,232,160,0.06); }
+  .achievement-icon { font-size: 1.3rem; }
+  .achievements-summary { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; }
 
   /* ── Streak ── */
   .streak-banner {
@@ -159,6 +196,15 @@
     animation: fadeUp .45s ease both;
   }
   .warmup-screen.visible { display: flex; }
+  .warmup-toto-face {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: contain;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 16px rgba(124,111,255,0.3));
+    animation: popIn .45s cubic-bezier(0.16,1,0.3,1) both;
+  }
 
   .warmup-greeting {
     font-family: 'Baloo 2', cursive;
@@ -218,10 +264,12 @@
   }
 
   .mood-grid {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     justify-content: center;
     margin-bottom: 28px;
+    max-width: 340px;
   }
   .mood-btn {
     display: flex;
@@ -240,10 +288,21 @@
   }
   .mood-btn:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--surface2); }
   .mood-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 22px var(--accent-glow); }
+  .mood-btn[data-mood="super"].active  { border-color: var(--cyan); box-shadow: 0 0 22px rgba(92,224,216,0.25); }
   .mood-btn[data-mood="bien"].active   { border-color: var(--green); box-shadow: 0 0 22px var(--green-glow); }
   .mood-btn[data-mood="masomenos"].active { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
   .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
-  .mood-emoji { font-size: 2rem; }
+  .mood-toto-img {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    object-fit: contain;
+    transition: filter 0.3s ease, transform 0.2s ease;
+  }
+  .mood-btn[data-mood="super"] .mood-toto-img  { filter: saturate(1.4) brightness(1.1) hue-rotate(-10deg); }
+  .mood-btn[data-mood="bien"] .mood-toto-img   { filter: saturate(1.2) brightness(1.05); }
+  .mood-btn[data-mood="masomenos"] .mood-toto-img { filter: saturate(0.5) sepia(0.3) brightness(0.9); }
+  .mood-btn[data-mood="mal"] .mood-toto-img    { filter: grayscale(0.7) hue-rotate(200deg) brightness(0.8); }
+  .mood-btn.active .mood-toto-img { transform: scale(1.1); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
 
   .btn-warmup-go {
@@ -277,7 +336,7 @@
   /* ── MODE SELECTOR ── */
   .mode-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 18px;
     animation: fadeUp .35s ease both;
@@ -300,6 +359,8 @@
   .mode-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 22px var(--accent-glow); }
   .mode-btn.active.tarea { border-color: var(--green); box-shadow: 0 0 22px var(--green-glow); }
   .mode-btn.active.tema { border-color: var(--cyan); box-shadow: 0 0 22px rgba(92,224,216,0.2); }
+  .mode-btn.active.practica { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
+  .mode-btn.active.explorar { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
   .mode-icon { font-size: 1.9rem; margin-top: 2px; }
   .mode-name { font-weight: 800; font-size: 0.97rem; }
   .mode-desc { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; font-weight: 600; line-height: 1.35; }
@@ -751,9 +812,11 @@
   @media (max-width: 480px) {
     .wrap { padding: 14px 12px 90px; }
     .logo-img { width: 320px; }
+    .tagline { font-size: 1.4rem; margin-top: -16px; }
     .hero-band { border-radius: 0 0 28px 28px; padding: 6px 12px 4px; }
     .mode-grid, .subject-grid { gap: 8px; }
-    .mood-btn { min-width: 78px; padding: 14px 12px; }
+    .mood-btn { min-width: 0; padding: 14px 12px; }
+    .mood-grid { max-width: 300px; gap: 10px; }
   }
 
   /* ═══════ ONBOARDING MODAL ═══════ */
@@ -808,7 +871,7 @@
   .onb-points li {
     color: var(--text);
     opacity: 0.88;
-    font-size: 0.97rem;
+    font-size: 1.05rem;
     line-height: 1.55;
     padding: 9px 0 9px 32px;
     position: relative;
@@ -818,8 +881,10 @@
     font-size: 1.15rem;
   }
   .onb-points li:nth-child(1)::before { content: '💡'; }
-  .onb-points li:nth-child(2)::before { content: '🎬'; }
-  .onb-points li:nth-child(3)::before { content: '📝'; }
+  .onb-points li:nth-child(2)::before { content: '📸'; }
+  .onb-points li:nth-child(3)::before { content: '🎬'; }
+  .onb-points li:nth-child(4)::before { content: '🧪'; }
+  .onb-points li:nth-child(5)::before { content: '🔭'; }
 
   .onb-btn {
     display: inline-block;
@@ -861,8 +926,12 @@
 
   <!-- XP -->
   <div class="xp-bar" id="xpBar" style="display:none;">
-    <div class="xp-stars" id="stars">⭐</div>
-    <div class="xp-label">Estrellas ganadas</div>
+    <div class="xp-level-icon" id="levelIcon">🔍</div>
+    <div class="xp-progress-wrap">
+      <div class="xp-level-name" id="levelName">Curioso</div>
+      <div class="xp-progress-bar"><div class="xp-progress-fill" id="levelProgress" style="width:0%"></div></div>
+    </div>
+    <div class="xp-badges" id="badges"></div>
     <div class="xp-count" id="xpCount">0</div>
   </div>
 
@@ -876,6 +945,7 @@
   ══════════════════════════════════════ -->
   <div class="warmup-screen visible" id="warmupScreen">
 
+    <img src="/cara-toto.png" class="warmup-toto-face" alt="Toto">
     <div class="warmup-greeting">¡Hola! ¿Cómo te llamás? 👋</div>
     <div class="warmup-sub">Contame tu nombre y cómo estás hoy</div>
 
@@ -919,17 +989,21 @@
     <div class="warmup-mood-label">¿Cómo estás hoy?</div>
 
     <div class="mood-grid">
+      <button class="mood-btn" data-mood="super" onclick="pickMood(this,'super')">
+        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto súper">
+        <span class="mood-label">¡Súper!</span>
+      </button>
       <button class="mood-btn active" data-mood="bien" onclick="pickMood(this,'bien')">
-        <span class="mood-emoji">😊</span>
-        <span class="mood-label">Bien</span>
+        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto piola">
+        <span class="mood-label">Piola</span>
       </button>
       <button class="mood-btn" data-mood="masomenos" onclick="pickMood(this,'masomenos')">
-        <span class="mood-emoji">😐</span>
-        <span class="mood-label">Más o menos</span>
+        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto maso">
+        <span class="mood-label">Maso</span>
       </button>
       <button class="mood-btn" data-mood="mal" onclick="pickMood(this,'mal')">
-        <span class="mood-emoji">😓</span>
-        <span class="mood-label">Mal</span>
+        <img src="/cara-toto.png" class="mood-toto-img" alt="Toto para atrás">
+        <span class="mood-label">Para atrás</span>
       </button>
     </div>
 
@@ -969,6 +1043,13 @@
           <div>
             <div class="mode-name">Practicar para un examen</div>
             <div class="mode-desc">Quiero prepararme con preguntas tipo prueba</div>
+          </div>
+        </button>
+        <button class="mode-btn explorar" onclick="pickMode(this,'explorar')">
+          <div class="mode-icon">🔭</div>
+          <div>
+            <div class="mode-name">Curiosidades</div>
+            <div class="mode-desc">Quiero explorar datos curiosos sobre un tema</div>
           </div>
         </button>
       </div>
@@ -1018,12 +1099,19 @@
     <!-- Error -->
     <div class="err" id="errMsg"></div>
 
+    <!-- Achievements -->
+    <div class="achievements-overlay" id="achievementsOverlay">
+      <div class="achievements-title">🏆 Tus logros de hoy</div>
+      <div class="achievements-grid" id="achievementsGrid"></div>
+      <div class="achievements-summary" id="achievementsSummary"></div>
+    </div>
+
     <!-- Celebration -->
     <div class="celeb" id="celeb">
       <div class="celeb-icon">🎉</div>
       <div class="celeb-title" id="celebTitle">¡Bien ahí, crack!</div>
       <div class="celeb-sub" style="color:var(--text-mid);font-size:0.85rem;font-weight:600;margin-bottom:4px;">Estás pensando por tu cuenta. Eso vale ORO.</div>
-      <div class="celeb-xp">+1 ⭐ estrella</div>
+      <div class="celeb-xp" id="celebBadge">+1 medalla</div>
     </div>
 
     <!-- Chat zone -->
@@ -1182,6 +1270,7 @@ function getFirstQuestion(subject, mood) {
 }
 
 const MOOD_CONTEXT = {
+  super:     'El alumno está re copado, con toda la energía — desafialo, subí el nivel, hacé preguntas más picantes y aprovechá el entusiasmo para ir más profundo.',
   bien:      'El alumno está de buen humor — respondé con energía, podés desafiarlo un poco más.',
   masomenos: 'El alumno está más o menos — sé paciente, hacé preguntas graduadas y validá su esfuerzo primero.',
   mal:       'El alumno está mal hoy — arrancá con apoyo emocional, usá preguntas muy simples al principio y ofrecé pausas si lo ves frustrado.'
@@ -1513,6 +1602,10 @@ REGLAS INVIOLABLES:
 
 - Preguntas cortas, claras, de a una
 
+Cada mensaje DEBE contener UNA sola línea de indagación.
+PERMITIDO: Reformular la misma pregunta para que se entienda mejor. Ejemplo: "¿Cómo te fue con el tema 3? ¿Qué recordás?" — ESTO ESTÁ BIEN porque ambas preguntan lo mismo.
+PROHIBIDO: Hacer dos preguntas sobre temas DISTINTOS en el mismo mensaje. Ejemplo: "¿Sabés qué es la fotosíntesis? ¿Y cuáles son los planetas del sistema solar?" — ESTO ESTÁ MAL porque son dos indagaciones diferentes.
+
 - Si el alumno se frustra, bajá la dificultad y motivalo
 
 ═══ DESCUBRIMIENTO DE FUNCIONALIDADES ═══
@@ -1530,6 +1623,67 @@ Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
 - 7mo grado: más desafiante, vocabulario técnico básico del tema, esperar respuestas más elaboradas.
 Si el grado es "no especificado", asumí 5to-6to grado como default.`
 
+const PROMPT_EXPLORAR = `Sos Toto, un guía curioso para chicos en edad escolar de CABA, Argentina.
+Tu personalidad es entusiasta, divertida y re copada — como un amigo que sabe un montón de datos re locos y te los cuenta con onda.
+
+REGLAS FUNDAMENTALES:
+1. Tu objetivo es DESPERTAR CURIOSIDAD, no enseñar formalmente.
+2. Arrancá con un dato curioso impactante sobre el tema que eligió el alumno.
+3. Después del dato, hacé UNA pregunta socrática que invite a pensar.
+4. Si el alumno responde, profundizá con otro dato conectado y otra pregunta.
+5. NUNCA des respuestas largas ni lecciones — siempre datos breves + preguntas.
+6. Usá el formato: dato curioso (2-3 líneas máx) → pregunta → escuchá → siguiente dato.
+7. Cada 3-4 intercambios, preguntá si quiere seguir con ese tema o explorar otro.
+
+FORMATO DE RESPUESTA:
+- Máximo 4 líneas por mensaje.
+- Un dato curioso + una pregunta. Nada más.
+- Usá emojis con moderación (1-2 por mensaje).
+
+DATOS CURIOSOS:
+- Priorizá datos sorprendentes, contraintuitivos o que conecten con la vida cotidiana.
+- Adaptá la complejidad al grado del alumno.
+- Si el alumno propone su propio dato, celebralo y conectalo con otro dato relacionado.
+
+ALUMNO: {NAME}, {AGE} años, {GRADE}
+ESTADO EMOCIONAL HOY: {MOOD_CONTEXT}
+TEMA DE CURIOSIDAD: {TASK}
+
+{IMAGE_CONTEXT}
+
+PRIMER MENSAJE: Saludá brevemente, tirá un dato curioso RE loco sobre {TASK}, y terminá con una pregunta que enganche. Ejemplo de estructura:
+"¡Buenas {NAME}! 🔭 ¿Sabías que [dato impactante sobre {TASK}]? [pregunta que invite a pensar]"
+
+REGLA DE UNA PREGUNTA:
+Cada mensaje DEBE contener UNA sola pregunta.
+PERMITIDO: Reformular la misma pregunta para que se entienda mejor.
+PROHIBIDO: Hacer dos preguntas sobre temas DISTINTOS en el mismo mensaje.
+
+TONO: Rioplatense puro — "che", "posta", "re loco", "dale", "vos", "¿sabías que...?", "mirá esto".
+
+═══ DESCUBRIMIENTO DE FUNCIONALIDADES ═══
+Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y oportuno (NO forzado), mencioná UNA funcionalidad por sesión de entre estas:
+- "¿Sabías que podés mandarme una foto de algo que te llame la atención y lo exploramos juntos?"
+- "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
+REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
+
+═══ ADAPTACIÓN POR GRADO ═══
+Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles. Evitá abstracciones.
+- 3er-4to grado: vocabulario un poco más amplio, ejemplos cotidianos, introducciones suaves a conceptos abstractos.
+- 5to-6to grado: vocabulario estándar, ejemplos de series/juegos, razonamiento más elaborado.
+- 7mo grado: más desafiante, vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Si el grado es "no especificado", asumí 5to-6to grado como default.
+
+═══ CIERRE ═══
+Cuando el alumno quiera parar o después de ~10 intercambios, ofrecé un mini-resumen:
+"¡Tremenda exploración! Hoy descubrimos: [2-3 datos clave]. ¿Querés seguir con otro tema o cerramos por hoy?"
+
+Si cierra: "{NAME}, ¡fue re piola explorar esto con vos! Volvé cuando quieras descubrir más datos locos. 🔭✨"
+
+[SESSION_END]
+Este bloque lo ponés SOLO cuando la sesión terminó naturalmente. Es una señal interna para el sistema, NO se la muestres al alumno.`
+
 /* ════════════════════════════════════════════════════
    STATE
 ════════════════════════════════════════════════════ */
@@ -1546,6 +1700,8 @@ let S = {
   hints: 0,
   xp: 0,
   streak: 0,
+  badges: [],
+  achievements: { intentaste: false, preguntaste: false, analogia: false, completaste: false, foto: false },
   imageBase64: null,
   imageType: null,
   phase: 'warmup',
@@ -1627,9 +1783,10 @@ function finishWarmup() {
   if (ageVal) localStorage.setItem('toto_edad', ageVal);
   if (gradeVal) localStorage.setItem('toto_grado', gradeVal);
 
-  // Mostrar la barra de estrellas después del warmup
+  // Mostrar la barra de medallas/nivel después del warmup
   const xpBar = $('xpBar');
   if (xpBar) xpBar.style.display = '';
+  updateXPBar();
 
   // Transición suave
   const warmup = $('warmupScreen');
@@ -1667,6 +1824,9 @@ function pickMode(btn, mode) {
   } else if (mode === 'practica') {
     ta.placeholder = 'Ej: Fracciones, Sistema solar, Revolución de Mayo...';
     lbl.textContent = 'Escribí el tema o temario del examen';
+  } else if (mode === 'explorar') {
+    ta.placeholder = 'Ej: Dinosaurios, El espacio, Volcanes, Egipto antiguo...';
+    lbl.textContent = 'Escribí el tema que te da curiosidad';
   } else {
     ta.placeholder = 'Ej: ¿Cuánto es 7 × 8?  /  ¿Qué quiere decir el poema?';
     lbl.textContent = 'Escribí tu tarea o pregunta';
@@ -1687,6 +1847,7 @@ function handleFile(event) {
     const [, data] = result.split(',');
     S.imageBase64 = data;
     S.imageType = file.type;
+    S.achievements.foto = true;
     $('previewThumb').src = result;
     $('previewName').textContent = file.name;
     $('previewSize').textContent = (file.size / 1024).toFixed(0) + ' KB';
@@ -1743,6 +1904,8 @@ function startSession() {
   // Toto arranca solo — sin mensaje del alumno primero
   const opener = S.mode === 'tema'
     ? `Quiero entender este tema: ${S.task}`
+    : S.mode === 'explorar'
+    ? `Quiero explorar curiosidades sobre: ${S.task}`
     : `Tengo esta tarea: ${S.task}`;
   callTutorFirst(opener);
 }
@@ -1797,6 +1960,12 @@ async function sendReply() {
     // Log student message
     logSessionMessage('kid', bubbleText);
 
+    // Achievement tracking
+    if (msg.length > 8) S.achievements.intentaste = true;
+    if (/\?/.test(msg)) S.achievements.preguntaste = true;
+    if (/analog[ií]a|peli|serie|minecraft|fortnite|explicame con/i.test(msg)) S.achievements.analogia = true;
+    if (replyImage.base64) { S.achievements.foto = true; earnBadge('foto', '📸', '¡Mandaste foto!'); }
+
     // Resetear timer de inactividad con cada mensaje
     resetInactivityTimer();
 
@@ -1814,7 +1983,7 @@ async function sendReply() {
 
     if (msg.length > 8) {
       S.streak++;
-      if (S.streak % 3 === 0) { gainXP(); showCeleb('🔥 ¡Racha de pensador!', '¡Seguís dándole, genio!'); }
+      if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
       updateStreak();
     }
     await callTutor(userContent, false);
@@ -1880,7 +2049,7 @@ async function callTutor(userMsg, isFirst) {
   chatZone.appendChild(loader);
   scrollDown();
 
-  const template = S.mode === 'tema' ? PROMPT_TEMA : S.mode === 'practica' ? PROMPT_PRACTICA : PROMPT_TAREA;
+  const template = S.mode === 'tema' ? PROMPT_TEMA : S.mode === 'practica' ? PROMPT_PRACTICA : S.mode === 'explorar' ? PROMPT_EXPLORAR : PROMPT_TAREA;
   const firstQ = isFirst ? getFirstQuestion(S.subject, S.mood) : '';
 
   // Build image context string for the prompt
@@ -2010,10 +2179,10 @@ async function callTutor(userMsg, isFirst) {
     }
 
     if (isFirst) {
-      gainXP();
       showCeleb(
         S.mode === 'tema' ? '💡 ¡Vamos a aprender juntos!' : '¡Arrancamos, crack! 🚀',
-        S.mode === 'tema' ? 'Preguntar es el primer paso para entender.' : 'Toto ya sabe de qué va. ¡A pensar!'
+        S.mode === 'tema' ? 'Preguntar es el primer paso para entender.' : 'Toto ya sabe de qué va. ¡A pensar!',
+        ''
       );
     }
 
@@ -2097,10 +2266,53 @@ function updateHintDots() {
   else lbl.textContent = '5 — llamá a mamá/papá 👨‍👩‍👧';
 }
 
-function gainXP() {
-  S.xp++;
+/* ── Niveles ── */
+const LEVELS = [
+  { name: 'Curioso',       icon: '🔍', min: 0,  max: 3  },
+  { name: 'Investigador',  icon: '🧪', min: 4,  max: 8  },
+  { name: 'Pensador',      icon: '🧠', min: 9,  max: 15 },
+  { name: 'Crack',         icon: '🏆', min: 16, max: 999 },
+];
+
+function getLevel(count) {
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (count >= LEVELS[i].min) return { ...LEVELS[i], index: i };
+  }
+  return { ...LEVELS[0], index: 0 };
+}
+
+function earnBadge(type, icon, label) {
+  S.badges.push({ type, icon, label, time: Date.now() });
+  S.xp = S.badges.length;
+  updateXPBar();
+  showCeleb(`${icon} ${label}`, null, `+1 ${icon} medalla`);
+
+  // Check for level up
+  const prev = getLevel(S.xp - 1);
+  const curr = getLevel(S.xp);
+  if (curr.index > prev.index) {
+    setTimeout(() => showCeleb(`🎉 ¡Nivel arriba!`, `Ahora sos ${curr.icon} ${curr.name}`, ''), 3800);
+  }
+}
+
+function updateXPBar() {
+  const lvl = getLevel(S.xp);
+  $('levelIcon').textContent = lvl.icon;
+  $('levelName').textContent = lvl.name;
   $('xpCount').textContent = S.xp;
-  $('stars').textContent = '⭐'.repeat(Math.min(S.xp, 10)) || '⭐';
+
+  // Progress bar
+  const progress = lvl.max === 999 ? 100 : Math.round(((S.xp - lvl.min) / (lvl.max - lvl.min + 1)) * 100);
+  $('levelProgress').style.width = Math.min(progress, 100) + '%';
+
+  // Show recent badges (last 5)
+  const recent = S.badges.slice(-5).map(b => b.icon).join('');
+  $('badges').textContent = recent;
+}
+
+function gainXP() {
+  earnBadge('intentaste', '💪', '¡Intentaste!');
+  S.achievements.intentaste = true;
 }
 
 function updateStreak() {
@@ -2110,13 +2322,48 @@ function updateStreak() {
   }
 }
 
-function showCeleb(title, sub) {
+function showCeleb(title, sub, badgeText) {
   const c = $('celeb');
   $('celebTitle').textContent = title || '🎉 ¡Bien ahí!';
   const s = c.querySelector('.celeb-sub');
   if (s && sub) s.textContent = sub;
+  const b = $('celebBadge');
+  if (b) b.textContent = badgeText || '+1 medalla';
   show(c);
   setTimeout(() => hide(c), 3500);
+}
+
+/* ── Mapa de Logros ── */
+const ACHIEVEMENT_DEFS = [
+  { key: 'intentaste',  icon: '💪', label: 'Intentaste algo' },
+  { key: 'preguntaste', icon: '🔍', label: 'Hiciste una pregunta' },
+  { key: 'analogia',    icon: '🎬', label: 'Pediste una analogía' },
+  { key: 'foto',        icon: '📸', label: 'Mandaste una foto' },
+  { key: 'completaste', icon: '🎯', label: 'Completaste la tarea' },
+];
+
+function showAchievements() {
+  const grid = $('achievementsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  let earned = 0;
+  ACHIEVEMENT_DEFS.forEach(a => {
+    const got = S.achievements[a.key];
+    if (got) earned++;
+    const item = document.createElement('div');
+    item.className = 'achievement-item' + (got ? ' earned' : '');
+    item.innerHTML = `<span class="achievement-icon">${got ? a.icon : '⬜'}</span><span>${a.label}</span>`;
+    grid.appendChild(item);
+  });
+  const summary = $('achievementsSummary');
+  if (summary) summary.textContent = `${earned}/${ACHIEVEMENT_DEFS.length} logros — ${earned >= 4 ? '¡Tremendo!' : earned >= 2 ? '¡Bien ahí!' : '¡Seguí intentando!'}`;
+
+  // Save to localStorage (cumulative)
+  const allTime = JSON.parse(localStorage.getItem('toto_achievements') || '{}');
+  ACHIEVEMENT_DEFS.forEach(a => { if (S.achievements[a.key]) allTime[a.key] = (allTime[a.key] || 0) + 1; });
+  localStorage.setItem('toto_achievements', JSON.stringify(allTime));
+
+  show($('achievementsOverlay'));
 }
 
 function resetSession() {
@@ -2129,9 +2376,12 @@ function resetSession() {
   // Limpiar email state para la próxima sesión
   clearTimeout(_inactivityTimer);
   _emailSent = false;
-  S = { ...S, mode: S.mode, subject: S.subject, xp: S.xp, name: S.name, mood: S.mood,
-        phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0,
+  S = { ...S, mode: S.mode, subject: S.subject, xp: 0, name: S.name, mood: S.mood,
+        phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0, badges:[],
+        achievements: { intentaste: false, preguntaste: false, analogia: false, completaste: false, foto: false },
         imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null };
+  hide($('achievementsOverlay'));
+  updateXPBar();
   replyImage = { base64: null, type: null };
   $('taskInput').value = '';
   const ri = $('replyInput'); if (ri) ri.value = '';
@@ -2220,6 +2470,13 @@ function sendSessionEmail(trigger) {
   _emailSent = true;
   clearTimeout(_inactivityTimer);
 
+  // Mark session as completed and show achievements
+  if (trigger.includes('SESSION_END') || trigger.includes('nueva tarea')) {
+    S.achievements.completaste = true;
+    earnBadge('completaste', '🎯', '¡Misión cumplida!');
+  }
+  showAchievements();
+
   finalizeSessionLog();
 
   const now = new Date();
@@ -2227,7 +2484,7 @@ function sendSessionEmail(trigger) {
     ? Math.round((now - new Date(S.sessionStartTime)) / 60000)
     : '?';
 
-  const moodLabel = { bien: '😊 Bien', masomenos: '😐 Más o menos', mal: '😓 Mal' };
+  const moodLabel = { super: '🤩 ¡Súper!', bien: '😊 Piola', masomenos: '😐 Maso', mal: '😓 Para atrás' };
 
   // Armar transcript completo
   const logs = (() => { try { return JSON.parse(localStorage.getItem('toto_sessions') || '[]'); } catch(e) { return []; } })();
@@ -2461,11 +2718,11 @@ function clearSessions() {
     <img class="onb-logo" id="onb-logo-img" src="" alt="Toto">
     <div class="onb-title">¡Hola! Soy Toto 👋</div>
     <ul class="onb-points">
-      <li>No te doy las respuestas: te ayudo a que VOS las descubras haciéndote preguntas.</li>
-      <li>🎬 ¿No entendés algo? Pedime que te lo explique como si fuera una escena de tu serie o peli favorita.</li>
-      <li>📸 Sacale foto a la tarea y mandámela, así la vemos juntos.</li>
-      <li>📝 Pedime un resumen de lo que fuimos charlando en cualquier momento.</li>
-      <li>🧪 ¿Tenés prueba? Activá el modo Práctica y te hago preguntas para prepararte.</li>
+      <li>No te doy las respuestas — te hago preguntas para que VOS las descubras. ¡Es más divertido así!</li>
+      <li>📸 ¿Tenés la tarea en papel? Sacale una foto y mandámela, la resolvemos juntos.</li>
+      <li>🎬 Decime "explicame con [tu peli o serie favorita]" y te lo cuento como si fuera una escena.</li>
+      <li>🧪 ¿Tenés prueba? Activá el modo Práctica y te preparo con preguntas tipo examen.</li>
+      <li>🔭 ¿Te da curiosidad algo? Probá el modo Curiosidades y exploramos datos re locos juntos.</li>
     </ul>
     <button class="onb-btn" id="onb-close-btn">¡Dale, arranquemos!</button>
   </div>
