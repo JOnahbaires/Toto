@@ -2324,15 +2324,24 @@ function updateStreak() {
   }
 }
 
+let _celebTimer = null;
 function showCeleb(title, sub, badgeText) {
   const c = $('celeb');
+  if (!c) return;
   $('celebTitle').textContent = title || '🎉 ¡Bien ahí!';
   const s = c.querySelector('.celeb-sub');
-  if (s && sub) s.textContent = sub;
+  if (s) s.textContent = sub || '';
   const b = $('celebBadge');
   if (b) b.textContent = badgeText || '+1 medalla';
-  show(c);
-  setTimeout(() => hide(c), 3500);
+  // Forzar display directo — el sistema de clases tiene conflictos de timing
+  c.style.display = 'block';
+  c.classList.add('visible');
+  if (_celebTimer) clearTimeout(_celebTimer);
+  _celebTimer = setTimeout(() => {
+    c.style.display = '';
+    c.classList.remove('visible');
+    _celebTimer = null;
+  }, 3500);
 }
 
 /* ── Mapa de Logros ── */
