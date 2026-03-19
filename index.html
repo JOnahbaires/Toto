@@ -2254,32 +2254,39 @@ function sendSessionEmail(trigger) {
     .then(d => console.log('[Toto] Email sesión enviado OK —', trigger, d))
     .catch(err => console.warn('[Toto] Error enviando email sesión:', err));
 
-  // Enviar análisis post-sesión al backend (en paralelo, no bloquea)
-  // Contar mensajes de Toto en el transcript para robustez (no depender de messageCount)
+  // Análisis post-sesión: 2 llamadas separadas (cada una con su propio budget de 10s)
   const totoMsgCount = transcript ? (transcript.match(/\[Toto\]/g) || []).length : 0;
-  console.log('[Toto] Análisis check:', { totoMsgCount, transcriptLen: transcript?.length, messageCount: S.messageCount });
+  console.log('[Toto] Análisis check:', { totoMsgCount, transcriptLen: transcript?.length });
   if (transcript && totoMsgCount >= 2) {
+    const analyzePayload = {
+      alumno_nombre: S.name || 'Sin nombre',
+      mood: moodLabel[S.mood] || S.mood || '?',
+      materia: SUBJ_MAP[S.subject] || 'General',
+      tarea: S.task || 'Sin tarea',
+      transcript: transcript,
+      fecha: now.toLocaleString('es-AR')
+    };
+
+    // Paso 1: guardar transcript en GitHub
     fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        alumno_nombre: S.name || 'Sin nombre',
-        mood: moodLabel[S.mood] || S.mood || '?',
-        materia: SUBJ_MAP[S.subject] || 'General',
-        tarea: S.task || 'Sin tarea',
-        transcript: transcript,
-        fecha: now.toLocaleString('es-AR')
-      })
+      body: JSON.stringify(analyzePayload)
     })
-      .then(r => {
-        const status = r.status;
-        return r.json().then(d => ({ status, data: d }));
+      .then(r => r.json())
+      .then(data => {
+        console.log('[Toto] Transcript guardado', data);
+        // Paso 2: análisis con Claude + email (llamada separada)
+        analyzePayload.fileName = data.file;
+        return fetch('/api/analyze-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(analyzePayload)
+        });
       })
-      .then(({ status, data }) => {
-        if (status === 200) console.log('[Toto] Análisis post-sesión OK', data);
-        else console.warn('[Toto] Análisis post-sesión ERROR', status, data);
-      })
-      .catch(err => console.warn('[Toto] Error análisis post-sesión:', err));
+      .then(r => r.json())
+      .then(data => console.log('[Toto] Análisis + email OK', data))
+      .catch(err => console.warn('[Toto] Error análisis:', err));
   }
 }
 
