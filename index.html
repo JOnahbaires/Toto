@@ -1785,7 +1785,7 @@ function finishWarmup() {
 
   // Mostrar la barra de medallas/nivel después del warmup
   const xpBar = $('xpBar');
-  if (xpBar) xpBar.style.display = '';
+  if (xpBar) xpBar.style.display = 'flex';
   updateXPBar();
 
   // Transición suave
@@ -1983,9 +1983,11 @@ async function sendReply() {
 
     if (msg.length > 8) {
       S.streak++;
+      if (S.streak === 1) { earnBadge('intentaste', '💪', '¡Intentaste!'); }
       if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
       updateStreak();
     }
+    if (/\?/.test(msg) && !S._preguntaBadge) { S._preguntaBadge = true; earnBadge('detective', '🔍', '¡Buena pregunta!'); S.achievements.preguntaste = true; }
     await callTutor(userContent, false);
   } finally {
     _sending = false;
@@ -2342,25 +2344,27 @@ const ACHIEVEMENT_DEFS = [
   { key: 'completaste', icon: '🎯', label: 'Completaste la tarea' },
 ];
 
-function showAchievements() {
+function showAchievements(achievements) {
+  const ach = achievements || S.achievements;
   const grid = $('achievementsGrid');
   if (!grid) return;
   grid.innerHTML = '';
   let earned = 0;
   ACHIEVEMENT_DEFS.forEach(a => {
-    const got = S.achievements[a.key];
+    const got = ach[a.key];
     if (got) earned++;
     const item = document.createElement('div');
     item.className = 'achievement-item' + (got ? ' earned' : '');
     item.innerHTML = `<span class="achievement-icon">${got ? a.icon : '⬜'}</span><span>${a.label}</span>`;
     grid.appendChild(item);
   });
+  if (earned === 0) return; // No mostrar si no hay logros
   const summary = $('achievementsSummary');
   if (summary) summary.textContent = `${earned}/${ACHIEVEMENT_DEFS.length} logros — ${earned >= 4 ? '¡Tremendo!' : earned >= 2 ? '¡Bien ahí!' : '¡Seguí intentando!'}`;
 
   // Save to localStorage (cumulative)
   const allTime = JSON.parse(localStorage.getItem('toto_achievements') || '{}');
-  ACHIEVEMENT_DEFS.forEach(a => { if (S.achievements[a.key]) allTime[a.key] = (allTime[a.key] || 0) + 1; });
+  ACHIEVEMENT_DEFS.forEach(a => { if (ach[a.key]) allTime[a.key] = (allTime[a.key] || 0) + 1; });
   localStorage.setItem('toto_achievements', JSON.stringify(allTime));
 
   show($('achievementsOverlay'));
@@ -2376,12 +2380,17 @@ function resetSession() {
   // Limpiar email state para la próxima sesión
   clearTimeout(_inactivityTimer);
   _emailSent = false;
+  // Guardar achievements antes de limpiar
+  const savedAch = _pendingAchievements || { ...S.achievements };
+  const savedBadges = _pendingBadges || [...S.badges];
+
   S = { ...S, mode: S.mode, subject: S.subject, xp: 0, name: S.name, mood: S.mood,
-        phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0, badges:[],
+        phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0, badges:[], _preguntaBadge: false,
         achievements: { intentaste: false, preguntaste: false, analogia: false, completaste: false, foto: false },
         imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null };
-  hide($('achievementsOverlay'));
   updateXPBar();
+  _pendingAchievements = null;
+  _pendingBadges = null;
   replyImage = { base64: null, type: null };
   $('taskInput').value = '';
   const ri = $('replyInput'); if (ri) ri.value = '';
@@ -2401,6 +2410,10 @@ function resetSession() {
   if (hb) { hb.disabled = false; hb.style.opacity = '1'; }
   updateHintDots();
   hideErr();
+
+  // Mostrar mapa de logros de la sesión que acaba de terminar
+  if (savedAch) showAchievements(savedAch);
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 /* ════════════════════════════════════════════════════
@@ -2452,6 +2465,8 @@ function downloadSummary() {
    EMAIL REPORTING (EmailJS)
 ════════════════════════════════════════════════════ */
 let _emailSent = false;
+let _pendingAchievements = null;
+let _pendingBadges = null;
 let _inactivityTimer = null;
 
 function resetInactivityTimer() {
@@ -2470,12 +2485,13 @@ function sendSessionEmail(trigger) {
   _emailSent = true;
   clearTimeout(_inactivityTimer);
 
-  // Mark session as completed and show achievements
+  // Mark session as completed
   if (trigger.includes('SESSION_END') || trigger.includes('nueva tarea')) {
     S.achievements.completaste = true;
-    earnBadge('completaste', '🎯', '¡Misión cumplida!');
   }
-  showAchievements();
+  // Save achievements before session data is cleared
+  _pendingAchievements = { ...S.achievements };
+  _pendingBadges = [...S.badges];
 
   finalizeSessionLog();
 
