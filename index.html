@@ -294,9 +294,9 @@
   .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
   .mood-toto-img {
     width: 60px; height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    transition: filter 0.3s ease, transform 0.2s ease;
+    border-radius: var(--radius-sm);
+    object-fit: contain;
+    transition: transform 0.2s ease;
   }
   /* Mood faces use individual images — no CSS filters needed */
   .mood-btn.active .mood-toto-img { transform: scale(1.1); }
@@ -730,12 +730,19 @@
   .celeb {
     text-align: center;
     padding: 20px;
-    background: linear-gradient(135deg, rgba(61,232,160,0.08), rgba(61,232,160,0.03));
-    border: 2px solid rgba(61,232,160,0.35);
+    background: var(--surface);
+    border: 2px solid rgba(61,232,160,0.5);
     border-radius: var(--radius);
     display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 20px rgba(61,232,160,0.15);
     animation: popIn .4s cubic-bezier(.175,.885,.32,1.275) both;
-    margin-bottom: 14px;
   }
   .celeb.visible { display: block; }
   .celeb-icon { font-size: 2.6rem; margin-bottom: 6px; }
