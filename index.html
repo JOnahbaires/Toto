@@ -124,6 +124,11 @@
     padding: 12px 18px;
     margin: 12px 0 18px;
     animation: fadeDown .6s ease both;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .xp-level-icon { font-size: 1.4rem; }
   .xp-level-name { font-size: 0.72rem; color: var(--accent); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
@@ -546,6 +551,8 @@
   .btn-hint:hover { background: rgba(255,179,71,0.18); }
   .btn-new { background: rgba(61,232,160,0.08); color: var(--green); border: 1.5px solid rgba(61,232,160,0.25); }
   .btn-new:hover { background: rgba(61,232,160,0.15); }
+  .btn-finish { background: rgba(255,107,138,0.1); color: var(--pink); border: 1.5px solid rgba(255,107,138,0.3); }
+  .btn-finish:hover { background: rgba(255,107,138,0.18); }
 
   /* ── Chat ── */
   .chat-zone { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
@@ -1221,6 +1228,7 @@
       <button class="btn btn-sm btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
       <button class="btn btn-sm btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
       <button class="btn btn-sm btn-summary" onclick="smartSummary()">📝 Resumen hasta ahora</button>
+      <button class="btn btn-sm btn-finish" onclick="finishSession()">✅ Terminé</button>
     </div>
 
     <!-- Smart Summary Modal -->
@@ -2460,6 +2468,40 @@ function showAchievements(achievements) {
   localStorage.setItem('toto_achievements', JSON.stringify(allTime));
 
   show($('achievementsOverlay'));
+}
+
+/* ════════════════════════════════════════════════════
+   FINISH SESSION — Cierre formal (logros → resumen → email)
+════════════════════════════════════════════════════ */
+async function finishSession() {
+  if (S.history.length < 2) {
+    showErr('Todavía no hay suficiente conversación para terminar 😅');
+    return;
+  }
+
+  // 1. Enviar email de sesión
+  if (!_emailSent && S.sessionId && S.phase === 'chat') {
+    sendSessionEmail('terminé (botón)');
+  }
+  finalizeSessionLog();
+  clearTimeout(_inactivityTimer);
+
+  // 2. Mostrar logros
+  showAchievements();
+
+  // 3. Disparar resumen automáticamente
+  await smartSummary();
+
+  // 4. Deshabilitar chat y acciones — sesión cerrada
+  hide($('replyBox'));
+  hide($('actionRow'));
+
+  // 5. Agregar mensaje de despedida en el chat
+  const farewell = document.createElement('div');
+  farewell.className = 'bubble tutor';
+  farewell.innerHTML = `<b>¡Genial sesión!</b> 🎉 Revisá tus logros arriba. Cuando quieras volver, recargá la página.`;
+  $('chatZone').appendChild(farewell);
+  farewell.scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetSession() {
