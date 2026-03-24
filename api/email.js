@@ -97,10 +97,11 @@ function escapeHtml(s) {
 
 function formatConversation(transcript, alumnoName) {
   if (!transcript) return '<p style="color:#999;">Sin mensajes registrados</p>';
-  const lines = transcript.split('\n');
+  // Split por el patrón [Nombre]: que indica inicio de mensaje
+  const messages = transcript.split(/(?=^\[)/m).filter(m => m.trim());
   let html = '';
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (const msg of messages) {
+    const trimmed = msg.trim();
     if (!trimmed) continue;
     const isToto = trimmed.startsWith('[Toto]');
     const bgColor = isToto ? '#f0eeff' : '#f5f5f5';
@@ -109,7 +110,7 @@ function formatConversation(transcript, alumnoName) {
     const text = trimmed.replace(/^\[(Toto|[^\]]+)\]:\s*/, '');
     html += `<div style="background:${bgColor};border-radius:8px;padding:10px 14px;margin-bottom:8px;">
       <div style="font-size:0.75rem;font-weight:700;color:${labelColor};margin-bottom:4px;">${label}</div>
-      <div style="font-size:0.88rem;line-height:1.5;color:#333;">${escapeHtml(text)}</div>
+      <div style="font-size:0.88rem;line-height:1.5;color:#333;">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
     </div>`;
   }
   return html || '<p style="color:#999;">Sin mensajes registrados</p>';
