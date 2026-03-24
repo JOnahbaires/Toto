@@ -318,15 +318,16 @@
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
-    object-position: center top;
-    background: none;
+    object-position: center 15%;
+    background: var(--surface);
     box-sizing: border-box;
     padding: 0;
     flex-shrink: 0;
     transition: transform 0.2s ease;
     border: 3px solid var(--surface3);
+    transform: scale(1.15);
   }
-  .mood-btn.active .mood-toto-img { transform: scale(1.15); }
+  .mood-btn.active .mood-toto-img { transform: scale(1.25); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
 
   .btn-warmup-go {
@@ -759,35 +760,35 @@
 
   /* ── Celebration (toast compacto, esquina superior derecha) ── */
   .celeb {
-    text-align: left;
-    padding: 14px 18px;
-    background: var(--surface);
+    text-align: center;
+    padding: 18px 24px;
+    background: rgba(20, 24, 41, 0.92);
     border: 2px solid rgba(61,232,160,0.55);
-    border-radius: 16px;
+    border-radius: 20px;
     display: none;
     position: fixed;
-    top: 16px;
-    right: 16px;
-    left: auto;
-    transform: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1000;
     width: auto;
-    max-width: 270px;
-    box-shadow: 0 6px 28px rgba(0,0,0,0.45), 0 0 20px rgba(61,232,160,0.3), 0 0 6px rgba(61,232,160,0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    animation: celebBounceIn .45s cubic-bezier(.175,.885,.32,1.275) both;
+    min-width: 220px;
+    max-width: 320px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(61,232,160,0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    animation: celebPopIn .5s cubic-bezier(.175,.885,.32,1.275) both;
   }
-  @keyframes celebBounceIn {
-    0% { opacity: 0; transform: translateX(80px) scale(0.9); }
-    60% { opacity: 1; transform: translateX(-6px) scale(1.03); }
-    100% { opacity: 1; transform: translateX(0) scale(1); }
+  @keyframes celebPopIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    60% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
-  .celeb.visible { display: flex; align-items: center; gap: 10px; }
-  .celeb-icon { font-size: 1.8rem; flex-shrink: 0; margin-bottom: 0; }
-  .celeb-content { display: flex; flex-direction: column; gap: 2px; }
-  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 800; color: var(--green); margin-bottom: 0; line-height: 1.2; }
-  .celeb-xp { display: inline-block; background: rgba(255,179,71,0.12); color: var(--orange); border: 1px solid rgba(255,179,71,0.35); border-radius: 14px; padding: 2px 10px; font-size: 0.78rem; font-weight: 800; margin-top: 2px; width: fit-content; }
+  .celeb.visible { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .celeb-icon { font-size: 2.4rem; flex-shrink: 0; margin-bottom: 0; }
+  .celeb-content { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 1.15rem; font-weight: 800; color: var(--green); margin-bottom: 0; line-height: 1.3; }
+  .celeb-xp { display: inline-block; background: rgba(255,179,71,0.12); color: var(--orange); border: 1px solid rgba(255,179,71,0.35); border-radius: 14px; padding: 4px 14px; font-size: 0.85rem; font-weight: 800; margin-top: 4px; width: fit-content; }
 
   /* ── Loading ── */
   .loading-bubble {
@@ -822,14 +823,15 @@
   .divider.visible { display: block; }
 
   /* ── Actions ── */
-  .actions { display: none; flex-direction: column; gap: 8px; margin-top: 10px; margin-bottom: 10px; }
+  .actions { display: none; flex-direction: column; gap: 6px; margin-top: 10px; margin-bottom: 10px; }
   .actions.visible { display: flex; }
-  .actions-row-quick { display: flex; gap: 8px; }
-  .actions-row-main { display: flex; gap: 8px; }
-  .actions-row-quick .btn { flex: 0 0 auto; }
-  .actions-row-main .btn { flex: 1; padding: 12px 16px; font-size: 0.92rem; font-weight: 800; }
-  .btn-summary { background: linear-gradient(135deg, rgba(124,111,255,0.15), rgba(155,109,255,0.1)); color: var(--accent); border: 1.5px solid rgba(124,111,255,0.35); }
-  .btn-summary:hover { background: linear-gradient(135deg, rgba(124,111,255,0.25), rgba(155,109,255,0.18)); }
+  .actions-row-quick { display: flex; gap: 6px; }
+  .actions-row-quick .btn { flex: 1; padding: 10px 12px; font-size: 0.82rem; text-align: center; }
+  .actions-row-main { display: flex; gap: 6px; }
+  .actions-row-main .btn { flex: 1; padding: 13px 16px; font-size: 0.88rem; font-weight: 800; text-align: center; }
+  .btn-summary { background: linear-gradient(135deg, rgba(124,111,255,0.12), rgba(155,109,255,0.08)); color: var(--accent); border: 1.5px solid rgba(124,111,255,0.3); }
+  .btn-summary:hover { background: linear-gradient(135deg, rgba(124,111,255,0.22), rgba(155,109,255,0.15)); }
+  .btn-finish { font-weight: 800; }
 
   /* ── Smart Summary Modal ── */
   .summary-overlay {
@@ -2313,7 +2315,7 @@ async function callTutor(userMsg, isFirst) {
       sendSessionEmail('[SESSION_END] conversacional');
     }
 
-    if (isFirst) {
+    if (isFirst && !S.isPersonalTopic) {
       showCeleb(
         S.mode === 'tema' ? '💡 ¡Vamos a aprender juntos!' : '¡Arrancamos, crack! 🚀',
         S.mode === 'tema' ? 'Preguntar es el primer paso para entender.' : 'Toto ya sabe de qué va. ¡A pensar!',
