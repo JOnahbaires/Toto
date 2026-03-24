@@ -318,16 +318,16 @@
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
-    object-position: center 15%;
+    object-position: center 20%;
     background: var(--surface);
     box-sizing: border-box;
     padding: 0;
     flex-shrink: 0;
     transition: transform 0.2s ease;
     border: 3px solid var(--surface3);
-    transform: scale(1.15);
+    transform: scale(1.35);
   }
-  .mood-btn.active .mood-toto-img { transform: scale(1.25); }
+  .mood-btn.active .mood-toto-img { transform: scale(1.45); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
 
   .btn-warmup-go {
@@ -772,8 +772,8 @@
     transform: translate(-50%, -50%);
     z-index: 1000;
     width: auto;
-    min-width: 220px;
-    max-width: 320px;
+    min-width: 280px;
+    max-width: 340px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(61,232,160,0.25);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -785,9 +785,9 @@
     100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
   .celeb.visible { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .celeb-icon { font-size: 2.4rem; flex-shrink: 0; margin-bottom: 0; }
+  .celeb-icon { font-size: 3rem; flex-shrink: 0; margin-bottom: 0; }
   .celeb-content { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 1.15rem; font-weight: 800; color: var(--green); margin-bottom: 0; line-height: 1.3; }
+  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 1.4rem; font-weight: 800; color: var(--green); margin-bottom: 0; line-height: 1.3; }
   .celeb-xp { display: inline-block; background: rgba(255,179,71,0.12); color: var(--orange); border: 1px solid rgba(255,179,71,0.35); border-radius: 14px; padding: 4px 14px; font-size: 0.85rem; font-weight: 800; margin-top: 4px; width: fit-content; }
 
   /* ── Loading ── */
@@ -825,10 +825,8 @@
   /* ── Actions ── */
   .actions { display: none; flex-direction: column; gap: 6px; margin-top: 10px; margin-bottom: 10px; }
   .actions.visible { display: flex; }
-  .actions-row-quick { display: flex; gap: 6px; }
-  .actions-row-quick .btn { flex: 1; padding: 10px 12px; font-size: 0.82rem; text-align: center; }
-  .actions-row-main { display: flex; gap: 6px; }
-  .actions-row-main .btn { flex: 1; padding: 13px 16px; font-size: 0.88rem; font-weight: 800; text-align: center; }
+  .actions-row-quick, .actions-row-main { display: flex; gap: 6px; }
+  .actions-row-quick .btn, .actions-row-main .btn { flex: 1; padding: 12px 16px; font-size: 0.88rem; font-weight: 800; text-align: center; }
   .btn-summary { background: linear-gradient(135deg, rgba(124,111,255,0.12), rgba(155,109,255,0.08)); color: var(--accent); border: 1.5px solid rgba(124,111,255,0.3); }
   .btn-summary:hover { background: linear-gradient(135deg, rgba(124,111,255,0.22), rgba(155,109,255,0.15)); }
   .btn-finish { font-weight: 800; }
@@ -1249,8 +1247,8 @@
     <!-- Action buttons -->
     <div class="actions" id="actionRow">
       <div class="actions-row-quick">
-        <button class="btn btn-sm btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
-        <button class="btn btn-sm btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
+        <button class="btn btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
+        <button class="btn btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
       </div>
       <div class="actions-row-main">
         <button class="btn btn-summary" onclick="smartSummary()">📝 Resumen hasta ahora</button>
@@ -1999,6 +1997,8 @@ function startSession() {
   const task = $('taskInput').value.trim();
   if (!task) { showErr('¡Escribí tu tarea o pregunta primero! 😊'); return; }
   S.task = task;
+  // Detectar tema personal desde la tarea inicial (antes de cualquier celebration)
+  detectPersonalTopic(task);
   S.subject = detectSubject(task);
   S.attempt = '';
   S.hints = 0;
