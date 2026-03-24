@@ -324,7 +324,7 @@
     padding: 4px;
     flex-shrink: 0;
     transition: transform 0.2s ease;
-    mix-blend-mode: lighten;
+    background: none;
   }
   .mood-btn.active .mood-toto-img { transform: scale(1.15); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
@@ -2082,12 +2082,29 @@ async function sendReply() {
     // Log student message
     logSessionMessage('kid', bubbleText);
 
-    // Achievement tracking (solo académico)
+    // PRIMERO: detectar tema personal (antes de cualquier badge o achievement)
+    detectPersonalTopic(msg);
+
+    // Achievement + Badge tracking (SOLO en contexto académico)
     if (!S.isPersonalTopic) {
+      // Achievements
       if (msg.length > 8) S.achievements.intentaste = true;
       if (/\?/.test(msg) && msg.length > 15) S.achievements.preguntaste = true;
       if (/analog[ií]a|peli|serie|minecraft|fortnite|explicame con/i.test(msg)) S.achievements.analogia = true;
       if (replyImage.base64) { S.achievements.foto = true; earnBadge('foto', '📸', '¡Mandaste foto!'); }
+
+      // Badges
+      if (msg.length > 8) {
+        S.streak++;
+        if (S.streak === 1) { earnBadge('intentaste', '💪', '¡Intentaste!'); }
+        if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
+        updateStreak();
+      }
+      if (/\?/.test(msg) && msg.length > 15 && !S._preguntaBadge) {
+        S._preguntaBadge = true;
+        earnBadge('detective', '🔍', '¡Buena pregunta!');
+        S.achievements.preguntaste = true;
+      }
     }
 
     // Resetear timer de inactividad con cada mensaje
@@ -2104,24 +2121,6 @@ async function sendReply() {
     } else {
       userContent = msg;
     }
-
-    // Detectar tema personal antes de evaluar badges
-    detectPersonalTopic(msg);
-
-    // Badges SOLO en contexto académico (no personal)
-    if (!S.isPersonalTopic) {
-      if (msg.length > 8) {
-        S.streak++;
-        if (S.streak === 1) { earnBadge('intentaste', '💪', '¡Intentaste!'); }
-        if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
-        updateStreak();
-      }
-      // Pregunta académica: tiene ?, más de 15 chars, y no es solo "si?" "que?" "eh?"
-      if (/\?/.test(msg) && msg.length > 15 && !S._preguntaBadge) {
-        S._preguntaBadge = true;
-        earnBadge('detective', '🔍', '¡Buena pregunta!');
-        S.achievements.preguntaste = true;
-      }
     }
     await callTutor(userContent, false);
   } finally {
