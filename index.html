@@ -313,21 +313,24 @@
   .mood-btn[data-mood="bien"].active   { border-color: var(--green); box-shadow: 0 0 22px var(--green-glow); }
   .mood-btn[data-mood="masomenos"].active { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
   .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
-  .mood-toto-img {
+  .mood-img-wrap {
     width: 100px; height: 100px;
-    aspect-ratio: 1 / 1;
     border-radius: 50%;
-    object-fit: cover;
-    object-position: center 20%;
-    background: var(--surface);
-    box-sizing: border-box;
-    padding: 0;
+    overflow: hidden;
     flex-shrink: 0;
-    transition: transform 0.2s ease;
     border: 3px solid var(--surface3);
-    transform: scale(1.35);
+    background: var(--surface);
   }
-  .mood-btn.active .mood-toto-img { transform: scale(1.45); }
+  .mood-toto-img {
+    width: 200%;
+    height: 200%;
+    object-fit: cover;
+    object-position: center 30%;
+    margin: -50% 0 0 -50%;
+    transition: transform 0.2s ease;
+  }
+  .mood-btn.active .mood-img-wrap { border-color: var(--accent); }
+  .mood-btn.active .mood-toto-img { transform: scale(1.08); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
 
   .btn-warmup-go {
@@ -907,7 +910,7 @@
     .mode-grid, .subject-grid { gap: 8px; }
     .mood-btn { min-width: 0; padding: 14px 12px; }
     .mood-grid { max-width: 300px; gap: 10px; }
-    .mood-toto-img { width: 80px; height: 80px; }
+    .mood-img-wrap { width: 80px; height: 80px; }
   }
 
   /* ═══════ ONBOARDING MODAL ═══════ */
@@ -1081,19 +1084,19 @@
 
     <div class="mood-grid">
       <button class="mood-btn" data-mood="super" onclick="pickMood(this,'super')">
-        <img src="/toto-super.png" class="mood-toto-img" alt="Toto súper">
+        <div class="mood-img-wrap"><img src="/toto-super.png" class="mood-toto-img" alt="Toto súper"></div>
         <span class="mood-label">¡Súper!</span>
       </button>
       <button class="mood-btn active" data-mood="bien" onclick="pickMood(this,'bien')">
-        <img src="/toto-piola.png" class="mood-toto-img" alt="Toto piola">
+        <div class="mood-img-wrap"><img src="/toto-piola.png" class="mood-toto-img" alt="Toto piola"></div>
         <span class="mood-label">Piola</span>
       </button>
       <button class="mood-btn" data-mood="masomenos" onclick="pickMood(this,'masomenos')">
-        <img src="/toto-maso.png" class="mood-toto-img" alt="Toto maso">
+        <div class="mood-img-wrap"><img src="/toto-maso.png" class="mood-toto-img" alt="Toto maso"></div>
         <span class="mood-label">Maso</span>
       </button>
       <button class="mood-btn" data-mood="mal" onclick="pickMood(this,'mal')">
-        <img src="/toto-para-atras.png" class="mood-toto-img" alt="Toto para atrás">
+        <div class="mood-img-wrap"><img src="/toto-para-atras.png" class="mood-toto-img" alt="Toto para atrás"></div>
         <span class="mood-label">Para atrás</span>
       </button>
     </div>
