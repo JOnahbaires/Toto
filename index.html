@@ -76,7 +76,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2px 20px 6px;
+    padding: 2px 20px 16px;
     z-index: 10;
     animation: fadeDown .5s ease both;
     /* subtle inner bottom glow to blend into dark bg */
@@ -101,16 +101,26 @@
   }
   .logo-img:hover { transform: scale(1.04) rotate(-1deg); }
   .tagline {
-    font-size: 1.9rem;
-    color: #7c6fff;
-    margin-top: -20px;
-    padding-bottom: 4px;
-    font-weight: 900;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--cyan), var(--accent), var(--pink));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease infinite;
+    margin-top: -16px;
+    padding-bottom: 14px;
+    font-weight: 800;
     letter-spacing: 0.5px;
-    font-style: normal;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Baloo 2', cursive;
     position: relative;
     z-index: 2;
+    text-shadow: none;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   /* ── XP / Medallas / Nivel ── */
@@ -175,6 +185,7 @@
   .achievement-item.earned { border-color: var(--green); color: var(--text); background: rgba(61,232,160,0.06); }
   .achievement-icon { font-size: 1.3rem; }
   .achievements-summary { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; }
+  .session-end-block { margin-top: 16px; animation: fadeUp .4s ease both; }
 
   /* ── Streak ── */
   .streak-banner {
@@ -303,19 +314,19 @@
   .mood-btn[data-mood="masomenos"].active { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
   .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
   .mood-toto-img {
-    width: 88px; height: 88px;
+    width: 100px; height: 100px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: contain;
     object-position: center;
-    background: radial-gradient(circle, rgba(124,111,255,0.08) 60%, transparent 100%);
+    background: transparent;
     box-sizing: border-box;
     padding: 4px;
     flex-shrink: 0;
     transition: transform 0.2s ease;
+    mix-blend-mode: lighten;
   }
-  /* Mood faces use individual images — no CSS filters needed */
-  .mood-btn.active .mood-toto-img { transform: scale(1.1); }
+  .mood-btn.active .mood-toto-img { transform: scale(1.15); }
   .mood-label { font-size: 0.78rem; font-weight: 800; }
 
   .btn-warmup-go {
@@ -811,9 +822,13 @@
   .divider.visible { display: block; }
 
   /* ── Actions ── */
-  .actions { display: none; gap: 8px; margin-top: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .actions { display: none; flex-direction: column; gap: 8px; margin-top: 10px; margin-bottom: 10px; }
   .actions.visible { display: flex; }
-  .btn-summary { background: linear-gradient(135deg, rgba(124,111,255,0.15), rgba(155,109,255,0.1)); color: var(--accent); border: 1.5px solid rgba(124,111,255,0.35); font-weight: 800; flex: 1 1 auto; margin-top: 0; padding: 12px 16px; font-size: 0.92rem; }
+  .actions-row-quick { display: flex; gap: 8px; }
+  .actions-row-main { display: flex; gap: 8px; }
+  .actions-row-quick .btn { flex: 0 0 auto; }
+  .actions-row-main .btn { flex: 1; padding: 12px 16px; font-size: 0.92rem; font-weight: 800; }
+  .btn-summary { background: linear-gradient(135deg, rgba(124,111,255,0.15), rgba(155,109,255,0.1)); color: var(--accent); border: 1.5px solid rgba(124,111,255,0.35); }
   .btn-summary:hover { background: linear-gradient(135deg, rgba(124,111,255,0.25), rgba(155,109,255,0.18)); }
 
   /* ── Smart Summary Modal ── */
@@ -887,11 +902,12 @@
   @media (max-width: 480px) {
     .wrap { padding: 14px 12px 90px; }
     .logo-img { width: 320px; }
-    .tagline { font-size: 1.4rem; margin-top: -16px; }
-    .hero-band { border-radius: 0 0 28px 28px; padding: 6px 12px 4px; }
+    .tagline { font-size: 1.2rem; margin-top: -12px; padding-bottom: 12px; }
+    .hero-band { border-radius: 0 0 28px 28px; padding: 6px 12px 14px; }
     .mode-grid, .subject-grid { gap: 8px; }
     .mood-btn { min-width: 0; padding: 14px 12px; }
     .mood-grid { max-width: 300px; gap: 10px; }
+    .mood-toto-img { width: 80px; height: 80px; }
   }
 
   /* ═══════ ONBOARDING MODAL ═══════ */
@@ -1230,10 +1246,14 @@
 
     <!-- Action buttons -->
     <div class="actions" id="actionRow">
-      <button class="btn btn-sm btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
-      <button class="btn btn-sm btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
-      <button class="btn btn-sm btn-summary" onclick="smartSummary()">📝 Resumen hasta ahora</button>
-      <button class="btn btn-sm btn-finish" onclick="finishSession()">✅ Terminé</button>
+      <div class="actions-row-quick">
+        <button class="btn btn-sm btn-hint" id="hintBtn" onclick="requestHint()">💡 Pista</button>
+        <button class="btn btn-sm btn-new"  onclick="resetSession()">🔄 Nueva tarea</button>
+      </div>
+      <div class="actions-row-main">
+        <button class="btn btn-summary" onclick="smartSummary()">📝 Resumen hasta ahora</button>
+        <button class="btn btn-finish" onclick="finishSession()">✅ Terminé</button>
+      </div>
     </div>
 
     <!-- Smart Summary Modal -->
@@ -1801,8 +1821,18 @@ let S = {
   sessionId: null,
   sessionStartTime: null,
   practiceQuestionCount: 0,
-  initialImageContext: null
+  initialImageContext: null,
+  isPersonalTopic: false
 };
+
+// Detectar si el mensaje es sobre temas personales/emocionales (no académicos)
+const PERSONAL_KEYWORDS = /\b(insult|bullying|peg[aó]|molest|trol[oa]|llorar|llor[oé]|triste|miedo|solo|sola|nadie me|me dijeron|me carg|me doli[oó]|me hace[ns]? mal|bronca|angustia|asust|deprim|suicid|autolesion|odi[oa]|discrimin|exclu[iy]|golpe[oa]|amenaz|acosa|maltra|abuso|vergüenza|me da cosa)\b/i;
+
+function detectPersonalTopic(msg) {
+  if (PERSONAL_KEYWORDS.test(msg)) {
+    S.isPersonalTopic = true;
+  }
+}
 
 // Recuperar datos guardados si existen
 const savedName = localStorage.getItem('toto_nombre');
@@ -2052,11 +2082,13 @@ async function sendReply() {
     // Log student message
     logSessionMessage('kid', bubbleText);
 
-    // Achievement tracking
-    if (msg.length > 8) S.achievements.intentaste = true;
-    if (/\?/.test(msg)) S.achievements.preguntaste = true;
-    if (/analog[ií]a|peli|serie|minecraft|fortnite|explicame con/i.test(msg)) S.achievements.analogia = true;
-    if (replyImage.base64) { S.achievements.foto = true; earnBadge('foto', '📸', '¡Mandaste foto!'); }
+    // Achievement tracking (solo académico)
+    if (!S.isPersonalTopic) {
+      if (msg.length > 8) S.achievements.intentaste = true;
+      if (/\?/.test(msg) && msg.length > 15) S.achievements.preguntaste = true;
+      if (/analog[ií]a|peli|serie|minecraft|fortnite|explicame con/i.test(msg)) S.achievements.analogia = true;
+      if (replyImage.base64) { S.achievements.foto = true; earnBadge('foto', '📸', '¡Mandaste foto!'); }
+    }
 
     // Resetear timer de inactividad con cada mensaje
     resetInactivityTimer();
@@ -2073,13 +2105,24 @@ async function sendReply() {
       userContent = msg;
     }
 
-    if (msg.length > 8) {
-      S.streak++;
-      if (S.streak === 1) { earnBadge('intentaste', '💪', '¡Intentaste!'); }
-      if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
-      updateStreak();
+    // Detectar tema personal antes de evaluar badges
+    detectPersonalTopic(msg);
+
+    // Badges SOLO en contexto académico (no personal)
+    if (!S.isPersonalTopic) {
+      if (msg.length > 8) {
+        S.streak++;
+        if (S.streak === 1) { earnBadge('intentaste', '💪', '¡Intentaste!'); }
+        if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
+        updateStreak();
+      }
+      // Pregunta académica: tiene ?, más de 15 chars, y no es solo "si?" "que?" "eh?"
+      if (/\?/.test(msg) && msg.length > 15 && !S._preguntaBadge) {
+        S._preguntaBadge = true;
+        earnBadge('detective', '🔍', '¡Buena pregunta!');
+        S.achievements.preguntaste = true;
+      }
     }
-    if (/\?/.test(msg) && !S._preguntaBadge) { S._preguntaBadge = true; earnBadge('detective', '🔍', '¡Buena pregunta!'); S.achievements.preguntaste = true; }
     await callTutor(userContent, false);
   } finally {
     _sending = false;
@@ -2328,13 +2371,11 @@ function addBubble(who, text, imgData) {
     wrapper.appendChild(avatar);
     wrapper.appendChild(div);
     zone.appendChild(wrapper);
-    // Scroll para que el final de la respuesta quede visible con espacio para el input
+    // Scroll para que el INICIO de la respuesta de Toto quede visible
     setTimeout(() => {
       const rect = wrapper.getBoundingClientRect();
-      const bottomOffset = rect.bottom + window.scrollY - window.innerHeight + 180;
-      if (bottomOffset > window.scrollY) {
-        window.scrollTo({ top: bottomOffset, behavior: 'smooth' });
-      }
+      const targetScroll = rect.top + window.scrollY - 80; // 80px de margen arriba (XP bar)
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
     }, 120);
   } else {
     const div = document.createElement('div');
@@ -2491,8 +2532,9 @@ async function finishSession() {
   finalizeSessionLog();
   clearTimeout(_inactivityTimer);
 
-  // 2. Mostrar logros
+  // 2. Preparar logros (no mostrar arriba, se muestran al final del chat)
   showAchievements();
+  hide($('achievementsOverlay')); // se clonará al fondo del chat
 
   // 3. Disparar resumen automáticamente
   await smartSummary();
@@ -2501,12 +2543,45 @@ async function finishSession() {
   hide($('replyBox'));
   hide($('actionRow'));
 
-  // 5. Agregar mensaje de despedida en el chat
+  // 5. Agregar mensaje de despedida contextualizado
   const farewell = document.createElement('div');
   farewell.className = 'bubble tutor';
-  farewell.innerHTML = `<b>¡Genial sesión!</b> 🎉 Revisá tus logros arriba. Cuando quieras volver, recargá la página.`;
+  let farewellMsg = '';
+  if (S.isPersonalTopic) {
+    farewellMsg = `<b>Gracias por animarte a hablar de cosas importantes, ${S.name || 'crack'}.</b> Eso dice mucho de vos. 💚 Recordá que siempre podés hablar con un adulto de confianza sobre lo que te pasa. Volvé cuando quieras — acá estoy.`;
+  } else if (S.task) {
+    const badgeCount = S.badges.length;
+    const taskShort = S.task.length > 40 ? S.task.slice(0, 40) + '…' : S.task;
+    farewellMsg = `<b>¡Buena sesión, ${S.name || 'crack'}!</b> 🎉 Trabajamos sobre "${taskShort}"${badgeCount > 0 ? ` y te ganaste ${badgeCount} medalla${badgeCount > 1 ? 's' : ''}` : ''}. Cuando quieras seguir aprendiendo, volvé. 🚀`;
+  } else {
+    farewellMsg = `<b>¡Buena sesión, ${S.name || 'crack'}!</b> Seguí así, cada vez que practicás aprendés un poco más. Volvé cuando quieras. 💪`;
+  }
+  farewell.innerHTML = farewellMsg;
   $('chatZone').appendChild(farewell);
-  farewell.scrollIntoView({ behavior: 'smooth' });
+
+  // 6. Mostrar logros DEBAJO del farewell + botón nueva sesión
+  const endBlock = document.createElement('div');
+  endBlock.className = 'session-end-block';
+  endBlock.id = 'sessionEndBlock';
+  // Clonar achievements al final
+  const achClone = document.createElement('div');
+  achClone.className = 'achievements-overlay visible';
+  achClone.style.cssText = 'position:relative;margin:16px 0;';
+  achClone.innerHTML = $('achievementsOverlay').innerHTML;
+  endBlock.appendChild(achClone);
+  // Botón nueva sesión
+  const newSesBtn = document.createElement('button');
+  newSesBtn.className = 'btn btn-summary';
+  newSesBtn.style.cssText = 'width:100%;padding:14px;font-size:1rem;margin-top:8px;';
+  newSesBtn.innerHTML = '🔄 Nueva sesión';
+  newSesBtn.onclick = () => { location.reload(); };
+  endBlock.appendChild(newSesBtn);
+  $('chatZone').appendChild(endBlock);
+
+  // Scroll al final para ver logros y botón
+  setTimeout(() => {
+    endBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 300);
 }
 
 function resetSession() {
@@ -2526,7 +2601,7 @@ function resetSession() {
   S = { ...S, mode: S.mode, subject: S.subject, xp: 0, name: S.name, mood: S.mood,
         phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0, badges:[], _preguntaBadge: false,
         achievements: { intentaste: false, preguntaste: false, analogia: false, completaste: false, foto: false },
-        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null };
+        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null, isPersonalTopic: false };
   updateXPBar();
   _pendingAchievements = null;
   _pendingBadges = null;
@@ -2574,15 +2649,21 @@ async function smartSummary() {
   actions.style.display = 'none';
   show(overlay);
 
-  const summaryPrompt = `Sos Toto, un tutor socrático para chicos de 6° grado en Argentina.
+  const summaryPrompt = `Sos Toto, un tutor socrático para chicos de primaria en Argentina.
 Tu ÚNICA tarea ahora es generar un RESUMEN CONSOLIDADO de la conversación que te paso abajo. NO hagas preguntas. NO continúes la conversación. Solo generá el resumen.
+
+REGLA CLAVE: El resumen debe enfocarse SOLO en contenido ACADÉMICO (lo que aprendió, conceptos, razonamientos sobre la tarea/materia).
+- Si la conversación incluyó temas personales o emocionales (bullying, insultos, miedos, tristeza, conflictos), NO los resumas en detalle. Solo mencioná brevemente que se habló de algo importante.
+- NUNCA reproduzcas frases textuales de lo que el alumno contó sobre su situación personal.
 
 El resumen debe:
 1. Arrancar con "📝 Acá va lo que vimos hoy:"
-2. Listar los CONCEPTOS CLAVE que se trabajaron (máximo 5, con bullet points usando •)
-3. Destacar lo que el alumno RAZONÓ BIEN (qué entendió, qué conexiones hizo)
-4. Si hubo errores, mencionar brevemente qué hay que repasar
-5. Cerrar con una frase motivacional corta
+2. Listar los CONCEPTOS ACADÉMICOS que se trabajaron (máximo 5, con bullet points usando •)
+3. Destacar lo que el alumno RAZONÓ BIEN sobre el tema académico
+4. Si hubo errores académicos, mencionar brevemente qué hay que repasar
+5. Si se habló de temas personales, agregar:
+   "💚 Hoy también hablamos de cosas importantes. Recordá: si algo te sigue dando vueltas, hablá con un adulto de confianza — un papá, mamá, profe o alguien que te escuche. Sos valiente por hablar de esto."
+6. Cerrar con una frase motivacional corta
 
 IMPORTANTE: Usá lenguaje simple que un chico de 11-12 años entienda. Máximo 200 palabras. NO uses markdown con ##, usá emojis como separadores. NO hagas preguntas al alumno.`;
 
