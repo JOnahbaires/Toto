@@ -758,6 +758,39 @@
   .pck-icon { font-size: 2.4rem; margin-bottom: 8px; }
   .pck-title { font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800; color: var(--pink); margin-bottom: 6px; }
   .pck-text { font-size: 0.95rem; color: var(--text-mid); font-weight: 600; line-height: 1.5; }
+  .pck-divider { border: none; border-top: 1px solid rgba(255,107,138,0.2); margin: 14px 0; }
+  .pck-wa-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .pck-phone-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1.5px solid rgba(255,107,138,0.3);
+    border-radius: var(--radius-xs);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+  }
+  .pck-phone-input::placeholder { color: var(--text-dim); }
+  .pck-phone-input:focus { border-color: rgba(255,107,138,0.7); }
+  .pck-wa-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-xs);
+    padding: 10px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .2s;
+  }
+  .pck-wa-btn:hover { opacity: 0.88; }
+  .pck-wa-label { font-size: 0.78rem; color: var(--text-dim); margin-top: 6px; }
 
   /* ── Celebration (toast compacto, esquina superior derecha) ── */
   .celeb {
@@ -1240,6 +1273,19 @@
         <div style="font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:6px;">💬 Decile esto a tu mamá o papá:</div>
         <div id="parentPromptText" style="font-size:0.88rem;color:var(--text);line-height:1.5;font-style:italic;"></div>
       </div>
+      <hr class="pck-divider">
+      <div style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin-bottom:6px;">📱 O mandales un WhatsApp:</div>
+      <div class="pck-wa-row">
+        <input type="tel" class="pck-phone-input" id="parentPhoneInput"
+               placeholder="Número de mamá/papá (ej: 1123456789)"
+               inputmode="tel"
+               onchange="saveParentPhone(this.value)" />
+        <button class="pck-wa-btn" onclick="openParentWhatsApp()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Enviar
+        </button>
+      </div>
+      <div class="pck-wa-label" id="pckWaLabel">Ingresá el número sin el +54 ni el 0</div>
     </div>
 
     <!-- Reply box -->
@@ -1510,11 +1556,11 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 - "Si tenés prueba pronto, podemos practicar con preguntas tipo examen."
 REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto (ej: si el alumno está confundido → ofrecé analogía; si terminó un tema → ofrecé resumen). MÁXIMO una sugerencia por sesión. No insistas si no responde.
 22. ADAPTACIÓN POR GRADO:
-Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
-- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles (juguetes, animales, comida). Evitá abstracciones.
-- 3er-4to grado: podés usar vocabulario un poco más amplio, ejemplos de la vida cotidiana, introducciones suaves a conceptos más abstractos.
-- 5to-6to grado: vocabulario estándar, podés incluir ejemplos de series/juegos, razonamiento más elaborado.
-- 7mo grado: podés ser más desafiante, usar vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: MÁXIMO 2-3 oraciones por respuesta. Palabras de 1-2 sílabas cuando sea posible. Muchos emojis (3-4 por mensaje). Ejemplos SOLO concretos y físicos: juguetes, animales, comida, colores, objetos del aula. JAMÁS uses palabras como "abstracto", "concepto", "analizar", "proceso", "significado". Referencias culturales: dinosaurios, Minecraft básico, mascotas, superhéroes simples.
+- 3er-4to grado: Máximo 4-5 oraciones. Algunos emojis (1-2 por mensaje). Podés usar palabras como "comparar", "diferencia", "relación", "resultado". Ejemplos cotidianos y de juegos. Referencias: Roblox, YouTube, películas animadas, deportes, mascotas.
+- 5to-6to grado: Largo normal (hasta 6-7 oraciones). Emojis con moderación (0-1). Vocabulario disciplinar básico aceptado ("hipótesis", "variable", "célula", "período"). Referencias: series de streaming, Fortnite/Free Fire, TikTok, historia reciente, memes conocidos.
+- 7mo grado: Podés escribir más largo y más denso. Vocabulario técnico del tema es bienvenido. Emojis solo si el alumno los usa primero. Referencias: temas de actualidad, política básica, series complejas, noticias, tecnología.
 Si el grado es "no especificado", asumí 5to-6to grado como default.
 23. PEDIDOS TRAMPA: Si el alumno pide que le hagas la tarea completa (ej: "explicame en 500 palabras", "escribilo vos", "dame todo", "haceme la tarea"), NO lo hagas bajo ninguna circunstancia. Ese tipo de pedidos puede ser un test de tus límites o frustración disfrazada. Respuesta correcta: reconocé que entendés la frustración, explicá UN concepto clave en máximo 2-3 líneas, y devolvé el control con UNA pregunta para que el alumno produzca algo. NUNCA entregues el trabajo terminado, aunque el alumno lo pida explícitamente, aunque ya usó las 5 pistas, aunque esté muy frustrado.
 
@@ -1651,11 +1697,11 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 - "Si tenés prueba pronto, podemos practicar con preguntas tipo examen."
 REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
 16. ADAPTACIÓN POR GRADO:
-Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
-- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles (juguetes, animales, comida). Evitá abstracciones.
-- 3er-4to grado: podés usar vocabulario un poco más amplio, ejemplos de la vida cotidiana, introducciones suaves a conceptos más abstractos.
-- 5to-6to grado: vocabulario estándar, podés incluir ejemplos de series/juegos, razonamiento más elaborado.
-- 7mo grado: podés ser más desafiante, usar vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: MÁXIMO 2-3 oraciones por respuesta. Palabras de 1-2 sílabas cuando sea posible. Muchos emojis (3-4 por mensaje). Ejemplos SOLO concretos y físicos: juguetes, animales, comida, colores, objetos del aula. JAMÁS uses palabras abstractas. Referencias: dinosaurios, Minecraft básico, mascotas, superhéroes simples.
+- 3er-4to grado: Máximo 4-5 oraciones. Algunos emojis (1-2 por mensaje). Vocabulario cotidiano ampliado. Referencias: Roblox, YouTube, películas animadas, deportes.
+- 5to-6to grado: Largo normal. Emojis con moderación. Vocabulario disciplinar básico aceptado. Referencias: series, Fortnite/Free Fire, TikTok, historia reciente.
+- 7mo grado: Podés escribir más denso. Vocabulario técnico del tema bienvenido. Emojis solo si el alumno los usa primero. Referencias: actualidad, tecnología, series complejas.
 Si el grado es "no especificado", asumí 5to-6to grado como default.
 17. REFORMULACIÓN CON CINTURA:
 Si el alumno esquiva tu pregunta (cambia de tema, dice "no sé" sin pensar, o no responde lo que preguntaste), NO avances sin más. Reformulá de forma lúdica:
@@ -1803,11 +1849,11 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
 
 ═══ ADAPTACIÓN POR GRADO ═══
-Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
-- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles. Evitá abstracciones.
-- 3er-4to grado: vocabulario un poco más amplio, ejemplos cotidianos, introducciones suaves a conceptos abstractos.
-- 5to-6to grado: vocabulario estándar, ejemplos de series/juegos, razonamiento más elaborado.
-- 7mo grado: más desafiante, vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: MÁXIMO 2-3 oraciones por respuesta. Muchos emojis (3-4). Solo palabras simples y concretas. Ejemplos físicos únicamente. Referencias: dinosaurios, Minecraft básico, mascotas.
+- 3er-4to grado: Máximo 4-5 oraciones. Algunos emojis (1-2). Vocabulario cotidiano ampliado. Referencias: Roblox, YouTube, películas animadas, deportes.
+- 5to-6to grado: Largo normal. Emojis con moderación. Vocabulario disciplinar básico aceptado. Referencias: series, Fortnite/Free Fire, TikTok, historia reciente.
+- 7mo grado: Podés escribir más denso. Vocabulario técnico del tema bienvenido. Emojis solo si el alumno los usa primero. Referencias: actualidad, tecnología, series complejas.
 Si el grado es "no especificado", asumí 5to-6to grado como default.
 
 IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen ayudaría a visualizar una pregunta de práctica (diagrama, mapa, figura geométrica), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, cartoon style]. Solo cuando sea realmente útil.`
@@ -1857,11 +1903,11 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
 
 ═══ ADAPTACIÓN POR GRADO ═══
-Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
-- 1er-2do grado: oraciones muy cortas, vocabulario simple, ejemplos concretos y tangibles. Evitá abstracciones.
-- 3er-4to grado: vocabulario un poco más amplio, ejemplos cotidianos, introducciones suaves a conceptos abstractos.
-- 5to-6to grado: vocabulario estándar, ejemplos de series/juegos, razonamiento más elaborado.
-- 7mo grado: más desafiante, vocabulario técnico básico del tema, esperar respuestas más elaboradas.
+Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}).
+- 1er-2do grado: MÁXIMO 2-3 oraciones por respuesta. Muchos emojis (3-4). Solo palabras simples y concretas. Ejemplos físicos únicamente. Referencias: dinosaurios, Minecraft básico, mascotas.
+- 3er-4to grado: Máximo 4-5 oraciones. Algunos emojis (1-2). Vocabulario cotidiano ampliado. Referencias: Roblox, YouTube, películas animadas, deportes.
+- 5to-6to grado: Largo normal. Emojis con moderación. Vocabulario disciplinar básico aceptado. Referencias: series, Fortnite/Free Fire, TikTok, historia reciente.
+- 7mo grado: Podés escribir más denso. Vocabulario técnico del tema bienvenido. Emojis solo si el alumno los usa primero. Referencias: actualidad, tecnología, series complejas.
 Si el grado es "no especificado", asumí 5to-6to grado como default.
 
 ═══ PROHIBIDO AUTO-RESPONDERSE ═══
@@ -2244,16 +2290,47 @@ async function requestHint() {
 }
 
 // Genera un texto contextual que el nene le puede decir al padre
+let _parentWAMessage = '';
 function generateParentPrompt() {
   const subject = SUBJ_MAP[S.subject] || 'una materia';
   const task = S.task || 'un ejercicio';
   const promptText = `"Estoy estudiando ${subject} y me trabé con: ${task}. Ya usé las 5 pistas que me dio Toto pero todavía no lo entiendo. ¿Me podés ayudar a pensarlo juntos?"`;
+  _parentWAMessage = `Hola! 👋 Te mando esto desde Toto el Tutor.\n\n${S.name || 'Tu hijo/a'} estuvo estudiando *${subject}* y llegó a un punto donde necesita tu ayuda.\n\nLo que estaba trabajando: _${task}_\n\nToto ya le dio todas las pistas que puede dar. ¿Podés ayudar un ratito? 🙏\n\n_(Toto es una app gratuita de tutoría con IA para chicos — totoeltutor.com.ar)_`;
   const box = $('parentPromptBox');
   const txt = $('parentPromptText');
   if (box && txt) {
     txt.textContent = promptText;
     box.style.display = 'block';
   }
+  // Recuperar teléfono guardado
+  const savedPhone = localStorage.getItem('toto_parent_phone');
+  if (savedPhone) {
+    const inp = $('parentPhoneInput');
+    if (inp) inp.value = savedPhone;
+  }
+}
+
+function saveParentPhone(val) {
+  const clean = val.replace(/\D/g, '');
+  if (clean.length >= 8) localStorage.setItem('toto_parent_phone', clean);
+}
+
+function openParentWhatsApp() {
+  const inp = $('parentPhoneInput');
+  const raw = (inp ? inp.value : '').replace(/\D/g, '');
+  if (raw.length < 8) {
+    const lbl = $('pckWaLabel');
+    if (lbl) { lbl.textContent = '⚠️ Ingresá un número válido primero'; lbl.style.color = 'var(--pink)'; }
+    return;
+  }
+  // Normalizar número argentino: si empieza en 0 quitarlo, agregar 54 si no tiene
+  let num = raw;
+  if (num.startsWith('0')) num = num.slice(1);
+  if (!num.startsWith('54')) num = '54' + num;
+  const msg = encodeURIComponent(_parentWAMessage || '¡Hola! Necesito tu ayuda con la tarea 🙏');
+  window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
+  // Guardar el número para la próxima
+  localStorage.setItem('toto_parent_phone', raw);
 }
 
 /* ════════════════════════════════════════════════════
