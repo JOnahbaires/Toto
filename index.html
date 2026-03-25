@@ -284,52 +284,77 @@
     margin-bottom: 14px;
   }
 
-  .mood-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    justify-content: center;
-    margin-bottom: 28px;
+  /* ── Mood Carousel ── */
+  .mood-carousel-outer {
+    position: relative;
+    width: 100%;
     max-width: 340px;
-  }
-  .mood-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 20px;
-    background: var(--surface);
-    border: 2px solid transparent;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: all .2s ease;
-    font-family: 'Nunito', sans-serif;
-    color: var(--text);
-    min-width: 90px;
-  }
-  .mood-btn:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--surface2); }
-  .mood-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 22px var(--accent-glow); }
-  .mood-btn[data-mood="super"].active  { border-color: var(--cyan); box-shadow: 0 0 22px rgba(92,224,216,0.25); }
-  .mood-btn[data-mood="bien"].active   { border-color: var(--green); box-shadow: 0 0 22px var(--green-glow); }
-  .mood-btn[data-mood="masomenos"].active { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
-  .mood-btn[data-mood="mal"].active    { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
-  .mood-img-wrap {
-    width: 100px; height: 100px;
-    border-radius: 50%;
+    height: 160px;
     overflow: hidden;
-    flex-shrink: 0;
-    border: 3px solid var(--surface3);
-    background: var(--surface);
+    cursor: grab;
+    touch-action: pan-y;
+    margin-bottom: 10px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
   }
-  .mood-toto-img {
+  .mood-carousel-outer:active { cursor: grabbing; }
+  .mood-carousel-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: background .35s ease, box-shadow .35s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .mood-slide {
+    position: absolute;
+    top: 50%;
+    transition: left .32s cubic-bezier(.25,.46,.45,.94),
+                opacity .32s ease,
+                transform .32s cubic-bezier(.25,.46,.45,.94);
+    z-index: 1;
+  }
+  .mood-slide.mood-active { z-index: 2; }
+  .mood-slide img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transition: transform 0.2s ease;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.45));
+    pointer-events: none;
+    display: block;
   }
-  .mood-btn.active .mood-img-wrap { border-color: var(--accent); }
-  .mood-btn.active .mood-toto-img { transform: scale(1.3); }
-  .mood-label { font-size: 0.78rem; font-weight: 800; }
+  .mood-carousel-label {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+    transition: color .3s ease;
+    min-height: 1.5em;
+  }
+  .mood-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 9px;
+    margin-bottom: 24px;
+  }
+  .mcd {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--surface3);
+    cursor: pointer;
+    transition: background .3s ease, transform .2s ease;
+  }
+  .mcd.active { transform: scale(1.4); }
+  .mcd[data-idx="0"].active { background: var(--cyan); }
+  .mcd[data-idx="1"].active { background: var(--green); }
+  .mcd[data-idx="2"].active { background: var(--orange); }
+  .mcd[data-idx="3"].active { background: var(--pink); }
 
   .btn-warmup-go {
     background: linear-gradient(135deg, #7c6fff, #9b6dff);
@@ -1128,25 +1153,21 @@
       </select>
     </div>
 
-    <div class="warmup-mood-label">¿Cómo estás hoy?</div>
+    <div class="warmup-mood-label">¿Cómo estás hoy? <span style="font-size:0.72rem;color:var(--text-dim);font-weight:600">← deslizá →</span></div>
 
-    <div class="mood-grid">
-      <button class="mood-btn" data-mood="super" onclick="pickMood(this,'super')">
-        <div class="mood-img-wrap"><img src="/toto-super.png" class="mood-toto-img" alt="Toto súper"></div>
-        <span class="mood-label">¡Súper!</span>
-      </button>
-      <button class="mood-btn active" data-mood="bien" onclick="pickMood(this,'bien')">
-        <div class="mood-img-wrap"><img src="/toto-piola.png" class="mood-toto-img" alt="Toto piola"></div>
-        <span class="mood-label">Piola</span>
-      </button>
-      <button class="mood-btn" data-mood="masomenos" onclick="pickMood(this,'masomenos')">
-        <div class="mood-img-wrap"><img src="/toto-maso.png" class="mood-toto-img" alt="Toto maso"></div>
-        <span class="mood-label">Maso</span>
-      </button>
-      <button class="mood-btn" data-mood="mal" onclick="pickMood(this,'mal')">
-        <div class="mood-img-wrap"><img src="/toto-para-atras.png" class="mood-toto-img" alt="Toto para atrás"></div>
-        <span class="mood-label">Para atrás</span>
-      </button>
+    <div class="mood-carousel-outer" id="moodCarouselOuter">
+      <div class="mood-carousel-ring" id="moodCarouselRing"></div>
+      <div class="mood-slide" data-idx="0" data-mood="super"><img src="/toto-super.png" alt="Súper"></div>
+      <div class="mood-slide" data-idx="1" data-mood="bien"><img src="/toto-piola.png" alt="Piola"></div>
+      <div class="mood-slide" data-idx="2" data-mood="masomenos"><img src="/toto-maso.png" alt="Más o menos"></div>
+      <div class="mood-slide" data-idx="3" data-mood="mal"><img src="/toto-para-atras.png" alt="Para atrás"></div>
+    </div>
+    <div class="mood-carousel-label" id="moodCarouselLabel">Piola 😊</div>
+    <div class="mood-carousel-dots" id="moodCarouselDots">
+      <span class="mcd" data-idx="0"></span>
+      <span class="mcd" data-idx="1"></span>
+      <span class="mcd" data-idx="2"></span>
+      <span class="mcd" data-idx="3"></span>
     </div>
 
     <button class="btn-warmup-go" onclick="finishWarmup()">
@@ -1970,6 +1991,9 @@ function detectPersonalTopic(msg) {
   }
 }
 
+// Init carousel de moods
+setTimeout(initMoodCarousel, 0);
+
 // Recuperar datos guardados si existen
 const savedName = localStorage.getItem('toto_nombre');
 if (savedName) {
@@ -2024,10 +2048,105 @@ function hideErr()    { hide($('errMsg')); }
 /* ════════════════════════════════════════════════════
    WARMUP
 ════════════════════════════════════════════════════ */
+/* ── Mood Carousel ── */
+const MOOD_DATA = [
+  { mood: 'super',     label: '¡Súper! ⭐',      ring: 'rgba(92,224,216,0.28)',  glow: '0 0 40px rgba(92,224,216,0.4)' },
+  { mood: 'bien',      label: 'Piola 😊',         ring: 'rgba(61,232,160,0.28)',  glow: '0 0 40px rgba(61,232,160,0.4)' },
+  { mood: 'masomenos', label: 'Más o menos 😅',   ring: 'rgba(255,179,71,0.28)',  glow: '0 0 40px rgba(255,179,71,0.4)' },
+  { mood: 'mal',       label: 'Para atrás 😔',    ring: 'rgba(255,107,138,0.28)', glow: '0 0 40px rgba(255,107,138,0.4)' },
+];
+let _moodIdx = 1; // arranca en 'bien'
+
+function updateMoodCarousel(idx) {
+  _moodIdx = Math.max(0, Math.min(MOOD_DATA.length - 1, idx));
+  const outer = document.getElementById('moodCarouselOuter');
+  if (!outer) return;
+  const cw = outer.offsetWidth || 320;
+  const cx = cw / 2;
+  const ACTIVE_SZ = 134;
+  const PEEK_SZ   = 80;
+  const PEEK_OFF  = Math.round(cw * 0.32);
+
+  document.querySelectorAll('.mood-slide').forEach(slide => {
+    const i   = parseInt(slide.dataset.idx);
+    const pos = i - _moodIdx;
+    const isActive = pos === 0;
+    const isPeek   = Math.abs(pos) === 1;
+    const sz  = isActive ? ACTIVE_SZ : PEEK_SZ;
+    const x   = cx + pos * PEEK_OFF - sz / 2;
+    const op  = isActive ? 1 : isPeek ? 0.48 : 0;
+    const sc  = isActive ? 1 : 0.62;
+    slide.style.left      = x + 'px';
+    slide.style.width     = sz + 'px';
+    slide.style.height    = sz + 'px';
+    slide.style.opacity   = op;
+    slide.style.transform = `translateY(-50%) scale(${sc})`;
+    slide.style.pointerEvents = Math.abs(pos) <= 1 ? 'auto' : 'none';
+    slide.style.zIndex    = isActive ? 2 : 1;
+    slide.classList.toggle('mood-active', isActive);
+  });
+
+  const m = MOOD_DATA[_moodIdx];
+  const ring = document.getElementById('moodCarouselRing');
+  if (ring) { ring.style.background = m.ring; ring.style.boxShadow = m.glow; }
+  const lbl = document.getElementById('moodCarouselLabel');
+  if (lbl) lbl.textContent = m.label;
+  document.querySelectorAll('.mcd').forEach((d, i) => d.classList.toggle('active', i === _moodIdx));
+  S.mood = m.mood;
+}
+
+function initMoodCarousel() {
+  updateMoodCarousel(1);
+  const outer = document.getElementById('moodCarouselOuter');
+  if (!outer) return;
+
+  // Click on side slides to select
+  outer.addEventListener('click', e => {
+    const slide = e.target.closest('.mood-slide');
+    if (!slide) return;
+    const i = parseInt(slide.dataset.idx);
+    if (!isNaN(i) && i !== _moodIdx) updateMoodCarousel(i);
+  });
+
+  // Dot clicks
+  document.querySelectorAll('.mcd').forEach(dot => {
+    dot.addEventListener('click', () => updateMoodCarousel(parseInt(dot.dataset.idx)));
+  });
+
+  // Mouse drag
+  let startX = 0, dragging = false;
+  outer.addEventListener('mousedown', e => {
+    startX = e.clientX; dragging = true;
+    outer.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const d = e.clientX - startX;
+    if (Math.abs(d) > 48) {
+      updateMoodCarousel(d < 0 ? _moodIdx + 1 : _moodIdx - 1);
+      startX = e.clientX;
+    }
+  });
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+    const o = document.getElementById('moodCarouselOuter');
+    if (o) o.style.cursor = 'grab';
+  });
+
+  // Touch swipe
+  let touchX = 0;
+  outer.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+  outer.addEventListener('touchend', e => {
+    const d = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(d) > 40) updateMoodCarousel(d < 0 ? _moodIdx + 1 : _moodIdx - 1);
+  }, { passive: true });
+}
+
+// pickMood mantenido como alias para compatibilidad
 function pickMood(btn, mood) {
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  S.mood = mood;
+  const idx = MOOD_DATA.findIndex(m => m.mood === mood);
+  if (idx >= 0) updateMoodCarousel(idx);
 }
 
 function finishWarmup() {
