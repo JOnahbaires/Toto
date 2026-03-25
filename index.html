@@ -322,13 +322,9 @@
     background: var(--surface);
   }
   .mood-toto-img {
-    width: 200%;
-    height: 200%;
-    object-fit: cover;
-    object-position: center 30%;
-    margin: -50% 0 0 -50%;
-    transform: scale(1.2);
-    transform-origin: 50% 35%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     transition: transform 0.2s ease;
   }
   .mood-btn.active .mood-img-wrap { border-color: var(--accent); }
@@ -896,6 +892,23 @@
 
   @keyframes fadeDown  { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeUp    { from { opacity: 0; transform: translateY(14px);  } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── AI-generated explanatory images ── */
+  .ai-generated-img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
+    display: block;
+    border: 1.5px solid var(--border);
+  }
+  .img-generating {
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
   @keyframes popIn     { from { opacity: 0; transform: scale(0.88); }       to { opacity: 1; transform: scale(1); } }
   @keyframes bounce    { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
   @keyframes shake     { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
@@ -1566,6 +1579,8 @@ CAMBIOS SUGERIDOS:
 IMPORTANTE: Este bloque NUNCA debe aparecer en el chat visible para el alumno. Si no hubo problemas detectados, escribir: "Sesión sin desvíos metodológicos."
 Este bloque será procesado por el sistema para enviar un email separado de mejoras. No lo expliques al alumno.
 
+IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen ayudaría a entender (geometría, diagramas, mapas, partes del cuerpo, circuitos, etc.), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, cartoon style]. Solo cuando sea realmente útil. Ejemplo: [GENERAR_IMAGEN: simple diagram of photosynthesis showing sun, plant, water and oxygen for children].
+
 Respondé siempre con calidez y entusiasmo. ¡Dale que vos podés! 🚀`;
 
 const PROMPT_TEMA = `Sos Toto, un tutor socrático para chicos en edad escolar de CABA, Argentina.
@@ -1686,6 +1701,8 @@ CAMBIOS SUGERIDOS AL PROMPT:
 
 Este bloque será procesado por el sistema para enviar un email separado de mejoras. No lo expliques al alumno.
 
+IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen ayudaría a entender (geometría, diagramas, mapas, partes del cuerpo, circuitos, etc.), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, cartoon style]. Solo cuando sea realmente útil. Ejemplo: [GENERAR_IMAGEN: simple diagram of the solar system for children].
+
 Respondé siempre con calidez y entusiasmo.`;
 
 const PROMPT_PRACTICA = `Sos Toto, un tutor socrático para chicos en edad escolar en Buenos Aires. Hablás en argentino rioplatense. El alumno se llama {NAME}. Edad: {AGE}. Grado: {GRADE}. El alumno eligió el modo PRÁCTICA PARA EXAMEN.
@@ -1791,7 +1808,9 @@ Adaptá tu lenguaje, profundidad y ejemplos al grado del alumno ({GRADE}).
 - 3er-4to grado: vocabulario un poco más amplio, ejemplos cotidianos, introducciones suaves a conceptos abstractos.
 - 5to-6to grado: vocabulario estándar, ejemplos de series/juegos, razonamiento más elaborado.
 - 7mo grado: más desafiante, vocabulario técnico básico del tema, esperar respuestas más elaboradas.
-Si el grado es "no especificado", asumí 5to-6to grado como default.`
+Si el grado es "no especificado", asumí 5to-6to grado como default.
+
+IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen ayudaría a visualizar una pregunta de práctica (diagrama, mapa, figura geométrica), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, cartoon style]. Solo cuando sea realmente útil.`
 
 const PROMPT_EXPLORAR = `Sos Toto, un guía curioso para chicos en edad escolar de CABA, Argentina.
 Tu personalidad es entusiasta, divertida y re copada — como un amigo que sabe un montón de datos re locos y te los cuenta con onda.
@@ -1862,7 +1881,9 @@ Antes de cerrar, probá con: "Dale, desafío final: ¿cuál fue el dato más loc
 Si cierra: "{NAME}, ¡fue re piola explorar esto con vos! Volvé cuando quieras descubrir más datos locos. 🔭✨"
 
 [SESSION_END]
-Este bloque lo ponés SOLO cuando la sesión terminó naturalmente. Es una señal interna para el sistema, NO se la muestres al alumno.`
+Este bloque lo ponés SOLO cuando la sesión terminó naturalmente. Es una señal interna para el sistema, NO se la muestres al alumno.
+
+IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen haría el dato curioso más impactante (animales, planetas, fenómenos naturales, inventos), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, cartoon style]. Solo cuando sea realmente espectacular.`
 
 /* ════════════════════════════════════════════════════
    STATE
@@ -1890,7 +1911,8 @@ let S = {
   sessionStartTime: null,
   practiceQuestionCount: 0,
   initialImageContext: null,
-  isPersonalTopic: false
+  isPersonalTopic: false,
+  imageCount: 0
 };
 
 // Detectar si el mensaje es sobre temas personales/emocionales (no académicos)
@@ -2348,6 +2370,14 @@ async function callTutor(userMsg, isFirst) {
     // Stripear bloque de auto-diagnóstico del chat (análisis ahora lo hace /api/analyze)
     reply = reply.replace(/\[AUTODIAG\][\s\S]*?\[\/AUTODIAG\]/g, '').trim();
 
+    // Detectar señal de imagen IA
+    let imagePrompt = null;
+    const imgMatch = reply.match(/\[GENERAR_IMAGEN:\s*(.*?)\]/);
+    if (imgMatch) {
+      imagePrompt = imgMatch[1].trim();
+      reply = reply.replace(/\[GENERAR_IMAGEN:[^\]]*\]/g, '').trim();
+    }
+
     // Para el historial: siempre guardamos texto plano para evitar reenviar imágenes
     // base64 pesadas en cada llamada (causa el error de overload).
     // La imagen inicial ya fue procesada por el modelo en el primer turno.
@@ -2363,6 +2393,35 @@ async function callTutor(userMsg, isFirst) {
     }
 
     addBubble('tutor', reply, null);
+
+    // Generar imagen explicativa si Toto lo indicó y no se superó el límite
+    if (imagePrompt && S.imageCount < 3) {
+      S.imageCount++;
+      const lastRow = document.querySelector('#chatZone .bubble-row:last-child .bubble.tutor');
+      if (lastRow) {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'img-generating';
+        placeholder.innerHTML = '<span style="animation:pulse 1s ease-in-out infinite">✨</span> Toto está dibujando...';
+        lastRow.appendChild(placeholder);
+        fetch('/api/generate-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: imagePrompt }),
+        })
+          .then(r => r.json())
+          .then(d => {
+            placeholder.remove();
+            if (d.url) {
+              const img = document.createElement('img');
+              img.src = d.url;
+              img.className = 'ai-generated-img';
+              img.alt = 'Ilustración de Toto';
+              lastRow.appendChild(img);
+            }
+          })
+          .catch(() => placeholder.remove());
+      }
+    }
 
     // Si fue el primer mensaje con imagen, guardamos el reply como contexto textual
     // Esto permite que el modelo "recuerde" la imagen sin reenviar base64 cada vez
