@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toto el Tutor — Landing v2 Secciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;
+  --surface:#141829;
+  --surface2:#1c2137;
+  --surface3:#242a42;
+  --accent:#7c6fff;
+  --accent-glow:rgba(124,111,255,0.25);
+  --pink:#ff6b8a;
+  --green:#3de8a0;
+  --orange:#F97316;
+  --cyan:#5ce0d8;
+  --yellow:#ffd60a;
+  --red:#ff4757;
+  --text:#edf0ff;
+  --text-mid:#b0b5d0;
+  --text-dim:#6b7194;
+  --whatsapp:#25D366;
+  --radius:22px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Comic Neue',cursive,sans-serif;
+  background:var(--bg);color:var(--text);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  padding-bottom:60px;
+}
+
+/* NOISE */
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;
+}
+
+section{max-width:1100px;margin:0 auto;padding:100px 48px;position:relative}
+
+.section-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Baloo 2',cursive;font-size:0.8rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.12em;margin-bottom:16px;
+}
+.section-tag .line{width:32px;height:2px;border-radius:2px}
+
+h2{
+  font-family:'Baloo 2',cursive;font-size:clamp(2rem,4vw,3rem);
+  font-weight:800;line-height:1.15;margin-bottom:56px;
+}
+
+/* ===== DOLOR SECTION ===== */
+.dolor{overflow:visible}
+.dolor .section-tag{color:var(--pink)}
+.dolor .section-tag .line{background:var(--pink)}
+.dolor h2 .hl{color:var(--pink)}
+
+.dolor-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.dolor-card{
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
+  border:1px solid rgba(255,107,138,0.08);
+  border-radius:var(--radius);padding:36px 28px;
+  position:relative;overflow:hidden;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.dolor-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--pink),var(--orange));
+  transform:scaleX(0);transform-origin:left;transition:transform 0.4s;
+}
+.dolor-card:hover::before{transform:scaleX(1)}
+.dolor-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(255,107,138,0.2);
+  box-shadow:0 20px 48px rgba(255,107,138,0.1);
+}
+
+.dolor-card .face{
+  width:72px;height:72px;border-radius:18px;overflow:hidden;
+  margin-bottom:20px;border:2px solid rgba(255,255,255,0.06);
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+.dolor-card .face img{width:100%;height:100%;object-fit:cover}
+.dolor-card h3{
+  font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:700;
+  margin-bottom:10px;color:var(--text);
+}
+.dolor-card p{font-size:1rem;line-height:1.65;color:var(--text-mid)}
+
+/* ===== TRANSFORMA SECTION ===== */
+.transforma .section-tag{color:var(--green)}
+.transforma .section-tag .line{background:var(--green)}
+.transforma h2 .hl{color:var(--green)}
+
+.transforma-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.transforma-card{
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
+  border:1px solid rgba(61,232,160,0.08);
+  border-radius:var(--radius);padding:36px 28px;
+  position:relative;overflow:hidden;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.transforma-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--green),var(--cyan));
+  transform:scaleX(0);transform-origin:left;transition:transform 0.4s;
+}
+.transforma-card:hover::before{transform:scaleX(1)}
+.transforma-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(61,232,160,0.2);
+  box-shadow:0 20px 48px rgba(61,232,160,0.08);
+}
+
+.transforma-card .card-icon{
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;font-size:1.6rem;
+}
+.transforma-card:nth-child(1) .card-icon{background:rgba(124,111,255,0.12)}
+.transforma-card:nth-child(2) .card-icon{background:rgba(61,232,160,0.12)}
+.transforma-card:nth-child(3) .card-icon{background:rgba(255,214,10,0.12)}
+
+.transforma-card h3{
+  font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:700;
+  margin-bottom:10px;color:var(--text);
+}
+.transforma-card p{font-size:1rem;line-height:1.65;color:var(--text-mid)}
+
+/* ===== COMO FUNCIONA ===== */
+.como .section-tag{color:var(--accent)}
+.como .section-tag .line{background:var(--accent)}
+.como h2 .hl{color:var(--accent)}
+
+.steps{display:flex;gap:0;position:relative}
+.steps::before{
+  content:'';position:absolute;top:44px;left:60px;right:60px;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--pink),var(--green));
+  opacity:0.3;
+}
+
+.step{
+  flex:1;text-align:center;position:relative;padding:0 16px;
+}
+.step-num{
+  width:88px;height:88px;border-radius:50%;margin:0 auto 24px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;
+  position:relative;z-index:2;
+  transition:all 0.35s;
+}
+.step:nth-child(1) .step-num{
+  background:linear-gradient(135deg,var(--accent),#9b7fff);color:white;
+  box-shadow:0 8px 24px var(--accent-glow);
+}
+.step:nth-child(2) .step-num{
+  background:linear-gradient(135deg,var(--pink),#ff8fa8);color:white;
+  box-shadow:0 8px 24px rgba(255,107,138,0.25);
+}
+.step:nth-child(3) .step-num{
+  background:linear-gradient(135deg,var(--green),#6bf0bd);color:var(--bg);
+  box-shadow:0 8px 24px rgba(61,232,160,0.25);
+}
+.step:hover .step-num{transform:scale(1.1)}
+
+.step h3{
+  font-family:'Baloo 2',cursive;font-size:1.15rem;font-weight:700;
+  margin-bottom:8px;
+}
+.step p{font-size:0.95rem;line-height:1.55;color:var(--text-mid);max-width:240px;margin:0 auto}
+
+/* ===== VS SECTION ===== */
+.versus .section-tag{color:var(--orange)}
+.versus .section-tag .line{background:var(--orange)}
+
+.vs-container{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:0;
+  max-width:800px;margin:0 auto;
+  border-radius:var(--radius);overflow:hidden;
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+.vs-col{padding:40px 36px}
+.vs-col.bad{background:linear-gradient(180deg,rgba(255,71,87,0.06) 0%,var(--surface) 100%)}
+.vs-col.good{background:linear-gradient(180deg,rgba(61,232,160,0.06) 0%,var(--surface) 100%)}
+
+.vs-col h3{
+  font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;
+  margin-bottom:28px;display:flex;align-items:center;gap:12px;
+}
+.vs-col.bad h3{color:var(--red)}
+.vs-col.good h3{color:var(--green)}
+.vs-col h3 img{width:44px;height:44px;border-radius:12px}
+
+.vs-divider{
+  width:1px;background:rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.vs-badge{
+  position:absolute;
+  background:var(--surface2);border:1px solid rgba(255,255,255,0.08);
+  padding:6px 14px;border-radius:20px;
+  font-family:'Baloo 2',cursive;font-size:0.85rem;font-weight:700;
+  color:var(--text-mid);white-space:nowrap;
+}
+
+.vs-list{list-style:none}
+.vs-list li{
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:1rem;line-height:1.5;color:var(--text-mid);
+  display:flex;align-items:flex-start;gap:12px;
+}
+.vs-list li:last-child{border-bottom:none}
+.vs-list .icon{
+  flex-shrink:0;width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:800;margin-top:2px;
+}
+.vs-col.bad .icon{background:rgba(255,71,87,0.15);color:var(--red)}
+.vs-col.good .icon{background:rgba(61,232,160,0.15);color:var(--green)}
+
+.aij-banner{
+  text-align:center;margin-top:56px;padding:40px;
+  background:linear-gradient(135deg,rgba(124,111,255,0.08) 0%,rgba(255,107,138,0.06) 100%);
+  border:1px solid rgba(124,111,255,0.12);border-radius:var(--radius);
+  position:relative;overflow:hidden;
+}
+.aij-banner::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(124,111,255,0.08) 0%,transparent 70%);
+}
+.aij-banner p{
+  font-family:'Baloo 2',cursive;font-size:clamp(1.4rem,3vw,2rem);
+  font-weight:800;position:relative;
+}
+.aij-banner .hl{
+  background:linear-gradient(135deg,var(--accent),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* ===== TRUST SECTION ===== */
+.trust .section-tag{color:var(--cyan)}
+.trust .section-tag .line{background:var(--cyan)}
+
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.trust-card{
+  background:var(--surface);border:1px solid rgba(255,255,255,0.04);
+  border-radius:var(--radius);padding:32px 24px;
+  text-align:center;transition:all 0.3s;
+}
+.trust-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(92,224,216,0.15);
+  box-shadow:0 16px 40px rgba(92,224,216,0.06);
+}
+.trust-icon{
+  width:64px;height:64px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;font-size:1.8rem;
+  background:rgba(92,224,216,0.08);
+}
+.trust-card h3{
+  font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:700;
+  margin-bottom:8px;
+}
+.trust-card p{font-size:0.9rem;line-height:1.55;color:var(--text-mid)}
+
+/* ===== CTA SECTION ===== */
+.cta-section{
+  text-align:center;
+  background:linear-gradient(180deg,transparent 0%,rgba(124,111,255,0.04) 100%);
+  padding-bottom:120px;
+}
+.cta-section h2{margin-bottom:20px}
+.cta-section .sub{
+  font-size:1.15rem;color:var(--text-mid);margin-bottom:40px;
+  max-width:500px;margin-left:auto;margin-right:auto;
+}
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+
+.btn-glow{
+  position:relative;display:inline-flex;align-items:center;gap:10px;
+  padding:16px 36px;border-radius:14px;font-family:'Baloo 2',cursive;
+  font-weight:700;font-size:1.1rem;cursor:pointer;
+  text-decoration:none;border:none;transition:all 0.25s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#9b7fff);color:white}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 36px var(--accent-glow)}
+.btn-wa{background:rgba(37,211,102,0.12);color:var(--whatsapp);border:1px solid rgba(37,211,102,0.3)}
+.btn-wa:hover{background:var(--whatsapp);color:white;transform:translateY(-3px)}
+.btn-wa svg{width:22px;height:22px;fill:currentColor}
+
+/* Email form */
+.email-form{
+  max-width:460px;margin:0 auto;display:flex;gap:0;
+  border-radius:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+  background:var(--surface);
+}
+.email-form input{
+  flex:1;padding:16px 20px;border:none;background:transparent;
+  color:var(--text);font-family:'Comic Neue',sans-serif;font-size:1rem;
+  outline:none;
+}
+.email-form input::placeholder{color:var(--text-dim)}
+.email-form button{
+  padding:16px 28px;border:none;
+  background:linear-gradient(135deg,var(--accent),#9b7fff);
+  color:white;font-family:'Baloo 2',cursive;font-weight:700;
+  font-size:0.95rem;cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;
+}
+.email-form button:hover{filter:brightness(1.15)}
+
+/* ===== FOOTER ===== */
+footer{
+  text-align:center;padding:40px 48px;
+  border-top:1px solid rgba(255,255,255,0.04);
+  color:var(--text-dim);font-size:0.85rem;
+}
+footer a{color:var(--accent);text-decoration:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  section{padding:64px 24px}
+  h2{margin-bottom:36px}
+  .dolor-cards,.transforma-grid,.trust-grid{grid-template-columns:1fr}
+  .steps{flex-direction:column;gap:32px}
+  .steps::before{display:none}
+  .vs-container{grid-template-columns:1fr;gap:0}
+  .vs-divider{width:100%;height:1px;flex-direction:row}
+  .vs-badge{position:static;margin:16px auto}
+  .email-form{flex-direction:column}
+  .email-form button{padding:14px}
+  .btn-glow{padding:14px 28px;font-size:1rem;width:100%;justify-content:center}
+  .cta-buttons{flex-direction:column;align-items:stretch;max-width:340px;margin-left:auto;margin-right:auto}
+}
+
+.mockup-note{
+  position:fixed;bottom:0;left:0;right:0;z-index:9998;
+  background:linear-gradient(135deg,var(--accent),var(--pink));
+  color:white;text-align:center;padding:10px;
+  font-size:0.85rem;font-weight:700;font-family:'Baloo 2',cursive;
+}
+</style>
+</head>
+<body>
+
+<!-- DOLOR -->
+<section class="dolor">
+  <div class="section-tag"><span class="line"></span> El problema</div>
+  <h2>La tarea no deberia ser <span class="hl">una pelea</span>.</h2>
+  <div class="dolor-cards">
+    <div class="dolor-card">
+      <div class="face"><img src="toto-verybad.png" alt=""></div>
+      <h3>Llegas detonado</h3>
+      <p>Despues de un dia largo, no tenes energia emocional ni cognitiva para bancarte el proceso de la tarea.</p>
+    </div>
+    <div class="dolor-card">
+      <div class="face"><img src="toto-notgood.png" alt=""></div>
+      <h3>No sabes como explicarle</h3>
+      <p>No sos profe. No tenes metodo. YouTube no alcanza. ChatGPT le hace la tarea por el.</p>
+    </div>
+    <div class="dolor-card">
+      <div class="face"><img src="toto-notgood.png" alt=""></div>
+      <h3>Termina en pelea</h3>
+      <p>Lo que deberia ser un momento de conexion, se convierte en frustracion, gritos y desgaste del vinculo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRANSFORMA -->
+<section class="transforma">
+  <div class="section-tag"><span class="line"></span> Lo que Toto transforma</div>
+  <h2>Menos pelea, mas <span class="hl">vinculo</span>.</h2>
+  <div class="transforma-grid">
+    <div class="transforma-card">
+      <div class="card-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c6fff" stroke-width="2" stroke-linecap="round"><path d="M12 2a7 7 0 017 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      </div>
+      <h3>Para tu hijo</h3>
+      <p>Aprende a pensar, no a copiar. Gana autonomia real. Se forma como alguien que doma la IA.</p>
+    </div>
+    <div class="transforma-card">
+      <div class="card-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3de8a0" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+      <h3>Para vos</h3>
+      <p>Soltas sin culpa. La tarea deja de ser tu problema. Respiras.</p>
+    </div>
+    <div class="transforma-card">
+      <div class="card-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffd60a" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <h3>Para la familia</h3>
+      <p>Las tardes vuelven a ser de ustedes. La tarea los une en vez de separarlos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="como">
+  <div class="section-tag"><span class="line"></span> Como funciona</div>
+  <h2>Tres pasos. <span class="hl">Cero drama.</span></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Sube la tarea</h3>
+      <p>Tu hijo sube una foto de la tarea o elige un tema que quiera explorar.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Toto lo guia</h3>
+      <p>Le hace preguntas para que piense. Nunca le da la respuesta directa.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Vos ves como le fue</h3>
+      <p>Recibis un resumen de la sesion por email. Sin estar encima.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VS -->
+<section class="versus">
+  <div class="section-tag"><span class="line"></span> La diferencia</div>
+  <h2>No es lo mismo <span style="color:var(--red)">copiar</span> que <span style="color:var(--green)">aprender</span>.</h2>
+  <div class="vs-container">
+    <div class="vs-col bad">
+      <h3>
+        ChatGPT
+      </h3>
+      <ul class="vs-list">
+        <li><span class="icon">&times;</span> Le da la respuesta hecha</li>
+        <li><span class="icon">&times;</span> Tu hijo copia y pega</li>
+        <li><span class="icon">&times;</span> Genera deuda cognitiva</li>
+        <li><span class="icon">&times;</span> La IA piensa por el</li>
+      </ul>
+    </div>
+    <div class="vs-divider"><span class="vs-badge">VS</span></div>
+    <div class="vs-col good">
+      <h3>
+        <img src="cara-toto.png" alt="Toto">
+        Toto
+      </h3>
+      <ul class="vs-list">
+        <li><span class="icon">&#10003;</span> Lo guia a encontrarla</li>
+        <li><span class="icon">&#10003;</span> Tu hijo piensa y aprende</li>
+        <li><span class="icon">&#10003;</span> Construye autonomia real</li>
+        <li><span class="icon">&#10003;</span> Tu hijo doma la IA</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="aij-banner">
+    <p>"Tu hijo <span class="hl">doma la IA</span>, no al reves."</p>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="section-tag"><span class="line"></span> Por que Toto</div>
+  <h2>No es otro ChatGPT con skin de nene.</h2>
+  <div class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+      <h3>Habla como un pibe argentino</h3>
+      <p>Nada de "Querido estudiante". Toto habla como un compañero copado, en rioplatense posta.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <h3>Conecta a la familia</h3>
+      <p>Despues de 3 pistas, te invita a conectar juntos. Un momento para compartir, no para sufrir.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <h3>Premia el esfuerzo</h3>
+      <p>Gana estrellas por cada intento, no por respuestas correctas. El proceso importa mas que el resultado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Probalo <span style="color:var(--accent)">gratis</span>.</h2>
+  <p class="sub">Tu hijo aprende a pensar. Vos respiras. La tarea los une.</p>
+  <div class="cta-buttons">
+    <a href="#" class="btn-glow btn-primary">
+      Probar ahora gratis
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="#" class="btn-glow btn-wa">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+      Hablanos por WhatsApp
+    </a>
+  </div>
+  <div class="email-form">
+    <input type="email" placeholder="Tu email para mantenerte al tanto...">
+    <button>Suscribirme</button>
+  </div>
+</section>
+
+<footer>
+  <p>Hecho con ganas en Buenos Aires &middot; <a href="#">Politica de Privacidad</a></p>
+</footer>
+
+<div class="mockup-note">MOCKUP V2 — Secciones: Dolor + Transforma + Como funciona + VS + Trust + CTA</div>
+
+</body>
+</html>

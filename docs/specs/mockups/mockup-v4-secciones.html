@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toto el Tutor — V4 Secciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#050505;--black2:#0c0c0c;--black3:#161616;--black4:#1e1e1e;
+  --white:#f0f0f0;--white-mid:#999;--white-dim:#555;
+  --accent:#7c6fff;--accent2:#a78bfa;
+  --pink:#ff6b8a;--green:#3de8a0;--red:#ff4757;
+  --orange:#ffb347;--cyan:#5ce0d8;--whatsapp:#25D366;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Jost',sans-serif;background:var(--black);color:var(--white);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;padding-bottom:50px;
+}
+
+section{max-width:1100px;margin:0 auto;padding:120px 48px;position:relative}
+.divider{width:100%;height:1px;background:rgba(255,255,255,0.06);max-width:1100px;margin:0 auto}
+
+.eyebrow{
+  font-size:0.7rem;font-weight:600;letter-spacing:0.2em;
+  text-transform:uppercase;margin-bottom:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:'';width:20px;height:1px}
+
+h2{
+  font-family:'Bodoni Moda',serif;font-weight:800;
+  font-size:clamp(2.2rem,4.5vw,3.5rem);line-height:1.08;
+  letter-spacing:-0.02em;margin-bottom:64px;
+}
+
+/* ================================================
+   NARRATIVE TIMELINE — "EL MOMENTO DE LA TAREA"
+   ================================================ */
+.narrative .eyebrow{color:var(--pink)}
+.narrative .eyebrow::before{background:var(--pink)}
+
+.timeline{position:relative;max-width:720px;margin:0 auto}
+
+/* Central line */
+.timeline::before{
+  content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;
+  background:linear-gradient(180deg,var(--red) 0%,var(--red) 50%,var(--green) 80%,var(--green) 100%);
+  opacity:0.2;transform:translateX(-50%);
+}
+
+.tl-item{
+  display:flex;gap:40px;padding:32px 0;position:relative;
+  opacity:0;transform:translateY(24px);
+  transition:all 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.tl-item.visible{opacity:1;transform:translateY(0)}
+
+.tl-item:nth-child(odd){flex-direction:row}
+.tl-item:nth-child(even){flex-direction:row-reverse;text-align:right}
+
+.tl-side{flex:1}
+
+/* Timeline dot */
+.tl-dot{
+  position:absolute;left:50%;transform:translateX(-50%);top:40px;
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid;z-index:2;background:var(--black);
+  transition:all 0.4s;
+}
+.tl-item:hover .tl-dot{transform:translateX(-50%) scale(1.4)}
+
+/* Phase colors */
+.tl-item[data-phase="pain"] .tl-dot{border-color:var(--red);box-shadow:0 0 12px rgba(255,71,87,0.3)}
+.tl-item[data-phase="turn"] .tl-dot{border-color:var(--accent);box-shadow:0 0 12px rgba(124,111,255,0.3)}
+.tl-item[data-phase="good"] .tl-dot{border-color:var(--green);box-shadow:0 0 12px rgba(61,232,160,0.3)}
+
+.tl-time{
+  font-size:0.65rem;font-weight:600;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.tl-item[data-phase="pain"] .tl-time{color:var(--red)}
+.tl-item[data-phase="turn"] .tl-time{color:var(--accent)}
+.tl-item[data-phase="good"] .tl-time{color:var(--green)}
+
+.tl-title{
+  font-family:'Bodoni Moda',serif;font-size:1.3rem;font-weight:700;
+  margin-bottom:8px;line-height:1.2;
+}
+.tl-desc{font-size:0.95rem;line-height:1.6;color:var(--white-mid)}
+
+/* Icon block on the other side */
+.tl-icon-block{
+  flex:1;display:flex;align-items:center;justify-content:center;
+}
+.tl-icon{
+  width:80px;height:80px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;transition:all 0.4s;
+}
+.tl-item:hover .tl-icon{transform:scale(1.1)}
+
+.tl-item[data-phase="pain"] .tl-icon{background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.1)}
+.tl-item[data-phase="turn"] .tl-icon{background:rgba(124,111,255,0.06);border:1px solid rgba(124,111,255,0.1)}
+.tl-item[data-phase="good"] .tl-icon{background:rgba(61,232,160,0.06);border:1px solid rgba(61,232,160,0.1)}
+
+/* Turn point — bigger */
+.tl-turn{
+  text-align:center;padding:48px 0;position:relative;
+  opacity:0;transform:translateY(24px);
+  transition:all 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.tl-turn.visible{opacity:1;transform:translateY(0)}
+.tl-turn-line{
+  font-family:'Bodoni Moda',serif;font-size:clamp(1.5rem,3vw,2.2rem);
+  font-weight:800;font-style:italic;
+}
+.tl-turn-line em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--accent),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* ================================================
+   BEFORE/AFTER
+   ================================================ */
+.ba .eyebrow{color:var(--accent)}
+.ba .eyebrow::before{background:var(--accent)}
+
+.ba-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  border:1px solid rgba(255,255,255,0.06);overflow:hidden;
+}
+.ba-col{padding:48px}
+.ba-col.before{
+  background:linear-gradient(180deg,rgba(255,71,87,0.03) 0%,var(--black2) 100%);
+  border-right:1px solid rgba(255,255,255,0.06);
+}
+.ba-col.after{background:linear-gradient(180deg,rgba(61,232,160,0.03) 0%,var(--black2) 100%)}
+
+.ba-label{
+  font-size:0.65rem;font-weight:600;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:28px;
+  display:flex;align-items:center;gap:10px;
+}
+.ba-col.before .ba-label{color:var(--red)}
+.ba-col.after .ba-label{color:var(--green)}
+.ba-col.after .ba-label img{width:28px;height:28px;border-radius:8px}
+
+.ba-item{padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.ba-item:last-child{border-bottom:none}
+.ba-item h4{font-size:1rem;font-weight:600;margin-bottom:4px}
+.ba-item p{font-size:0.9rem;color:var(--white-mid);line-height:1.55}
+
+/* ================================================
+   JOURNEY
+   ================================================ */
+.como .eyebrow{color:var(--accent)}
+.como .eyebrow::before{background:var(--accent)}
+
+.journey{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:12px;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
+.journey::-webkit-scrollbar{height:3px}
+.journey::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+.journey-card{
+  flex:0 0 360px;scroll-snap-align:start;padding:48px 36px;
+  border:1px solid rgba(255,255,255,0.06);border-right:none;
+  position:relative;transition:background 0.4s;cursor:default;
+}
+.journey-card:last-child{border-right:1px solid rgba(255,255,255,0.06)}
+.journey-card:hover{background:rgba(124,111,255,0.02)}
+
+.journey-num{
+  font-family:'Bodoni Moda',serif;font-size:4.5rem;font-weight:900;
+  color:rgba(255,255,255,0.03);line-height:1;margin-bottom:-16px;
+  transition:color 0.4s;
+}
+.journey-card:hover .journey-num{color:rgba(124,111,255,0.06)}
+
+.j-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;position:relative;z-index:1;transition:transform 0.3s;
+}
+.journey-card:hover .j-icon{transform:scale(1.1)}
+.journey-card:nth-child(1) .j-icon{background:rgba(124,111,255,0.08)}
+.journey-card:nth-child(2) .j-icon{background:rgba(255,107,138,0.08)}
+.journey-card:nth-child(3) .j-icon{background:rgba(61,232,160,0.08)}
+
+.journey-card h3{font-family:'Bodoni Moda',serif;font-size:1.2rem;font-weight:700;margin-bottom:10px;position:relative;z-index:1}
+.journey-card p{font-size:0.9rem;line-height:1.6;color:var(--white-mid);position:relative;z-index:1}
+
+/* ================================================
+   VS TOGGLE
+   ================================================ */
+.versus .eyebrow{color:var(--orange)}
+.versus .eyebrow::before{background:var(--orange)}
+
+.vs-toggle{display:flex;gap:0;margin-bottom:48px;border:1px solid rgba(255,255,255,0.1);width:fit-content}
+.vs-toggle button{
+  padding:12px 28px;background:transparent;color:var(--white-dim);
+  font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:500;
+  border:none;cursor:pointer;transition:all 0.3s;letter-spacing:0.03em;
+}
+.vs-toggle button.active{background:var(--white);color:var(--black)}
+.vs-toggle button:not(.active):hover{color:var(--white)}
+
+.vs-content{position:relative;min-height:280px}
+.vs-panel{display:none;animation:fadeIn 0.5s cubic-bezier(0.16,1,0.3,1)}
+.vs-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.vs-col h3{font-family:'Bodoni Moda',serif;font-size:1.5rem;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.vs-col.bad h3{color:var(--red)}
+.vs-col.good h3{color:var(--green)}
+.vs-col.good h3 img{width:32px;height:32px;border-radius:10px}
+
+.vs-row{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.vs-row:last-child{border-bottom:none}
+.vs-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0;margin-top:3px}
+.bad .vs-icon{background:rgba(255,71,87,0.12);color:var(--red)}
+.good .vs-icon{background:rgba(61,232,160,0.12);color:var(--green)}
+.vs-text{font-size:0.9rem;line-height:1.5;color:var(--white-mid)}
+.vs-text strong{color:var(--white);font-weight:600}
+
+.aij-quote{
+  margin-top:56px;padding:48px;text-align:center;
+  border:1px solid rgba(124,111,255,0.1);position:relative;
+}
+.aij-quote::before{
+  content:'\201C';position:absolute;top:-16px;left:40px;
+  font-family:'Bodoni Moda',serif;font-size:5rem;color:rgba(124,111,255,0.12);line-height:1;
+}
+.aij-quote p{font-family:'Bodoni Moda',serif;font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:600;font-style:italic;line-height:1.4}
+.aij-quote em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ================================================
+   TRUST
+   ================================================ */
+.trust .eyebrow{color:var(--cyan)}
+.trust .eyebrow::before{background:var(--cyan)}
+
+.trust-list{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid rgba(255,255,255,0.06)}
+.trust-item{padding:36px 28px;border-right:1px solid rgba(255,255,255,0.06);transition:background 0.3s;cursor:default}
+.trust-item:last-child{border-right:none}
+.trust-item:hover{background:rgba(92,224,216,0.02)}
+.trust-item .t-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;background:rgba(92,224,216,0.06)}
+.trust-item h3{font-family:'Bodoni Moda',serif;font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.trust-item p{font-size:0.85rem;line-height:1.6;color:var(--white-mid)}
+
+/* ================================================
+   CTA
+   ================================================ */
+.cta{text-align:center;padding-top:80px;padding-bottom:140px}
+.cta h2{margin-bottom:20px}
+.cta .sub{font-size:1.05rem;color:var(--white-mid);font-weight:300;margin-bottom:48px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.65}
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+
+.btn-solid{display:inline-flex;align-items:center;gap:10px;padding:16px 40px;background:var(--white);color:var(--black);font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;letter-spacing:0.03em;border:none;cursor:pointer;transition:all 0.35s cubic-bezier(0.16,1,0.3,1);text-decoration:none;position:relative;overflow:hidden}
+.btn-solid::after{content:'';position:absolute;inset:0;background:var(--accent);transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)}
+.btn-solid:hover{color:var(--white)}
+.btn-solid:hover::after{transform:translateY(0)}
+.btn-solid span{position:relative;z-index:1;display:flex;align-items:center;gap:10px}
+
+.btn-outline{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:var(--white);font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;letter-spacing:0.03em;cursor:pointer;text-decoration:none;transition:all 0.3s}
+.btn-outline:hover{border-color:var(--whatsapp);color:var(--whatsapp)}
+.btn-outline svg{width:20px;height:20px;fill:currentColor}
+
+.email-row{max-width:460px;margin:0 auto;display:flex;gap:0;border:1px solid rgba(255,255,255,0.1);transition:border-color 0.3s}
+.email-row:focus-within{border-color:var(--accent)}
+.email-row input{flex:1;padding:16px 20px;border:none;background:transparent;color:var(--white);font-family:'Jost',sans-serif;font-size:0.95rem;outline:none}
+.email-row input::placeholder{color:var(--white-dim)}
+.email-row button{padding:16px 28px;border:none;background:var(--accent);color:white;font-family:'Jost',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;transition:background 0.3s}
+.email-row button:hover{background:var(--accent2)}
+
+footer{text-align:center;padding:32px 48px;border-top:1px solid rgba(255,255,255,0.06);color:var(--white-dim);font-size:0.8rem;letter-spacing:0.04em}
+footer a{color:var(--accent);text-decoration:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  section{padding:80px 24px}
+  h2{margin-bottom:40px}
+  .timeline::before{left:20px}
+  .tl-item{flex-direction:column!important;gap:0;padding-left:48px;text-align:left!important}
+  .tl-item:nth-child(even){text-align:left!important}
+  .tl-dot{left:20px!important}
+  .tl-icon-block{display:none}
+  .ba-grid{grid-template-columns:1fr}
+  .ba-col.before{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}
+  .journey{flex-direction:column}
+  .journey-card{flex:none;border-right:1px solid rgba(255,255,255,0.06)}
+  .vs-toggle{flex-wrap:wrap}
+  .vs-grid{grid-template-columns:1fr}
+  .trust-list{grid-template-columns:1fr}
+  .trust-item{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}
+  .trust-item:last-child{border-bottom:none}
+  .cta-buttons{flex-direction:column;align-items:center}
+  .email-row{flex-direction:column}
+  .btn-solid,.btn-outline{width:100%;justify-content:center}
+}
+
+.mockup-note{position:fixed;bottom:0;left:0;right:0;z-index:9998;background:var(--accent);color:white;text-align:center;padding:10px;font-size:0.8rem;font-weight:600;font-family:'Jost',sans-serif;letter-spacing:0.04em}
+</style>
+</head>
+<body>
+
+<!-- ========== NARRATIVE TIMELINE ========== -->
+<section class="narrative">
+  <div class="eyebrow">El momento de la tarea</div>
+  <h2>Cada tarde,<br>la misma <span style="color:var(--pink)">historia</span>.</h2>
+
+  <div class="timeline">
+
+    <div class="tl-item" data-phase="pain">
+      <div class="tl-side">
+        <div class="tl-time">18:30 — Llegas a casa</div>
+        <div class="tl-title">Detonado del laburo</div>
+        <div class="tl-desc">Todo el dia afuera. Cero energia. Lo unico que queres es descansar. Pero hay tarea.</div>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-icon-block">
+        <div class="tl-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-phase="pain">
+      <div class="tl-side">
+        <div class="tl-time">19:00 — La tarea empieza</div>
+        <div class="tl-title">"Papa, no entiendo"</div>
+        <div class="tl-desc">Tu hijo te pide ayuda. Miras la consigna. No sabes por donde arrancar. Buscas en YouTube. Proba con ChatGPT. Le termina haciendo la tarea.</div>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-icon-block">
+        <div class="tl-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-phase="pain">
+      <div class="tl-side">
+        <div class="tl-time">19:45 — La frustracion escala</div>
+        <div class="tl-title">Gritos, culpa, desgaste</div>
+        <div class="tl-desc">Se frustra. Te frustras. La paciencia no alcanza. Lo que deberia ser conexion, se vuelve pelea. El vinculo se desgasta dia a dia.</div>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-icon-block">
+        <div class="tl-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><path d="M19.07 4.93A10 10 0 004.93 19.07"/><path d="M4.93 4.93A10 10 0 0019.07 19.07"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- TURNING POINT -->
+    <div class="tl-turn">
+      <div class="tl-turn-line">Y si hubiera otra forma?<br><em>La hay.</em></div>
+    </div>
+
+    <div class="tl-item" data-phase="good">
+      <div class="tl-side">
+        <div class="tl-time">19:00 — Con Toto</div>
+        <div class="tl-title">Tu hijo abre Toto</div>
+        <div class="tl-desc">Sube la foto de la tarea. Toto lo saluda y le pregunta que se acuerda del tema. El chico piensa. Intenta. Avanza solo.</div>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-icon-block">
+        <div class="tl-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-phase="good">
+      <div class="tl-side">
+        <div class="tl-time">19:30 — Vos respiras</div>
+        <div class="tl-title">Soltas sin culpa</div>
+        <div class="tl-desc">Toto guia el proceso cognitivo. Vos podes descansar, cocinar, estar. Cuando tu hijo necesita apoyo, Toto te invita a un momento juntos. Desde el vinculo, no la frustracion.</div>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-icon-block">
+        <div class="tl-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-phase="good">
+      <div class="tl-side">
+        <div class="tl-time">20:00 — Resumen por email</div>
+        <div class="tl-title">Ves como penso tu hijo</div>
+        <div class="tl-desc">Te llega un resumen: como encaro la tarea, que le costo, donde brillo. Sin haber estado encima. La tarea termino. El vinculo esta intacto.</div>
+      </div>
+      <div class="tl-dot"></div>
+      <div class="tl-icon-block">
+        <div class="tl-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== BEFORE/AFTER ========== -->
+<section class="ba">
+  <div class="eyebrow">El contraste</div>
+  <h2>Mismo momento.<br>Distinto <span style="color:var(--green)">resultado</span>.</h2>
+  <div class="ba-grid">
+    <div class="ba-col before">
+      <div class="ba-label"><span style="color:var(--red)">&#x2715;</span> Sin Toto</div>
+      <div class="ba-item"><h4>El padre intenta explicar</h4><p>Sin metodo, sin paciencia. Frustracion mutua.</p></div>
+      <div class="ba-item"><h4>ChatGPT le da la respuesta</h4><p>Copia, pega, entrega. No aprendio nada. Deuda cognitiva.</p></div>
+      <div class="ba-item"><h4>La tarea destruye el vinculo</h4><p>Cada tarde, un poco mas lejos. Gritos que quedan.</p></div>
+    </div>
+    <div class="ba-col after">
+      <div class="ba-label"><img src="cara-toto.png" alt=""> Con Toto</div>
+      <div class="ba-item"><h4>El padre suelta sin culpa</h4><p>Toto guia. El padre recupera su energia y su tarde.</p></div>
+      <div class="ba-item"><h4>El chico piensa por si mismo</h4><p>Preguntas que activan el pensamiento. Autonomia real.</p></div>
+      <div class="ba-item"><h4>La tarea los une</h4><p>Checkpoint de conexion cuando importa. Vinculo desde la calma.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== JOURNEY ========== -->
+<section class="como">
+  <div class="eyebrow">Como funciona</div>
+  <h2>Tres pasos.<br>Cero <span style="color:var(--accent)">drama</span>.</h2>
+  <div class="journey">
+    <div class="journey-card">
+      <div class="journey-num">01</div>
+      <div class="j-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c6fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <h3>Sube la tarea</h3>
+      <p>Tu hijo saca una foto o elige un tema. Toto detecta la materia automaticamente.</p>
+    </div>
+    <div class="journey-card">
+      <div class="journey-num">02</div>
+      <div class="j-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6b8a" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <h3>Toto lo guia</h3>
+      <p>Preguntas que activan el pensamiento. Gana estrellas por cada intento. Nunca la respuesta.</p>
+    </div>
+    <div class="journey-card">
+      <div class="journey-num">03</div>
+      <div class="j-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3de8a0" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <h3>Vos ves como le fue</h3>
+      <p>Resumen por email: como penso, que le costo, donde brillo. Sin estar encima.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== VS TOGGLE ========== -->
+<section class="versus">
+  <div class="eyebrow">La diferencia</div>
+  <h2>No es lo mismo <span style="color:var(--red)">copiar</span><br>que <span style="color:var(--green)">aprender</span>.</h2>
+  <div class="vs-toggle" id="vsToggle">
+    <button class="active" data-panel="chatgpt">vs ChatGPT</button>
+    <button data-panel="youtube">vs YouTube</button>
+    <button data-panel="padre">vs El padre solo</button>
+  </div>
+  <div class="vs-content">
+    <div class="vs-panel active" id="panel-chatgpt">
+      <div class="vs-grid">
+        <div class="vs-col bad">
+          <h3>ChatGPT</h3>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Da la respuesta hecha.</strong> Tu hijo copia, pega, entrega.</div></div>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Genera deuda cognitiva.</strong> La IA piensa por el. Cada vez necesita mas ayuda.</div></div>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Sin limites ni metodo.</strong> No hay checkpoint, no hay guia. Solo respuestas.</div></div>
+        </div>
+        <div class="vs-col good">
+          <h3><img src="cara-toto.png" alt=""> Toto</h3>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Lo guia con preguntas.</strong> Activa el pensamiento, no lo reemplaza.</div></div>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Construye autonomia.</strong> Cada sesion lo hace mas independiente.</div></div>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>3 pistas + checkpoint.</strong> Metodo socratico real. Involucra a la familia.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="vs-panel" id="panel-youtube">
+      <div class="vs-grid">
+        <div class="vs-col bad">
+          <h3>YouTube</h3>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Pasivo.</strong> 20 minutos mirando sin interactuar. Se distrae a los 3.</div></div>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>No ensena a pensar.</strong> Consume tiempo sin construir habilidades.</div></div>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Un agujero negro.</strong> Empezo con fracciones, termino en Minecraft.</div></div>
+        </div>
+        <div class="vs-col good">
+          <h3><img src="cara-toto.png" alt=""> Toto</h3>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Interactivo.</strong> Conversacion activa. Piensa, intenta, avanza.</div></div>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Enfocado.</strong> Detecta la materia. Sin distracciones.</div></div>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>2 segundos.</strong> No hay video de 20 min. Progreso real en tiempo real.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="vs-panel" id="panel-padre">
+      <div class="vs-grid">
+        <div class="vs-col bad">
+          <h3>El padre solo</h3>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Sin metodo.</strong> No sos profe. No tenes formacion didactica.</div></div>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Desgaste emocional.</strong> Cansado + sin paciencia = pelea.</div></div>
+          <div class="vs-row"><div class="vs-icon">&times;</div><div class="vs-text"><strong>Destruye el vinculo.</strong> Gritos, frustracion, culpa. Todos los dias.</div></div>
+        </div>
+        <div class="vs-col good">
+          <h3><img src="cara-toto.png" alt=""> Toto + vos</h3>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Metodo comprobado.</strong> Socratico real. Probado con familias en Buenos Aires.</div></div>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Soltas sin culpa.</strong> Toto guia. Vos recuperas tu energia.</div></div>
+          <div class="vs-row"><div class="vs-icon">&#10003;</div><div class="vs-text"><strong>Checkpoint de vinculo.</strong> Cuando importa, conectan juntos. Desde la calma.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="aij-quote">
+    <p>Tu hijo <em>doma la IA</em>, no al reves.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== TRUST ========== -->
+<section class="trust">
+  <div class="eyebrow">Por que Toto</div>
+  <h2>No es otro ChatGPT<br>con skin de <span style="color:var(--cyan)">nene</span>.</h2>
+  <div class="trust-list">
+    <div class="trust-item">
+      <div class="t-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+      <h3>Habla rioplatense posta</h3>
+      <p>Nada de "Querido estudiante". Habla como un compañero copado. Che, dale, posta.</p>
+    </div>
+    <div class="trust-item">
+      <div class="t-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <h3>Checkpoint de familia</h3>
+      <p>Despues de 3 pistas, te invita a participar juntos. Vinculo, no evaluacion.</p>
+    </div>
+    <div class="trust-item">
+      <div class="t-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5ce0d8" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <h3>Premia el intento</h3>
+      <p>Estrellas por pensar, no por acertar. El esfuerzo cognitivo es lo que importa.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== CTA ========== -->
+<section class="cta">
+  <h2>Probalo <span style="color:var(--accent)">gratis</span>.</h2>
+  <p class="sub">Tu hijo aprende a pensar. Vos respiras.<br>La tarea los une.</p>
+  <div class="cta-buttons">
+    <a href="#" class="btn-solid"><span>Probar ahora gratis <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+    <a href="#" class="btn-outline">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+      Hablanos por WhatsApp
+    </a>
+  </div>
+  <div class="email-row">
+    <input type="email" placeholder="Tu email para mantenerte al tanto">
+    <button>Suscribirme</button>
+  </div>
+</section>
+
+<footer>
+  <p>Hecho con ganas en Buenos Aires &middot; <a href="#">Politica de Privacidad</a></p>
+</footer>
+
+<div class="mockup-note">V4 SECCIONES — Timeline narrativa (rojo→verde), Before/After, Journey, VS toggle, Trust, CTA</div>
+
+<script>
+// VS Toggle
+document.getElementById('vsToggle').querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.vs-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.vs-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('active');
+  });
+});
+
+// Scroll animations
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.15});
+document.querySelectorAll('.tl-item,.tl-turn,.ba-item,.trust-item,.journey-card').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
