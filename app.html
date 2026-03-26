@@ -1994,6 +1994,22 @@ function detectPersonalTopic(msg) {
 // Init carousel de moods
 setTimeout(initMoodCarousel, 0);
 
+// ── Token de registro beta ──────────────────────────────────
+(function() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      const alumno = JSON.parse(atob(token));
+      if (alumno.nombre) localStorage.setItem('toto_nombre', alumno.nombre);
+      if (alumno.edad)   localStorage.setItem('toto_edad', String(alumno.edad));
+      if (alumno.grado)  localStorage.setItem('toto_grado', alumno.grado);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  } catch(e) { /* token inválido → onboarding normal */ }
+})();
+// ────────────────────────────────────────────────────────────
+
 // Recuperar datos guardados si existen
 const savedName = localStorage.getItem('toto_nombre');
 if (savedName) {
