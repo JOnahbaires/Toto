@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toto el Tutor &mdash; Que la tarea los una, no los separe</title>
+<meta name="description" content="Toto el Tutor: el tutor de tarea socr&aacute;tico que ense&ntilde;a a pensar. Gratis, sin descarga, 100% socr&aacute;tico. Para chicos de primaria en Buenos Aires.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: auto; overflow-x: hidden; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #050510;
+  color: #e8e8f0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection { background: rgba(139, 92, 246, 0.4); color: #fff; }
+
+/* ========== VERSION LABEL ========== */
+.version-label {
+  position: fixed;
+  top: 16px;
+  left: 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  z-index: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ========== SCROLL PROGRESS ========== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #8b5cf6, #f59e0b, #10b981);
+  z-index: 999;
+  transition: none;
+}
+
+/* ========== PARTICLE FIELD ========== */
+.particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatParticle linear infinite;
+}
+@keyframes floatParticle {
+  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+}
+
+/* ========== STICKY HEADER ========== */
+.sticky-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: rgba(5, 5, 16, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 100;
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sticky-header.visible {
+  transform: translateY(0);
+}
+.sticky-header-logo-img {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+}
+.sticky-header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: #fff;
+  text-decoration: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+}
+.sticky-header-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(139,92,246,0.45);
+}
+
+/* ========== SECTIONS BASE ========== */
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  overflow: hidden;
+}
+.scene-inner {
+  max-width: 1200px;
+  width: 100%;
+  padding: 60px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ========== TYPOGRAPHY ========== */
+.headline-xl {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 10vw, 8rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.headline-lg {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 7vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.headline-md {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 4vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.body-lg {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  line-height: 1.6;
+  font-weight: 400;
+}
+.body-md {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  line-height: 1.6;
+  font-weight: 400;
+}
+.mono {
+  font-family: 'Space Mono', monospace;
+}
+.text-gradient-violet {
+  background: linear-gradient(135deg, #8b5cf6, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-amber {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-mint {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-red { color: #ef4444; }
+.text-dim { color: rgba(255,255,255,0.5); }
+.text-dark { color: #1a1a2e; }
+
+/* ========== SCENE 1: ARRIVAL ========== */
+#scene1 { background: #050510; }
+#scene1 .line {
+  opacity: 0;
+  transform: translateY(30px);
+}
+#scene1 .line-pause {
+  display: block;
+  margin-top: 1.5rem;
+}
+
+/* ========== SCENE 2: STATS ========== */
+#scene2 { background: #050510; }
+.stat-card {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 16px;
+  padding: 32px;
+  opacity: 0;
+  transform: translateX(-60px);
+}
+.stat-card:nth-child(even) { transform: translateX(60px); }
+.stat-card .stat-number {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  color: #ef4444;
+  line-height: 1;
+}
+.stat-card .stat-label {
+  font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+  color: rgba(255,255,255,0.7);
+  margin-top: 8px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+.pain-cards-wrapper {
+  position: relative;
+  margin-top: 32px;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 40px 24px;
+}
+.pain-cards-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.18;
+  filter: brightness(0.5) saturate(0.7);
+  z-index: 0;
+  pointer-events: none;
+}
+.pain-cards {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.pain-card {
+  background: rgba(239, 68, 68, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 16px;
+  padding: 28px 20px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.85);
+  opacity: 0;
+  transform: translateY(20px);
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
+  position: relative;
+}
+.pain-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  top: -14px;
+  right: 12px;
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.pain-card-role {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  font-style: normal;
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: rgba(239, 68, 68, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.pain-card .quote-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4em;
+  color: #ef4444;
+  font-style: normal;
+  vertical-align: baseline;
+  line-height: 1;
+}
+
+/* ========== SCENE 3: CHATGPT ========== */
+#scene3 { background: #050510; }
+.chatgpt-flow {
+  text-align: center;
+}
+.chatgpt-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 12px 28px;
+  margin: 32px auto;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.7);
+  opacity: 0;
+}
+.chatgpt-brand svg {
+  width: 24px; height: 24px;
+}
+.flow-step {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  color: rgba(255,255,255,0.5);
+  margin: 16px 0;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.flow-step.resolved {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+}
+.deuda-box {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  transform: scale(0.95);
+}
+.deuda-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  color: #ef4444;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+/* ========== SCENE 3.5: DEUDA COGNITIVA GRAPH ========== */
+#sceneDeuda { background: #050510; }
+.deuda-graph-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.deuda-graph-text p {
+  color: rgba(255,255,255,0.6);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.deuda-citation {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.35);
+  border-left: 3px solid #10b981;
+  padding-left: 18px;
+  margin-top: 28px;
+  line-height: 1.65;
+}
+.graph-container {
+  width: 100%;
+  max-width: 540px;
+}
+.graph-container svg {
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 768px) {
+  .deuda-graph-section { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* ========== SCENE 4: THE TURN ========== */
+#scene4 {
+  background: linear-gradient(180deg, #050510 0%, #1a1a3e 30%, #faf7f2 100%);
+}
+#scene4 .headline-xl {
+  color: #fff !important;
+  opacity: 0;
+  transform: translateY(30px);
+}
+#scene4 .scene-inner {
+  text-align: center;
+}
+.turn-question {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ========== SCENE 5: HORIZONTAL SCROLL ========== */
+#scene5-wrapper {
+  overflow: hidden;
+  background: #faf7f2;
+  position: relative;
+}
+#scene5 {
+  background: #faf7f2;
+  min-height: 100vh;
+  width: 200vw;
+  display: flex;
+  flex-wrap: nowrap;
+}
+.hw-panel {
+  width: 50vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 130px 32px 60px;
+  position: relative;
+}
+.hw-panel-inner {
+  max-width: 520px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hw-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+.hw-number {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(5rem, 15vw, 12rem);
+  font-weight: 700;
+  opacity: 0.08;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #1a1a2e;
+  pointer-events: none;
+}
+.hw-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+.hw-icon-1 { background: rgba(139,92,246,0.12); }
+.hw-icon-2 { background: rgba(245,158,11,0.12); }
+.hw-icon-3 { background: rgba(16,185,129,0.12); }
+.hw-icon-4 { background: rgba(59,130,246,0.12); }
+.hw-icon svg { width: 36px; height: 36px; }
+.hw-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+.hw-desc {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: #555;
+  line-height: 1.6;
+}
+.hw-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+}
+
+/* ========== SCENE 6: CHAT DEMO ========== */
+#scene6 { background: #faf7f2; }
+.phone-mockup {
+  max-width: 400px;
+  margin: 0 auto;
+  background: #0a0e1a;
+  border-radius: 32px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+  overflow: hidden;
+  border: 6px solid #222;
+}
+.phone-header {
+  background: #141829;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(124,111,255,0.15);
+}
+.phone-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(124,111,255,0.15), rgba(155,109,255,0.2));
+  border: 2px solid rgba(124,111,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.phone-avatar svg { width: 28px; height: 28px; }
+.phone-name {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #edf0ff;
+}
+.phone-status {
+  font-size: 0.72rem;
+  color: #7c6fff;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.phone-input-area {
+  background: #141829;
+  border-top: 1px solid rgba(124,111,255,0.15);
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.phone-input-field {
+  flex: 1;
+  background: #1c2137;
+  border: 1.5px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  color: #6b7194;
+  font-size: 0.82rem;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+}
+.phone-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c6fff, #9b6dff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.chat-body {
+  padding: 20px 16px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #0a0e1a;
+}
+.chat-bubble {
+  max-width: 85%;
+  padding: 13px 16px;
+  border-radius: 18px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  opacity: 0;
+  transform: translateY(15px);
+}
+.chat-student {
+  background: linear-gradient(135deg, rgba(124,111,255,0.12), rgba(155,109,255,0.08));
+  border: 1px solid rgba(124,111,255,0.2);
+  color: #edf0ff;
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+}
+.chat-toto {
+  background: #141829;
+  border: 1px solid rgba(124,111,255,0.15);
+  color: #edf0ff;
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+}
+.chat-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 5px;
+}
+.chat-toto .chat-label { color: #7c6fff; }
+.chat-student .chat-label { color: #6b7194; text-align: right; }
+.chat-label-right { text-align: right; }
+
+/* ========== TYPING INDICATOR ========== */
+.typing-indicator {
+  align-self: flex-start;
+  display: flex;
+  gap: 4px;
+  padding: 14px 18px;
+  background: #141829;
+  border: 1px solid rgba(124,111,255,0.15);
+  border-radius: 18px;
+  border-bottom-left-radius: 5px;
+  opacity: 0;
+  width: fit-content;
+}
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: #7c6fff;
+  border-radius: 50%;
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ========== SCENE 6.5: CHILD PERSPECTIVE ========== */
+#sceneChild { background: #faf7f2; }
+.child-grid {
+  display: flex;
+  gap: 32px;
+  margin-top: 48px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
+  scrollbar-width: none;
+}
+.child-grid::-webkit-scrollbar { display: none; }
+.child-card {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 44px 32px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.6);
+  opacity: 0;
+  transform: translateY(30px);
+  min-width: 320px;
+  flex: 1;
+  scroll-snap-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.child-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 24px 24px 0 0;
+}
+.child-card:nth-child(1)::before { background: linear-gradient(90deg, #8b5cf6, #c084fc); }
+.child-card:nth-child(2)::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.child-card:nth-child(3)::before { background: linear-gradient(90deg, #10b981, #34d399); }
+.child-card-img {
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  object-fit: cover;
+  margin: 0 auto 24px;
+  display: block;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+.child-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 14px;
+}
+.child-card p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.7;
+}
+.child-card .child-quote {
+  font-style: italic;
+  font-size: 1.05rem;
+  margin-top: 20px;
+  padding-top: 32px;
+  border-top: 2px solid rgba(139,92,246,0.12);
+  font-weight: 500;
+  position: relative;
+}
+.child-card:nth-child(1) .child-quote { color: #8b5cf6; }
+.child-card:nth-child(1) .child-quote::before { color: #8b5cf6; }
+.child-card:nth-child(2) .child-quote { color: #d97706; }
+.child-card:nth-child(2) .child-quote::before { color: #f59e0b; }
+.child-card:nth-child(3) .child-quote { color: #059669; }
+.child-card:nth-child(3) .child-quote::before { color: #10b981; }
+.child-nav {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.child-nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(139,92,246,0.2);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  padding: 0;
+}
+.child-nav-dot.active {
+  background: #8b5cf6;
+  transform: scale(1.3);
+}
+@media (max-width: 768px) {
+  .child-card { min-width: 85vw; flex: none; }
+  .child-nav { display: flex; }
+}
+
+/* ========== SCENE 7: RESULTS — CLAYMORPHISM ========== */
+#scene7 { background: linear-gradient(180deg, #faf7f2, #f0fdf4); min-height: auto; padding: 60px 0; }
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-top: 56px;
+}
+.result-card {
+  border-radius: 28px;
+  padding: 48px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.result-card:nth-child(1) {
+  background: linear-gradient(145deg, #f3eeff, #e8dbff);
+  box-shadow: inset 0 -8px 20px rgba(139,92,246,0.08), inset 0 8px 20px rgba(255,255,255,0.9), 0 16px 48px rgba(139,92,246,0.12);
+}
+.result-card:nth-child(2) {
+  background: linear-gradient(145deg, #fef6e4, #fdedc8);
+  box-shadow: inset 0 -8px 20px rgba(245,158,11,0.08), inset 0 8px 20px rgba(255,255,255,0.9), 0 16px 48px rgba(245,158,11,0.12);
+}
+.result-card:nth-child(3) {
+  background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+  box-shadow: inset 0 -8px 20px rgba(16,185,129,0.08), inset 0 8px 20px rgba(255,255,255,0.9), 0 16px 48px rgba(16,185,129,0.12);
+}
+.result-number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.5rem, 8vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.result-label {
+  font-size: 1.05rem;
+  color: #444;
+  font-weight: 500;
+}
+
+/* ========== SCENE 8: AIJ ========== */
+#scene8 { background: #f0fdf4; }
+.aij-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  margin-top: 56px;
+  align-items: stretch;
+}
+@media (max-width: 768px) {
+  .aij-grid { grid-template-columns: 1fr; gap: 24px; }
+  .aij-vs { display: none; }
+}
+.aij-card {
+  border-radius: 24px;
+  padding: 40px 32px;
+  opacity: 0;
+  transform: translateY(30px);
+  position: relative;
+  overflow: hidden;
+}
+.aij-good {
+  background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+  border: 2px solid rgba(16,185,129,0.25);
+  box-shadow: 0 12px 48px rgba(16,185,129,0.12);
+}
+.aij-bad {
+  background: linear-gradient(145deg, #fef2f2, #fee2e2);
+  border: 2px solid rgba(239,68,68,0.2);
+  box-shadow: 0 12px 48px rgba(239,68,68,0.08);
+}
+.aij-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.12;
+  z-index: 0;
+  border-radius: 22px;
+  pointer-events: none;
+}
+.aij-card-content {
+  position: relative;
+  z-index: 1;
+}
+.aij-card-header {
+  margin-bottom: 24px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(0,0,0,0.06);
+}
+.aij-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.aij-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #333;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+.aij-good .aij-list li {
+  background: rgba(255,255,255,0.6);
+  border-left: 3px solid #10b981;
+  color: #1a5e3a;
+}
+.aij-bad .aij-list li {
+  background: rgba(255,255,255,0.5);
+  border-left: 3px solid #ef4444;
+  color: #7f1d1d;
+}
+.aij-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+.aij-vs-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a1a2e, #2d2d4e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+  box-shadow: 0 0 30px rgba(139,92,246,0.3), 0 0 60px rgba(139,92,246,0.1);
+  animation: vsGlow 3s ease-in-out infinite alternate;
+}
+@keyframes vsGlow {
+  0% { box-shadow: 0 0 20px rgba(139,92,246,0.2), 0 0 40px rgba(139,92,246,0.05); }
+  100% { box-shadow: 0 0 35px rgba(139,92,246,0.4), 0 0 70px rgba(139,92,246,0.15); }
+}
+.shield-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(139,92,246,0.12));
+  border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 100px;
+  padding: 14px 28px;
+  margin-top: 48px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: #1a1a2e;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.shield-badge svg {
+  width: 22px; height: 22px;
+}
+
+/* ========== SCENE 8.5: TRIPODE ACADEMICO ========== */
+#sceneTripode {
+  background: linear-gradient(180deg, #f0fdf4 0%, #050510 40%);
+}
+.tripod-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 56px;
+}
+.tripod-card {
+  text-align: left;
+  opacity: 0;
+  transform: translateY(30px);
+  padding: 32px 24px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.tripod-line { display: none; }
+.tripod-card svg {
+  margin-bottom: 24px;
+  display: inline-block;
+}
+#tripod1 svg { filter: drop-shadow(0 0 12px rgba(59,130,246,0.5)) drop-shadow(0 0 28px rgba(59,130,246,0.25)); }
+#tripod2 svg { filter: drop-shadow(0 0 12px rgba(245,158,11,0.5)) drop-shadow(0 0 28px rgba(245,158,11,0.25)); }
+#tripod3 svg { filter: drop-shadow(0 0 12px rgba(16,185,129,0.5)) drop-shadow(0 0 28px rgba(16,185,129,0.25)); }
+.tripod-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.tripod-card p {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+}
+@media (max-width: 768px) {
+  .tripod-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== SCENE 9: CTA ========== */
+#scene9 {
+  background: #050510;
+  text-align: center;
+}
+.cta-orbs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+}
+.orb-1 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #8b5cf6, transparent);
+  top: 20%; left: -5%;
+  animation: orbFloat 8s ease-in-out infinite alternate;
+}
+.orb-2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #10b981, transparent);
+  bottom: 10%; right: -5%;
+  animation: orbFloat 10s ease-in-out infinite alternate-reverse;
+}
+.orb-3 {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, #f59e0b, transparent);
+  top: 50%; left: 40%;
+  animation: orbFloat 12s ease-in-out infinite alternate;
+}
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -30px) scale(1.15); }
+}
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: #fff;
+  text-decoration: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 600;
+  padding: 20px 48px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 40px rgba(139,92,246,0.35);
+  margin-top: 40px;
+}
+.cta-button:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 50px rgba(139,92,246,0.5);
+}
+.cta-sub {
+  margin-top: 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(0.75rem, 1vw, 0.9rem);
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+}
+.cta-sub span {
+  margin: 0 8px;
+  opacity: 0.4;
+}
+
+/* ========== DECORATIVE SHAPES ========== */
+.deco-shape {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+  filter: blur(1px);
+}
+.deco-circle-violet {
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+}
+.deco-circle-mint {
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, #10b981 0%, transparent 70%);
+}
+.deco-circle-amber {
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
+}
+.deco-ring {
+  border-radius: 50%;
+  border: 2px solid rgba(139,92,246,0.15);
+  background: none;
+  opacity: 0.3;
+}
+
+/* ========== FILL-TEXT ANIMATION ========== */
+.fill-text {
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: none;
+}
+.fill-text-dark {
+  background-image: linear-gradient(90deg, #1a1a2e 50%, rgba(26,26,46,0.2) 50%);
+}
+.fill-text-light {
+  background-image: linear-gradient(90deg, #fff 50%, rgba(255,255,255,0.2) 50%);
+}
+
+/* ========== COUNTER ========== */
+.counter { display: inline-block; }
+
+/* ========== AIJ ILLUSTRATION ========== */
+.aij-illustration {
+  text-align: center;
+  margin: 48px auto 0;
+  max-width: 800px;
+  position: relative;
+}
+.aij-illustration-frame {
+  position: relative;
+  overflow: visible;
+}
+.aij-illustration-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 20px 60px rgba(139,92,246,0.25));
+}
+.aij-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  margin-top: 24px;
+  line-height: 1.1;
+  color: #1a1a2e;
+}
+.aij-title-highlight {
+  display: inline-block;
+  background: linear-gradient(135deg, #8b5cf6, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.aij-caption {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .scene-inner { padding: 40px 20px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+  .phone-mockup { max-width: 340px; }
+  /* grids removed in V5 — scenes use centered layout now */
+  .cta-button { padding: 16px 36px; }
+  .hw-panel { padding: 100px 20px 40px; width: 80vw; }
+  #scene5 { width: 320vw; }
+  .hw-img { max-height: 160px; }
+  .child-card-img { height: 160px; }
+}
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .particle { display: none; }
+  .orb { animation: none !important; }
+  .scroll-progress { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- VERSION LABEL -->
+<!-- STICKY HEADER -->
+<header class="sticky-header" id="stickyHeader">
+  <img src="toto-logotipo.png" alt="Toto el Tutor" class="sticky-header-logo-img">
+  <a href="#scene9" class="sticky-header-cta">Probalo gratis &rarr;</a>
+</header>
+
+<div class="version-label">V5 &middot; Scroll Story</div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- ==================== ACT 1: THE PROBLEM ==================== -->
+
+<!-- SCENE 1: ARRIVAL -->
+<section class="scene" id="scene1">
+  <div class="deco-shape deco-circle-violet" id="deco1" style="top: 10%; right: -8%;"></div>
+  <div class="deco-shape deco-circle-mint" id="deco2" style="bottom: 15%; left: -6%;"></div>
+  <img src="scene1-llegada.png" alt="" loading="lazy" class="scene-bg-img" id="scene1-bg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 60%; opacity: 0; z-index: 0; pointer-events: none; filter: brightness(0.7) saturate(0.85);">
+  <div class="scene-inner" style="text-align: center; position: relative; z-index: 2;">
+    <h1 class="headline-xl" style="max-width: 900px; margin: 0 auto;">
+      <span class="line">Son las 19:30.</span>
+      <span class="line line-pause">Lleg&aacute;s del trabajo<br>agotado.</span>
+    </h1>
+    <div style="margin-top: 48px;">
+      <p class="body-lg line" style="color: rgba(255,255,255,0.5); max-width: 600px; margin: 0 auto;">
+        Tu hijo te mira con el cuaderno abierto.
+      </p>
+      <p class="body-lg line line-pause" style="color: rgba(255,255,255,0.3); max-width: 600px; margin: 0 auto;">
+        Y los dos saben c&oacute;mo termina esto.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 2: STATS -->
+<section class="scene" id="scene2">
+  <div class="scene-inner">
+    <img src="scene2-pelea.png" alt="" loading="lazy" class="scene-bg-img" id="scene2-bg" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 70%; opacity: 0; z-index: 0; pointer-events: none; filter: brightness(0.65) saturate(0.8);">
+    <div style="text-align: center; margin-bottom: 48px; position: relative; z-index: 2;">
+      <h2 class="headline-lg" style="max-width: 800px; margin: 0 auto;">
+        La tarea se transforma<br>en <span class="text-red">pelea.</span> Otra vez.
+      </h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number"><span class="counter" data-target="73">0</span>%</div>
+        <div class="stat-label">de los padres argentinos viven esta escena cada semana</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><span class="counter" data-target="45">0</span> min</div>
+        <div class="stat-label">promedio que dura la pelea por la tarea</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><span class="counter" data-target="3">0</span> de 5</div>
+        <div class="stat-label">chicos terminan llorando o gritando</div>
+      </div>
+    </div>
+    <div class="pain-cards-wrapper">
+      <img src="pain-cards-emotions.jpg" alt="" loading="lazy" class="pain-cards-bg">
+      <div class="pain-cards">
+        <div class="pain-card">
+          <span class="pain-card-role">Padre</span>
+          <img src="avatar-padre.jpg" alt="" class="pain-card-avatar">
+          <span class="quote-mark">&ldquo;</span>Cambi&oacute; el m&eacute;todo de cuando yo estudi&eacute;<span class="quote-mark">&rdquo;</span>
+        </div>
+        <div class="pain-card">
+          <span class="pain-card-role">Hijo</span>
+          <img src="avatar-hijo.jpg" alt="" class="pain-card-avatar">
+          <span class="quote-mark">&ldquo;</span>No entiendo nada y encima se enoja conmigo<span class="quote-mark">&rdquo;</span>
+        </div>
+        <div class="pain-card">
+          <span class="pain-card-role">Padre</span>
+          <img src="avatar-padre.jpg" alt="" class="pain-card-avatar">
+          <span class="quote-mark">&ldquo;</span>Siento que le estoy fallando<span class="quote-mark">&rdquo;</span>
+        </div>
+        <div class="pain-card">
+          <span class="pain-card-role">Hijo</span>
+          <img src="avatar-hijo.jpg" alt="" class="pain-card-avatar">
+          <span class="quote-mark">&ldquo;</span>&iexcl;Odio hacer la tarea!<span class="quote-mark">&rdquo;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 3: CHATGPT -->
+<section class="scene" id="scene3">
+  <div class="scene-inner chatgpt-flow">
+    <h2 class="headline-lg">
+      Entonces busc&aacute;s<br>una salida r&aacute;pida.
+    </h2>
+    <div class="chatgpt-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      ChatGPT
+    </div>
+    <div class="flow-step">&laquo;Le da la respuesta.&raquo;</div>
+    <div class="flow-step">&laquo;Tu hijo copia.&raquo;</div>
+    <div class="flow-step">&laquo;Problema resuelto.&raquo;</div>
+    <div class="flow-step resolved" style="margin-top: 32px; display: flex; align-items: baseline; justify-content: center; gap: 24px;">
+      <span class="text-red" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(1.8rem, 4vw, 3rem);">&iquest;Resuelto?</span>
+      <span style="font-family: 'Playfair Display', serif; font-weight: 900; font-size: clamp(3rem, 8vw, 6rem); color: #fff; letter-spacing: 4px; text-shadow: 0 0 40px rgba(239,68,68,0.6), 0 0 80px rgba(239,68,68,0.3);">NO.</span>
+    </div>
+    <div class="deuda-box">
+      <div class="deuda-title">Deuda Cognitiva</div>
+      <p class="body-md" style="color: rgba(255,255,255,0.7);">
+        Cada respuesta regalada es un m&uacute;sculo mental que tu hijo <strong>no ejercit&oacute;</strong>.
+        Se acumula. Y cuando llega el examen, no hay ChatGPT que lo salve.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 3.5: DEUDA COGNITIVA GRAPH -->
+<section class="scene" id="sceneDeuda">
+  <div class="scene-inner">
+    <div class="deuda-graph-section">
+      <div class="deuda-graph-text">
+        <p class="mono" style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #10b981; margin-bottom: 16px; opacity: 0;" id="deuda-label">Concepto clave</p>
+        <h2 class="headline-md" style="margin-bottom: 24px;">El costo oculto de copiar sin pensar</h2>
+        <p>El deterioro progresivo de habilidades cognitivas &mdash; atenci&oacute;n, memoria de trabajo, pensamiento cr&iacute;tico &mdash; que ocurre cuando una herramienta realiza el trabajo mental por el estudiante.</p>
+        <p>Como un m&uacute;sculo que deja de ejercitarse: se atrofia. Y la brecha entre quien piensa y quien copia se agranda cada d&iacute;a.</p>
+        <div class="deuda-citation">Concepto utilizado en investigaci&oacute;n sobre tecnolog&iacute;a educativa y desarrollo cognitivo infantil.</div>
+      </div>
+      <div class="graph-container" id="graphContainer">
+        <svg viewBox="0 0 540 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="graphGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            </pattern>
+            <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feFlood flood-color="#ef4444" flood-opacity="0.3" result="color"/>
+              <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+              <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feFlood flood-color="#10b981" flood-opacity="0.3" result="color"/>
+              <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+              <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect x="80" y="30" width="430" height="310" fill="url(#graphGrid)" rx="2"/>
+          <rect x="80" y="30" width="430" height="310" fill="rgba(255,255,255,0.02)" rx="2"/>
+          <!-- Axes -->
+          <line x1="80" y1="340" x2="510" y2="340" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+          <line x1="80" y1="30" x2="80" y2="340" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+          <path d="M80 30 L76 38 L84 38 Z" fill="rgba(255,255,255,0.3)"/>
+          <path d="M510 340 L502 336 L502 344 Z" fill="rgba(255,255,255,0.3)"/>
+          <!-- Axis labels -->
+          <text x="300" y="385" font-family="'Space Mono', monospace" font-size="12" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-weight="500">Tiempo</text>
+          <text x="28" y="190" font-family="'Space Mono', monospace" font-size="11" fill="rgba(255,255,255,0.4)" text-anchor="middle" transform="rotate(-90, 28, 190)" font-weight="500">Capacidad cognitiva</text>
+          <!-- Y-axis ticks -->
+          <line x1="74" y1="90" x2="80" y2="90" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <text x="68" y="94" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="end">Alta</text>
+          <line x1="80" y1="90" x2="510" y2="90" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="4 4"/>
+          <line x1="74" y1="190" x2="80" y2="190" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <text x="68" y="194" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="end">Media</text>
+          <line x1="80" y1="190" x2="510" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="4 4"/>
+          <line x1="74" y1="300" x2="80" y2="300" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <text x="68" y="304" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="end">Baja</text>
+          <line x1="80" y1="300" x2="510" y2="300" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="4 4"/>
+          <!-- X-axis ticks -->
+          <line x1="160" y1="340" x2="160" y2="346" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <text x="160" y="360" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">1 mes</text>
+          <line x1="300" y1="340" x2="300" y2="346" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <text x="300" y="360" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">6 meses</text>
+          <line x1="430" y1="340" x2="430" y2="346" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <text x="430" y="360" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">1 a&ntilde;o</text>
+          <!-- Starting point -->
+          <circle cx="100" cy="195" r="6" fill="rgba(255,255,255,0.15)"/>
+          <circle cx="100" cy="195" r="3" fill="#fff"/>
+          <text x="100" y="228" font-family="'Space Mono', monospace" font-size="10" fill="rgba(255,255,255,0.5)" font-weight="500" text-anchor="middle">Inicio</text>
+          <!-- Red descending curve -->
+          <path id="redCurve"
+            d="M100 195 C140 198, 180 210, 220 228 C260 246, 300 268, 340 282 C380 296, 420 306, 480 315"
+            stroke="#ef4444" stroke-width="3" fill="none" stroke-linecap="round"
+            filter="url(#glowRed)"
+            stroke-dasharray="650" stroke-dashoffset="650"/>
+          <!-- Green ascending curve -->
+          <path id="greenCurve"
+            d="M100 195 C140 188, 180 170, 220 148 C260 126, 300 104, 340 88 C380 72, 420 62, 480 55"
+            stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round"
+            filter="url(#glowGreen)"
+            stroke-dasharray="650" stroke-dashoffset="650"/>
+          <!-- End dots -->
+          <g id="redEndDot" opacity="0">
+            <circle cx="480" cy="315" r="5" fill="#ef4444" opacity="0.3"/>
+            <circle cx="480" cy="315" r="3" fill="#ef4444"/>
+          </g>
+          <g id="greenEndDot" opacity="0">
+            <circle cx="480" cy="55" r="5" fill="#10b981" opacity="0.3"/>
+            <circle cx="480" cy="55" r="3" fill="#10b981"/>
+          </g>
+          <!-- Labels -->
+          <g id="redLabel" opacity="0">
+            <rect x="370" y="278" width="155" height="28" rx="6" fill="rgba(239,68,68,0.25)" stroke="rgba(239,68,68,0.4)" stroke-width="1"/>
+            <text x="447" y="296" font-family="'Space Mono', monospace" font-size="11" fill="#ef4444" text-anchor="middle" font-weight="600">Copia sin pensar</text>
+          </g>
+          <g id="greenLabel" opacity="0">
+            <rect x="368" y="18" width="160" height="28" rx="6" fill="rgba(16,185,129,0.25)" stroke="rgba(16,185,129,0.4)" stroke-width="1"/>
+            <text x="448" y="36" font-family="'Space Mono', monospace" font-size="11" fill="#10b981" text-anchor="middle" font-weight="600">Piensa con gu&iacute;a</text>
+          </g>
+          <!-- Divergence -->
+          <g id="divergeAnnotation" opacity="0">
+            <line x1="220" y1="148" x2="220" y2="228" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="230" y="170" font-family="'Space Mono', monospace" font-size="9" fill="rgba(255,255,255,0.5)">divergencia</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ACT 2: THE TURN ==================== -->
+
+<!-- SCENE 4: THE TURN -->
+<section class="scene" id="scene4">
+  <div class="deco-shape deco-circle-violet" id="deco3" style="top: 20%; left: -10%; width: 400px; height: 400px; opacity: 0.08;"></div>
+  <div class="deco-shape deco-ring" id="deco4" style="bottom: 10%; right: 5%; width: 180px; height: 180px;"></div>
+  <div class="scene-inner" style="text-align: center;">
+    <div class="turn-question">
+      <p class="mono text-dim" style="font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; opacity: 0;" id="turn-label">
+        Plot twist
+      </p>
+      <h2 class="headline-xl" id="turn-headline" style="color: #fff;">
+        &iquest;Y si hubiera un tutor que no le da la respuesta&hellip; sino que le ense&ntilde;a a encontrarla?
+      </h2>
+      <p class="body-lg" style="color: #fff; max-width: 650px; margin: 32px auto 0; opacity: 0;" id="turn-sub">
+        Conoc&eacute; a <strong style="color: #c084fc; font-size: 1.15em; text-shadow: 0 0 30px rgba(192,132,252,0.5);">Toto</strong> &mdash; el primer tutor socr&aacute;tico pensado para chicas y chicos de CABA y AMBA.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 5: HORIZONTAL SCROLL &mdash; HOW IT WORKS -->
+<section id="scene5-wrapper">
+  <div style="position: absolute; top: 32px; left: 0; width: 100%; text-align: center; z-index: 10; pointer-events: none;">
+    <p style="font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: #8b5cf6; margin-bottom: 8px;">Paso a paso</p>
+    <div class="hw-section-title">C&oacute;mo funciona Toto</div>
+  </div>
+  <div id="scene5">
+    <div class="hw-panel">
+      <div class="hw-number">1</div>
+      <div class="hw-panel-inner">
+        <img src="hw-step1-foto.jpg" alt="Chico sacando foto a la tarea" class="hw-img" loading="lazy">
+        <h3 class="hw-title">Sube la foto de la tarea</h3>
+        <p class="hw-desc">Tu hijo le saca una foto al ejercicio. Toto lee el problema al instante. As&iacute; de simple, sin fricci&oacute;n.</p>
+      </div>
+    </div>
+    <div class="hw-panel">
+      <div class="hw-number">2</div>
+      <div class="hw-panel-inner">
+        <img src="hw-step2-pregunta.jpg" alt="Chico pensando una pregunta" class="hw-img" loading="lazy">
+        <h3 class="hw-title">Toto pregunta en vez de responder</h3>
+        <p class="hw-desc">&laquo;Fijate, &iquest;qu&eacute; pasa si divid&iacute;s esa torta en 4 partes iguales?&raquo; Gu&iacute;a el pensamiento sin hacer trampa.</p>
+      </div>
+    </div>
+    <div class="hw-panel">
+      <div class="hw-number">3</div>
+      <div class="hw-panel-inner">
+        <img src="hw-step3-pista.jpg" alt="Chico descubriendo la respuesta" class="hw-img" loading="lazy">
+        <h3 class="hw-title">Si se traba, da pistas</h3>
+        <p class="hw-desc">Nunca lo deja solo. Si se frustra, Toto baja el nivel y le ofrece una pista. Pero la respuesta siempre la encuentra &eacute;l.</p>
+      </div>
+    </div>
+    <div class="hw-panel">
+      <div class="hw-number">4</div>
+      <div class="hw-panel-inner">
+        <img src="hw-step4-reporte.jpg" alt="Madre recibiendo el reporte" class="hw-img" loading="lazy">
+        <h3 class="hw-title">Vos recib&iacute;s el reporte</h3>
+        <p class="hw-desc">Despu&eacute;s de cada sesi&oacute;n, te llega un resumen: qu&eacute; hizo, d&oacute;nde se trab&oacute;, c&oacute;mo se sinti&oacute;. Sin tener que estar encima.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 6: CHAT DEMO -->
+<section class="scene" id="scene6">
+  <div class="scene-inner" style="display: flex; flex-direction: column; align-items: center;">
+    <p class="mono" style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #8b5cf6; margin-bottom: 24px;">Demo en vivo</p>
+    <h2 class="headline-md text-dark" style="text-align: center; margin-bottom: 40px;">
+      As&iacute; habla Toto con tu hijo
+    </h2>
+    <div class="phone-mockup">
+      <div class="phone-header">
+        <div class="phone-avatar">
+          <img src="cara-toto.png" alt="Toto" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; transform: scale(1.45) translateY(-4%);">
+        </div>
+        <div>
+          <div class="phone-name">Toto el Tutor</div>
+          <div class="phone-status">En l&iacute;nea &bull; M&eacute;todo socr&aacute;tico</div>
+        </div>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="typing-indicator" id="typingDots"><span></span><span></span><span></span></div>
+        <div class="chat-bubble chat-student">
+          <div class="chat-label chat-label-right">Alumno</div>
+          Toto, no entiendo c&oacute;mo se forman las monta&ntilde;as
+        </div>
+        <div class="chat-bubble chat-toto">
+          <div class="chat-label">Toto</div>
+          &iexcl;Mir&aacute; esta imagen que te hice para entender!
+        </div>
+        <div class="chat-bubble chat-toto">
+          <img src="toto-imagen-placas.jpg" alt="Diagrama de placas tect&oacute;nicas" style="width: 100%; border-radius: 10px; margin: 4px 0;">
+        </div>
+        <div class="chat-bubble chat-toto">
+          <div class="chat-label">Toto</div>
+          &iquest;Ves esas flechas naranjas a los costados? Son las placas. &iquest;Qu&eacute; pasa cuando se empujan una contra la otra?
+        </div>
+        <div class="chat-bubble chat-student">
+          <div class="chat-label chat-label-right">Alumno</div>
+          &iquest;Se levantan?
+        </div>
+        <div class="chat-bubble chat-toto">
+          <div class="chat-label">Toto</div>
+          &iexcl;Exacto! Se empujan y el terreno sube. As&iacute; se forman las monta&ntilde;as. &iquest;Se te ocurre alguna cordillera famosa que se haya formado as&iacute;?
+        </div>
+        <div class="chat-bubble chat-student">
+          <div class="chat-label chat-label-right">Alumno</div>
+          &iexcl;Los Andes! Lo entend&iacute; solo!
+        </div>
+        <div class="chat-bubble chat-toto">
+          <div class="chat-label">Toto</div>
+          Lo entendiste vos. Yo solo te mostr&eacute; la imagen y pregunt&eacute;. &iquest;Ves que pod&eacute;s?
+        </div>
+      </div>
+      <div class="phone-input-area">
+        <div class="phone-input-field">Escrib&iacute; tu respuesta...</div>
+        <div class="phone-send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 6.5: CHILD PERSPECTIVE -->
+<section class="scene" id="sceneChild" style="min-height: auto; padding: 60px 0 20px;">
+  <div class="scene-inner">
+    <div style="text-align: center; margin-bottom: 56px;">
+      <p class="mono" style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #8b5cf6; margin-bottom: 16px;">La experiencia del alumno</p>
+      <h2 class="headline-lg text-dark">
+        Lo que tu hijo siente usando Toto
+      </h2>
+    </div>
+    <div class="child-grid" id="childGrid">
+      <div class="child-card">
+        <img src="child-confianza-real.jpg" alt="Chico confiado con idea" class="child-card-img" loading="lazy">
+        <h3>Confianza genuina</h3>
+        <p>Cuando encuentra la respuesta por s&iacute; mismo, sabe que puede. No depende de que otro le diga qu&eacute; hacer.</p>
+        <div class="child-quote">&laquo;Lo hice solo, Toto solo me preguntaba cosas&raquo;</div>
+      </div>
+      <div class="child-card">
+        <img src="child-esfuerzo-real.jpg" alt="Chico esforzándose con la tarea" class="child-card-img" loading="lazy">
+        <h3>Esfuerzo valorado</h3>
+        <p>Toto celebra el proceso, no solo el resultado. El chico siente que equivocarse est&aacute; bien si est&aacute; pensando.</p>
+        <div class="child-quote">&laquo;No me ret&oacute; cuando me equivoqu&eacute;, me ayud&oacute; a pensar de nuevo&raquo;</div>
+      </div>
+      <div class="child-card">
+        <img src="child-familia-real.jpg" alt="Familia tranquila después de la tarea" class="child-card-img" loading="lazy">
+        <h3>Sin tensi&oacute;n familiar</h3>
+        <p>La tarea deja de ser territorio de pelea. El padre descansa, el hijo trabaja con un tutor paciente.</p>
+        <div class="child-quote">&laquo;Mam&aacute;, ya termin&eacute; la tarea con Toto&raquo;</div>
+      </div>
+    </div>
+    <div class="child-nav" id="childNav">
+      <button class="child-nav-dot active" data-idx="0" aria-label="Card 1"></button>
+      <button class="child-nav-dot" data-idx="1" aria-label="Card 2"></button>
+      <button class="child-nav-dot" data-idx="2" aria-label="Card 3"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ACT 3: THE PROOF ==================== -->
+
+<!-- SCENE 7: RESULTS -->
+<section class="scene" id="scene7">
+  <div class="scene-inner" style="text-align: center;">
+    <p class="mono" style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #10b981; margin-bottom: 16px;">Resultados reales</p>
+    <h2 class="headline-lg text-dark">
+      Los n&uacute;meros hablan solos.
+    </h2>
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-number text-gradient-violet"><span class="counter" data-target="7">0</span>x</div>
+        <div class="result-label">Lucas volvi&oacute; 7 veces en una semana</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number text-gradient-amber"><span class="counter" data-target="8" data-decimal="7">0</span>/10</div>
+        <div class="result-label">Engagement emocional promedio</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number text-gradient-mint">0</div>
+        <div class="result-label">Respuestas regaladas. Nunca. Jam&aacute;s.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 8: AIJ -->
+<section class="scene" id="scene8">
+  <div class="scene-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <p class="mono" style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #8b5cf6; margin-bottom: 16px;">Una nueva habilidad para ni&ntilde;os nativos de la IA</p>
+      <h2 class="headline-lg text-dark">
+        Tu hijo, un <span style="font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.15em; background: linear-gradient(135deg, #8b5cf6, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">AIJ</span>
+      </h2>
+      <p class="body-md text-dark" style="max-width: 500px; margin: 8px auto 0; opacity: 0.55;">
+        Se pronuncia &ldquo;eiaish&eacute;i&rdquo; &mdash; como los DJ&rsquo;s, pero con la AI
+      </p>
+      <p class="body-lg text-dark" style="max-width: 700px; margin: 16px auto 0; opacity: 0.7;">
+        Alguien que <strong>doma la IA</strong>, no al rev&eacute;s. Que la usa como herramienta, no como muleta.
+      </p>
+    </div>
+
+    <!-- AIJ Illustration — borderless, animated -->
+    <div class="aij-illustration" style="opacity: 0;" id="aijIllustration">
+      <div class="aij-illustration-frame">
+        <video src="aij-hero-animated-v2.mp4" autoplay loop muted playsinline style="max-width: 100%; border-radius: 20px; filter: drop-shadow(0 20px 60px rgba(139,92,246,0.2));" id="aijHeroVideo"></video>
+      </div>
+    </div>
+
+    <div class="aij-grid">
+      <div class="aij-card aij-good">
+        <img src="compare-toto-real.jpg" alt="Chico pensando activamente con cuaderno" class="aij-card-img" loading="lazy">
+        <div class="aij-card-content">
+          <div class="aij-card-header">
+            Toto el Tutor
+          </div>
+          <ul class="aij-list">
+            <li>Pregunta antes de responder</li>
+            <li>Construye pensamiento cr&iacute;tico</li>
+            <li>Gamifica el esfuerzo, no el atajo</li>
+            <li>Habla como un tutor que entiende</li>
+            <li>Reporta al padre despu&eacute;s</li>
+          </ul>
+        </div>
+      </div>
+      <div class="aij-vs"><div class="aij-vs-circle">VS</div></div>
+      <div class="aij-card aij-bad">
+        <img src="compare-chatgpt-real.jpg" alt="Chico pasivo copiando de pantalla" class="aij-card-img" loading="lazy">
+        <div class="aij-card-content">
+          <div class="aij-card-header">
+            ChatGPT gen&eacute;rico
+          </div>
+          <ul class="aij-list">
+            <li>Responde todo al instante</li>
+            <li>Crea dependencia</li>
+            <li>No diferencia ni edad ni contexto</li>
+            <li>Habla como manual t&eacute;cnico</li>
+            <li>El padre no se entera de nada</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 56px;">
+      <h3 style="font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3.5vw, 2.8rem); font-weight: 900; color: #1a1a2e; line-height: 1.3;">
+        <span style="color: #8b5cf6;">Toto cr&iacute;a AIJs.</span><br>
+        <span style="color: #999; font-weight: 400; font-size: 0.7em;">ChatGPT cr&iacute;a dependientes.</span>
+      </h3>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 8.5: TRIPODE ACADEMICO -->
+<section class="scene" id="sceneTripode">
+  <div class="scene-inner">
+    <div style="text-align: center; margin-bottom: 16px;">
+      <p class="mono" style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: #3b82f6; margin-bottom: 16px; opacity: 0;" id="tripode-label">Fundamento</p>
+      <h2 class="headline-lg" style="opacity: 0;" id="tripode-title">
+        Una herramienta co-creada por expertos en tres &aacute;reas claves para la ni&ntilde;ez.
+      </h2>
+    </div>
+    <div class="tripod-grid">
+      <div class="tripod-card" id="tripod1">
+        <div class="tripod-line tripod-line--blue"></div>
+        <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 12 C24 12 18 16 16 22 C12 22 8 28 8 34 C8 42 14 48 22 48 C22 52 26 56 32 56"
+            stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M32 12 C40 12 46 16 48 22 C52 22 56 28 56 34 C56 42 50 48 42 48 C42 52 38 56 32 56"
+            stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <line x1="32" y1="14" x2="32" y2="54" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2 3" opacity="0.35"/>
+          <circle cx="20" cy="26" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+          <circle cx="14" cy="36" r="2.5" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+          <circle cx="44" cy="26" r="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+          <circle cx="50" cy="36" r="2.5" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+          <path d="M20 26 L14 36" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+          <path d="M44 26 L50 36" stroke="#3b82f6" stroke-width="1" opacity="0.3"/>
+          <path d="M20 26 Q32 22 44 26" stroke="#3b82f6" stroke-width="0.8" opacity="0.2" stroke-dasharray="2 2"/>
+          <circle cx="32" cy="34" r="2" fill="#3b82f6" opacity="0.5"/>
+        </svg>
+        <h3>Neurodesarrollo</h3>
+        <p>C&oacute;mo se forman las conexiones neuronales en la infancia. Qu&eacute; tipo de est&iacute;mulos fortalecen vs debilitan el pensamiento aut&oacute;nomo.</p>
+      </div>
+      <div class="tripod-card" id="tripod2">
+        <div class="tripod-line tripod-line--amber"></div>
+        <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 16 L32 52" stroke="#f59e0b" stroke-width="2"/>
+          <path d="M10 14 Q10 12 12 12 L30 14 Q32 14.5 32 16 L32 52 Q32 50.5 30 50 L12 48 Q10 48 10 46 Z" stroke="#f59e0b" stroke-width="2" fill="none"/>
+          <path d="M54 14 Q54 12 52 12 L34 14 Q32 14.5 32 16 L32 52 Q32 50.5 34 50 L52 48 Q54 48 54 46 Z" stroke="#f59e0b" stroke-width="2" fill="none"/>
+          <path d="M16 22 L28 24" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+          <path d="M16 27 L28 29" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+          <path d="M16 32 L28 34" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+          <path d="M36 24 L48 22" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+          <path d="M36 29 L48 27" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+          <path d="M28 4 Q28 2 30 2 L34 2 Q36 2 36 4 Q36 6 34 7 L33 8 Q32 9 32 10"
+            stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="32" cy="14" r="1.5" fill="#f59e0b"/>
+        </svg>
+        <h3>Pedagog&iacute;a socr&aacute;tica</h3>
+        <p>El m&eacute;todo de ense&ntilde;anza basado en preguntas que lleva 2400 a&ntilde;os formando pensadores cr&iacute;ticos. Adaptado para estudiantes de primaria.</p>
+      </div>
+      <div class="tripod-card" id="tripod3">
+        <div class="tripod-line tripod-line--green"></div>
+        <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 30 L32 10 L56 30" stroke="#10b981" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 27 L14 54 L50 54 L50 27" stroke="#10b981" stroke-width="2" fill="none" stroke-linejoin="round"/>
+          <rect x="26" y="38" width="12" height="16" rx="2" stroke="#10b981" stroke-width="2" fill="none"/>
+          <circle cx="35" cy="46" r="1.5" fill="#10b981"/>
+          <rect x="17" y="32" width="7" height="7" rx="1" stroke="#10b981" stroke-width="1.5" fill="none"/>
+          <rect x="40" y="32" width="7" height="7" rx="1" stroke="#10b981" stroke-width="1.5" fill="none"/>
+          <path d="M28 18 C28 15.5 25 14 23.5 15.5 C22 17 22 19 24 21.5 L28 25 L32 21.5 C34 19 34 17 32.5 15.5 C31 14 28 15.5 28 18 Z"
+            stroke="#10b981" stroke-width="1.5" fill="none"/>
+        </svg>
+        <h3>Crianza respetuosa</h3>
+        <p>El v&iacute;nculo familiar como base del aprendizaje. La tarea como oportunidad de conexi&oacute;n, no de conflicto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ACT 4: THE CALL ==================== -->
+
+<!-- SCENE 9: CTA -->
+<section class="scene" id="scene9">
+  <div class="cta-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="scene-inner" style="text-align: center; position: relative; z-index: 2;">
+    <h2 class="headline-xl fill-text fill-text-light" id="cta-headline">
+      Que la tarea los una, no los separe.
+    </h2>
+    <p class="body-lg" style="color: rgba(255,255,255,0.5); max-width: 550px; margin: 24px auto 0; opacity: 0;" id="cta-sub-text">
+      Toto est&aacute; listo para acompa&ntilde;ar a tu hijo.<br>Y a darte tranquilidad a vos.
+    </p>
+    <a href="#scene9" class="cta-button" id="cta-btn" style="opacity: 0; transform: translateY(20px);">
+      Probalo gratis &rarr;
+    </a>
+    <div class="cta-sub" id="cta-details" style="opacity: 0;">
+      Sin tarjeta<span>&bull;</span>Sin descarga<span>&bull;</span>100% socr&aacute;tico
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ===== PARTICLES =====
+  if (!prefersReduced) {
+    var particlesEl = document.getElementById('particles');
+    var colors = ['#8b5cf6', '#10b981', '#f59e0b', '#3b82f6', '#ef4444'];
+    for (var i = 0; i < 30; i++) {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      var size = Math.random() * 4 + 2;
+      p.style.cssText =
+        'width:' + size + 'px;height:' + size + 'px;' +
+        'left:' + (Math.random() * 100) + '%;' +
+        'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+        'animation-duration:' + (Math.random() * 15 + 10) + 's;' +
+        'animation-delay:' + (Math.random() * 10) + 's;';
+      particlesEl.appendChild(p);
+    }
+  }
+
+  // ===== SCROLL PROGRESS =====
+  var progressBar = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', function() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }, { passive: true });
+
+  // ===== GSAP SETUP =====
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ===== COUNTER ANIMATION =====
+  function animateCounter(el) {
+    var target = parseInt(el.dataset.target);
+    var decimal = el.dataset.decimal;
+    var obj = { val: 0 };
+    gsap.to(obj, {
+      val: decimal ? parseFloat(target + '.' + decimal) : target,
+      duration: 2,
+      ease: 'power2.out',
+      onUpdate: function() {
+        el.textContent = decimal ? obj.val.toFixed(1) : Math.round(obj.val);
+      }
+    });
+  }
+
+  // ===== STICKY HEADER — show after hero =====
+  var stickyHeader = document.getElementById('stickyHeader');
+  ScrollTrigger.create({
+    trigger: '#scene2',
+    start: 'top 80%',
+    onEnter: function() { stickyHeader.classList.add('visible'); },
+    onLeaveBack: function() { stickyHeader.classList.remove('visible'); }
+  });
+
+  // ===== SCENE 1: TEXT FIRST, THEN BG IMAGE =====
+  var s1Lines = document.querySelectorAll('#scene1 .line');
+  var s1tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#scene1',
+      start: 'top 80%',
+      end: 'bottom 30%',
+      toggleActions: 'play none none reverse'
+    }
+  });
+  s1Lines.forEach(function(line, i) {
+    s1tl.to(line, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, i * 0.6);
+  });
+  // Background image fades in early, in parallel with the first text lines
+  s1tl.to('#scene1-bg', { opacity: 0.75, duration: 2.5, ease: 'power2.inOut' }, 0);
+
+  // ===== SCENE 2: BG IMAGE + STATS =====
+  gsap.to('#scene2-bg', {
+    opacity: 0.7, duration: 2, ease: 'power2.inOut',
+    scrollTrigger: { trigger: '#scene2 .pain-cards-wrapper', start: 'top 80%', toggleActions: 'play none none reverse' }
+  });
+  gsap.utils.toArray('#scene2 .stat-card').forEach(function(card) {
+    gsap.to(card, {
+      opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+      scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none reverse' },
+      onStart: function() {
+        var counter = card.querySelector('.counter');
+        if (counter && counter.textContent === '0') animateCounter(counter);
+      }
+    });
+  });
+  gsap.utils.toArray('#scene2 .pain-card').forEach(function(card, i) {
+    gsap.to(card, {
+      opacity: 1, y: 0, duration: 0.6, delay: i * 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '#scene2 .pain-cards', start: 'top 85%', toggleActions: 'play none none reverse' }
+    });
+  });
+
+  // ===== SCENE 3: CHATGPT FLOW =====
+  var s3tl = gsap.timeline({
+    scrollTrigger: { trigger: '#scene3', start: 'top 60%', end: 'bottom 30%', toggleActions: 'play none none reverse' }
+  });
+  s3tl.to('#scene3 .chatgpt-brand', { opacity: 1, duration: 0.6 })
+    .to('#scene3 .flow-step', { opacity: 1, y: 0, duration: 0.5, stagger: 0.3 })
+    .to('#scene3 .deuda-box', { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.2)' }, '+=0.3');
+
+  // ===== SCENE 3.5: DEUDA COGNITIVA GRAPH =====
+  gsap.to('#deuda-label', {
+    opacity: 1, duration: 0.6,
+    scrollTrigger: { trigger: '#sceneDeuda', start: 'top 70%', toggleActions: 'play none none reverse' }
+  });
+  // Animate curves
+  var graphTl = gsap.timeline({
+    scrollTrigger: { trigger: '#graphContainer', start: 'top 70%', end: 'bottom 30%', toggleActions: 'play none none reverse' }
+  });
+  graphTl
+    .to('#redCurve', { strokeDashoffset: 0, duration: 2, ease: 'power2.inOut' })
+    .to('#greenCurve', { strokeDashoffset: 0, duration: 2, ease: 'power2.inOut' }, 0.3)
+    .to('#redEndDot', { opacity: 1, duration: 0.4 }, 1.5)
+    .to('#greenEndDot', { opacity: 1, duration: 0.4 }, 1.8)
+    .to('#redLabel', { opacity: 1, duration: 0.5 }, 1.8)
+    .to('#greenLabel', { opacity: 1, duration: 0.5 }, 2.1)
+    .to('#divergeAnnotation', { opacity: 1, duration: 0.5 }, 2.4);
+
+  // ===== SCENE 4: THE TURN =====
+  gsap.to('#turn-headline', {
+    opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
+    scrollTrigger: { trigger: '#scene4', start: 'top 60%', toggleActions: 'play none none reverse' }
+  });
+  gsap.to('#turn-label', {
+    opacity: 1, duration: 0.6,
+    scrollTrigger: { trigger: '#scene4', start: 'top 70%', toggleActions: 'play none none reverse' }
+  });
+  gsap.to('#turn-sub', {
+    opacity: 1, duration: 0.8,
+    scrollTrigger: { trigger: '#scene4', start: 'center 60%', toggleActions: 'play none none reverse' }
+  });
+  // scene4 image removed per feedback
+
+  // ===== SCENE 5: HORIZONTAL SCROLL =====
+  var scene5 = document.getElementById('scene5');
+  var scene5Wrapper = document.getElementById('scene5-wrapper');
+  gsap.to(scene5, {
+    x: function() { return -(scene5.scrollWidth - window.innerWidth); },
+    ease: 'none',
+    scrollTrigger: {
+      trigger: scene5Wrapper,
+      start: 'top top',
+      end: function() { return '+=' + (scene5.scrollWidth - window.innerWidth); },
+      scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true
+    }
+  });
+
+  // ===== SCENE 6: INTERACTIVE CHAT WITH TYPING =====
+  var chatBubbles = gsap.utils.toArray('#chatBody .chat-bubble');
+  var typingDots = document.getElementById('typingDots');
+  var chatTl = gsap.timeline({
+    scrollTrigger: { trigger: '#scene6', start: 'top 55%', toggleActions: 'play none none reverse' }
+  });
+  var cumDelay = 0;
+  chatBubbles.forEach(function(bubble, i) {
+    var isToto = bubble.classList.contains('chat-toto');
+    if (isToto) {
+      // Show typing indicator before Toto messages
+      chatTl.to(typingDots, { opacity: 1, y: 0, duration: 0.2 }, cumDelay);
+      cumDelay += 0.8;
+      chatTl.to(typingDots, { opacity: 0, duration: 0.15 }, cumDelay);
+      cumDelay += 0.15;
+    }
+    chatTl.to(bubble, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, cumDelay);
+    cumDelay += isToto ? 1.2 : 0.8;
+  });
+
+  // ===== SCENE 6.5: CHILD PERSPECTIVE =====
+  gsap.utils.toArray('#sceneChild .child-card').forEach(function(card, i) {
+    gsap.to(card, {
+      opacity: 1, y: 0, duration: 0.7, delay: i * 0.15, ease: 'power3.out',
+      scrollTrigger: { trigger: '#sceneChild .child-grid', start: 'top 80%', toggleActions: 'play none none reverse' }
+    });
+  });
+
+  // ===== SCENE 7: RESULTS =====
+  gsap.utils.toArray('#scene7 .result-card').forEach(function(card, i) {
+    gsap.to(card, {
+      opacity: 1, y: 0, duration: 0.7, delay: i * 0.15, ease: 'power3.out',
+      scrollTrigger: { trigger: '#scene7 .results-grid', start: 'top 80%', toggleActions: 'play none none reverse' },
+      onStart: function() {
+        var counter = card.querySelector('.counter');
+        if (counter && counter.textContent === '0') animateCounter(counter);
+      }
+    });
+  });
+
+  // ===== SCENE 8: AIJ =====
+  gsap.utils.toArray('#scene8 .aij-card').forEach(function(card, i) {
+    gsap.to(card, {
+      opacity: 1, y: 0, duration: 0.7, delay: i * 0.2, ease: 'power3.out',
+      scrollTrigger: { trigger: '#scene8 .aij-grid', start: 'top 80%', toggleActions: 'play none none reverse' }
+    });
+  });
+  gsap.to('#aijIllustration', {
+    opacity: 1, duration: 1, ease: 'power2.out',
+    scrollTrigger: { trigger: '#aijIllustration', start: 'top 85%', toggleActions: 'play none none reverse' }
+  });
+  // AIJ hero image — static (animation removed, user wants video animation via fal.ai)
+
+  // ===== SCENE 8.5: TRIPODE ACADEMICO =====
+  gsap.to('#tripode-label', {
+    opacity: 1, duration: 0.6,
+    scrollTrigger: { trigger: '#sceneTripode', start: 'top 70%', toggleActions: 'play none none reverse' }
+  });
+  gsap.to('#tripode-title', {
+    opacity: 1, duration: 0.8,
+    scrollTrigger: { trigger: '#sceneTripode', start: 'top 65%', toggleActions: 'play none none reverse' }
+  });
+  gsap.utils.toArray('.tripod-card').forEach(function(card, i) {
+    gsap.to(card, {
+      opacity: 1, y: 0, duration: 0.7, delay: i * 0.2, ease: 'power3.out',
+      scrollTrigger: { trigger: '.tripod-grid', start: 'top 80%', toggleActions: 'play none none reverse' }
+    });
+  });
+
+  // ===== SCENE 9: CTA - FILL TEXT =====
+  gsap.to('#cta-headline', {
+    backgroundPosition: '0% 0%', ease: 'none',
+    scrollTrigger: { trigger: '#scene9', start: 'top 60%', end: 'center center', scrub: 1 }
+  });
+  gsap.to('#cta-sub-text', {
+    opacity: 1, duration: 0.8,
+    scrollTrigger: { trigger: '#scene9', start: 'top 40%', toggleActions: 'play none none reverse' }
+  });
+  gsap.to('#cta-btn', {
+    opacity: 1, y: 0, duration: 0.8, ease: 'back.out(1.5)',
+    scrollTrigger: { trigger: '#scene9', start: 'top 35%', toggleActions: 'play none none reverse' }
+  });
+  gsap.to('#cta-details', {
+    opacity: 1, duration: 0.6,
+    scrollTrigger: { trigger: '#scene9', start: 'top 30%', toggleActions: 'play none none reverse' }
+  });
+
+  // ===== DECORATIVE PARALLAX SHAPES =====
+  ['deco1','deco2','deco3','deco4'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    gsap.to(el, {
+      y: function() { return id === 'deco2' || id === 'deco4' ? 80 : -100; },
+      ease: 'none',
+      scrollTrigger: {
+        trigger: el.closest('.scene'),
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5
+      }
+    });
+  });
+
+  // ===== CHILD CAROUSEL NAV (MOBILE) =====
+  var childGrid = document.getElementById('childGrid');
+  var childDots = document.querySelectorAll('.child-nav-dot');
+  if (childGrid && childDots.length) {
+    childGrid.addEventListener('scroll', function() {
+      var scrollLeft = childGrid.scrollLeft;
+      var cardWidth = childGrid.querySelector('.child-card').offsetWidth + 32;
+      var idx = Math.round(scrollLeft / cardWidth);
+      childDots.forEach(function(d, i) {
+        d.classList.toggle('active', i === idx);
+      });
+    }, { passive: true });
+    childDots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        var idx = parseInt(dot.dataset.idx);
+        var cardWidth = childGrid.querySelector('.child-card').offsetWidth + 32;
+        childGrid.scrollTo({ left: idx * cardWidth, behavior: 'smooth' });
+      });
+    });
+  }
+
+  // ===== REFRESH ON RESIZE =====
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() { ScrollTrigger.refresh(); }, 250);
+  });
+
+})();
+</script>
+</body>
+</html>
