@@ -311,6 +311,15 @@ body {
   vertical-align: baseline;
   line-height: 1;
 }
+/* Padre cards (1st, 3rd): avatar upper-left, role upper-right */
+.pain-card:nth-child(odd) .pain-card-avatar {
+  right: auto;
+  left: 12px;
+}
+.pain-card:nth-child(odd) .pain-card-role {
+  left: auto;
+  right: 12px;
+}
 
 /* ========== SCENE 3: CHATGPT ========== */
 #scene3 { background: #050510; }
@@ -737,8 +746,22 @@ body {
   transform: scale(1.3);
 }
 @media (max-width: 768px) {
-  .child-card { min-width: 85vw; flex: none; }
-  .child-nav { display: flex; }
+  .child-grid {
+    flex-direction: column;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    gap: 24px;
+  }
+  .child-card {
+    min-width: 0;
+    width: 100%;
+    flex: none;
+    padding: 32px 24px;
+  }
+  .child-card-img {
+    height: 180px;
+  }
+  .child-nav { display: none; }
 }
 
 /* ========== SCENE 7: RESULTS — CLAYMORPHISM ========== */
@@ -1124,7 +1147,6 @@ body {
   .hw-panel { padding: 100px 20px 40px; width: 80vw; }
   #scene5 { width: 320vw; }
   .hw-img { max-height: 160px; }
-  .child-card-img { height: 160px; }
 }
 
 /* ========== REDUCED MOTION ========== */
