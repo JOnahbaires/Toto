@@ -59,7 +59,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: 'Toto el Tutor <onboarding@resend.dev>',
+        from: 'Toto el Tutor <toto@totoeltutor.com.ar>',
         to: [emailPadre],
         subject: `${escapeHtml(nombreAlumno)} ya puede empezar a usar Toto`,
         html: htmlBody,
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     const data = await response.json();
     if (!response.ok) {
       console.error('Resend error:', data);
-      return res.status(500).json({ error: 'Error enviando email', detail: data });
+      return res.status(500).json({ error: 'Error enviando email' });
     }
 
     return res.status(200).json({ ok: true, id: data.id });
