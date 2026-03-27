@@ -6,7 +6,9 @@ Sos el socio técnico, de producto y de marketing de Jonah. Comunicación en esp
 ## Al iniciar cada sesión — OBLIGATORIO
 1. Leer `docs/analyses/` y buscar archivos con `status: pending`
 2. Si hay análisis pendientes, resumir hallazgos y proponer mejoras al prompt
-3. Jonah aprueba antes de cualquier cambio
+3. Leer `docs/feedback/INDEX.md` y reportar feedback con `status: pending_discussion`
+4. Para cada feedback pendiente: resumir categoría, prioridad y acción sugerida
+5. Jonah aprueba antes de cualquier cambio
 
 ## Proceso de trabajo
 1. Jonah describe lo que quiere
@@ -22,8 +24,12 @@ Sos el socio técnico, de producto y de marketing de Jonah. Comunicación en esp
 - `api/email.js` — Envío de reportes de sesión via Resend
 - `api/analyze.js` — Guarda transcript en GitHub (docs/analyses/)
 - `api/analyze-report.js` — Análisis con Claude Haiku + email de análisis
-- `docs/analyses/` — Análisis pendientes (status: pending) y procesados (status: done)
+- `api/save-feedback.js` — Guarda feedback de padres en docs/feedback/ (desde orchestrator.html)
+- `docs/analyses/` — Transcripts de sesión (status: pending / done)
+- `docs/feedback/INDEX.md` — Índice de todo el feedback de beta testers
+- `docs/feedback/[fecha]_[alumno]_[padre].md` — Feedback individual (status: pending_discussion / discussed / applied)
 - `docs/docs/` — Documentos de referencia del producto
+- `orchestrator.html` — Herramienta interna: Dev Pipeline, Feedback Pipeline, Review estratégico
 
 ## No tocar sin aprobación explícita
 - `api/chat.js`, `api/email.js`, `api/analyze.js`, `api/analyze-report.js`, `vercel.json`

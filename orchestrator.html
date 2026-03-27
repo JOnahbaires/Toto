@@ -1067,6 +1067,20 @@ async function runFeedbackPipeline() {
       clean(mp.TAGS_METRICAS), clean(mp.SEÑAL_CUANTIFICABLE), clean(mp.COMPARACION_TEMPORAL), clean(mp.HIPOTESIS), clean(mp.RECOMENDACION_SEGUIMIENTO)
     ].join('\t');
 
+    // Guardar datos para el botón "Guardar en repo"
+    window._lastFeedbackData = {
+      alumno, padre,
+      canales: canalesStr,
+      feedbackCrudo: contenido,
+      intakeOut, analystOut, metricsOut,
+      parsed: {
+        categoria: ap.CATEGORIA,
+        prioridad: ap.PRIORIDAD,
+        accion_sugerida: ap.ACCION_SUGERIDA,
+        fase_roadmap: ap.FASE_ROADMAP,
+      }
+    };
+
     clipEl.style.display = 'block';
     clipEl.innerHTML = `
       <div class="info-banner" style="background:#0ea5e910;border:1px solid #0ea5e930;margin-top:10px">
@@ -1075,6 +1089,13 @@ async function runFeedbackPipeline() {
           <strong style="color:#22c55e">Feedback procesado.</strong> Hacé click en el campo de abajo, seleccioná todo con <strong style="color:#e2e8f0">Ctrl+A</strong> (o ⌘A) y después <strong style="color:#e2e8f0">Ctrl+C</strong> (o ⌘C). Pegá en tu Google Sheet.
           <textarea readonly onclick="this.select()" onfocus="this.select()" rows="3"
             style="width:100%;margin-top:8px;background:#0c0f1a;border:1px solid #22c55e40;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;line-height:1.5;cursor:text">${escHtml(row)}</textarea>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button id="fb-save-btn" onclick="saveFeedback()"
+              style="background:linear-gradient(135deg,#7c3aed,#6366f1);color:white;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 12px rgba(99,102,241,0.3)">
+              💾 Guardar en repo
+            </button>
+            <span id="fb-save-status" style="font-size:12px;color:#475569"></span>
+          </div>
         </div>
       </div>`;
 
@@ -1094,6 +1115,40 @@ async function runFeedbackPipeline() {
   document.getElementById('fb-card').classList.remove('glowing');
 }
 
+async function saveFeedback() {
+  const btn = document.getElementById('fb-save-btn');
+  const statusEl = document.getElementById('fb-save-status');
+  if (!btn || !window._lastFeedbackData) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  statusEl.textContent = '';
+
+  try {
+    const res = await fetch('/api/save-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: AUTH_PIN, ...window._lastFeedbackData })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+
+    btn.textContent = '✓ Guardado';
+    btn.style.background = 'linear-gradient(135deg,#15803d,#16a34a)';
+    btn.style.boxShadow = '0 4px 12px rgba(22,163,74,0.3)';
+    btn.disabled = true;
+
+    const shortFile = data.file ? data.file.split('/').pop() : '';
+    statusEl.innerHTML = `<span style="color:#22c55e">${shortFile}${data.index_updated ? ' · INDEX actualizado' : ''}</span>`;
+
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = '💾 Guardar en repo';
+    statusEl.innerHTML = `<span style="color:#ef4444">Error: ${escHtml(err.message)}</span>`;
+  }
+}
+
 function resetFeedback() {
   // Mantener alumno y padre
   document.getElementById('fb-whatsapp').value = '';
@@ -1103,6 +1158,7 @@ function resetFeedback() {
   document.getElementById('fb-clipboard').style.display = 'none';
   document.getElementById('fb-reset-btn').style.display = 'none';
   document.getElementById('fb-status').innerHTML = '<span style="color:#475569">Intake → Analyst → Metrics</span>';
+  window._lastFeedbackData = null;
   ['fb-wa-check','fb-audio-check','fb-email-check'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
