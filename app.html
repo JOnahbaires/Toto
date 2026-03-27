@@ -384,59 +384,38 @@
     padding-left: 4px;
   }
 
-  /* ── MODE SELECTOR ── */
+  /* ── MODE SELECTOR (grid 2×2 compacto) ── */
   .mode-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 18px;
     animation: fadeUp .35s ease both;
   }
   .mode-btn {
     background: var(--surface);
-    border: 2px solid transparent;
-    border-radius: var(--radius);
-    padding: 18px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 8px;
     cursor: pointer;
     transition: all .2s ease;
-    text-align: left;
+    text-align: center;
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
     color: var(--text);
     font-family: 'Nunito', sans-serif;
   }
   .mode-btn:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-1px); }
-  .mode-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 22px var(--accent-glow); }
-  .mode-btn.active.tarea { border-color: var(--green); box-shadow: 0 0 22px var(--green-glow); }
-  .mode-btn.active.tema { border-color: var(--cyan); box-shadow: 0 0 22px rgba(92,224,216,0.2); }
-  .mode-btn.active.practica { border-color: var(--pink); box-shadow: 0 0 22px var(--pink-glow); }
-  .mode-btn.active.explorar { border-color: var(--orange); box-shadow: 0 0 22px var(--orange-glow); }
-  .mode-icon { font-size: 1.9rem; margin-top: 2px; }
-  .mode-name { font-weight: 800; font-size: 0.97rem; }
-  .mode-desc { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; font-weight: 600; line-height: 1.35; }
-
-  /* ── MODE SELECTOR — mobile ── */
-  @media (max-width: 480px) {
-    .mode-grid {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-    .mode-btn {
-      flex-direction: row;
-      align-items: center;
-      padding: 12px 16px;
-      gap: 14px;
-      border-radius: var(--radius-sm);
-    }
-    .mode-icon {
-      font-size: 1.7rem;
-      margin-top: 0;
-      flex-shrink: 0;
-    }
-    .mode-name { font-size: 0.95rem; }
-    .mode-desc { font-size: 0.71rem; margin-top: 2px; }
-  }
+  .mode-btn.active { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 18px var(--accent-glow); }
+  .mode-btn.active.tarea { border-color: var(--green); box-shadow: 0 0 18px var(--green-glow); }
+  .mode-btn.active.tema { border-color: var(--cyan); box-shadow: 0 0 18px rgba(92,224,216,0.2); }
+  .mode-btn.active.practica { border-color: var(--pink); box-shadow: 0 0 18px var(--pink-glow); }
+  .mode-btn.active.imagenes { border-color: #ffe066; box-shadow: 0 0 18px rgba(255,224,102,0.25); }
+  .mode-icon { font-size: 1.6rem; }
+  .mode-name { font-weight: 800; font-size: 0.78rem; line-height: 1.2; }
+  .mode-desc { font-size: 0.62rem; color: var(--text-dim); font-weight: 600; line-height: 1.3; }
 
   /* ── Subject grid ── */
   .subject-grid {
@@ -817,37 +796,36 @@
   .pck-wa-btn:hover { opacity: 0.88; }
   .pck-wa-label { font-size: 0.78rem; color: var(--text-dim); margin-top: 6px; }
 
-  /* ── Celebration (toast compacto, esquina superior derecha) ── */
+  /* ── Celebration (toast compacto, esquina inferior derecha) ── */
   .celeb {
-    text-align: center;
-    padding: 18px 24px;
-    background: rgba(20, 24, 41, 0.92);
-    border: 2px solid rgba(61,232,160,0.55);
-    border-radius: 20px;
+    padding: 10px 16px;
+    background: rgba(13, 16, 32, 0.95);
+    border: 1.5px solid rgba(61,232,160,0.5);
+    border-radius: 12px;
     display: none;
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    bottom: 20px;
+    right: 16px;
+    left: auto;
+    top: auto;
+    transform: none;
     z-index: 1000;
     width: auto;
-    min-width: 280px;
-    max-width: 340px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(61,232,160,0.25);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    animation: celebPopIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+    max-width: 260px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 12px rgba(61,232,160,0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: celebSlideIn .35s ease both;
   }
-  @keyframes celebPopIn {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
-    60% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  @keyframes celebSlideIn {
+    0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
   }
-  .celeb.visible { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .celeb-icon { font-size: 3rem; flex-shrink: 0; margin-bottom: 0; }
-  .celeb-content { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 1.4rem; font-weight: 800; color: var(--green); margin-bottom: 0; line-height: 1.3; }
-  .celeb-xp { display: inline-block; background: rgba(255,179,71,0.12); color: var(--orange); border: 1px solid rgba(255,179,71,0.35); border-radius: 14px; padding: 4px 14px; font-size: 0.85rem; font-weight: 800; margin-top: 4px; width: fit-content; }
+  .celeb.visible { display: flex; flex-direction: row; align-items: center; gap: 10px; }
+  .celeb-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .celeb-content { display: flex; flex-direction: column; gap: 1px; }
+  .celeb-title { font-family: 'Baloo 2', cursive; font-size: 0.88rem; font-weight: 800; color: var(--green); line-height: 1.2; }
+  .celeb-xp { font-size: 0.68rem; font-weight: 700; color: var(--text-dim); }
 
   /* ── Loading ── */
   .loading-bubble {
@@ -1189,31 +1167,23 @@
       <div class="mode-grid">
         <button class="mode-btn tarea active" onclick="pickMode(this,'tarea')">
           <div class="mode-icon">📝</div>
-          <div>
-            <div class="mode-name">Tengo una tarea</div>
-            <div class="mode-desc">Quiero resolver un ejercicio o pregunta con ayuda</div>
-          </div>
+          <div class="mode-name">Tengo una tarea</div>
+          <div class="mode-desc">Resolver con ayuda</div>
+        </button>
+        <button class="mode-btn imagenes" onclick="pickMode(this,'imagenes')">
+          <div class="mode-icon">🎨</div>
+          <div class="mode-name">Explicame con un dibujo</div>
+          <div class="mode-desc">Te armo una imagen</div>
         </button>
         <button class="mode-btn tema" onclick="pickMode(this,'tema')">
           <div class="mode-icon">💡</div>
-          <div>
-            <div class="mode-name">Quiero entender algo</div>
-            <div class="mode-desc">Quiero que me expliquen un tema que no entiendo</div>
-          </div>
+          <div class="mode-name">Quiero entender algo</div>
+          <div class="mode-desc">No es tarea</div>
         </button>
         <button class="mode-btn practica" onclick="pickMode(this,'practica')">
           <div class="mode-icon">🎯</div>
-          <div>
-            <div class="mode-name">Practicar para un examen</div>
-            <div class="mode-desc">Quiero prepararme con preguntas tipo prueba</div>
-          </div>
-        </button>
-        <button class="mode-btn explorar" onclick="pickMode(this,'explorar')">
-          <div class="mode-icon">🔭</div>
-          <div>
-            <div class="mode-name">Curiosidades</div>
-            <div class="mode-desc">Quiero explorar datos curiosos sobre un tema</div>
-          </div>
+          <div class="mode-name">Practicar para examen</div>
+          <div class="mode-desc">Preguntas tipo prueba</div>
         </button>
       </div>
 
@@ -1269,12 +1239,12 @@
       <div class="achievements-summary" id="achievementsSummary"></div>
     </div>
 
-    <!-- Celebration (toast compacto) -->
+    <!-- Celebration (toast esquina) -->
     <div class="celeb" id="celeb">
-      <div class="celeb-icon">🎉</div>
+      <div class="celeb-icon" id="celebIcon">🧠</div>
       <div class="celeb-content">
         <div class="celeb-title" id="celebTitle">¡Bien ahí, crack!</div>
-        <div class="celeb-xp" id="celebBadge">+1 medalla</div>
+        <div class="celeb-xp" id="celebBadge"></div>
       </div>
     </div>
 
@@ -2208,7 +2178,8 @@ document.getElementById('nameInput').addEventListener('keydown', e => {
 function pickMode(btn, mode) {
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  S.mode = mode;
+  // 'imagenes' usa el prompt de 'explorar' internamente
+  S.mode = mode === 'imagenes' ? 'explorar' : mode;
   const ta = $('taskInput');
   const lbl = $('taskLabel');
   if (mode === 'tema') {
@@ -2217,9 +2188,9 @@ function pickMode(btn, mode) {
   } else if (mode === 'practica') {
     ta.placeholder = 'Ej: Fracciones, Sistema solar, Revolución de Mayo...';
     lbl.textContent = 'Escribí el tema o temario del examen';
-  } else if (mode === 'explorar') {
-    ta.placeholder = 'Ej: Dinosaurios, El espacio, Volcanes, Egipto antiguo...';
-    lbl.textContent = 'Escribí el tema que te da curiosidad';
+  } else if (mode === 'imagenes' || mode === 'explorar') {
+    ta.placeholder = 'Ej: Cómo funciona el corazón, El sistema solar, Fracciones...';
+    lbl.textContent = '¿Qué querés que te dibuje?';
   } else {
     ta.placeholder = 'Ej: ¿Cuánto es 7 × 8?  /  ¿Qué quiere decir el poema?';
     lbl.textContent = 'Escribí tu tarea o pregunta';
@@ -2360,24 +2331,41 @@ async function sendReply() {
 
     // Achievement + Badge tracking (SOLO en contexto académico)
     if (!S.isPersonalTopic) {
-      // Achievements
+      // Achievements (tracking silencioso, se muestran al final)
       if (msg.length > 8) S.achievements.intentaste = true;
       if (/\?/.test(msg) && msg.length > 15) S.achievements.preguntaste = true;
       if (/analog[ií]a|peli|serie|minecraft|fortnite|explicame con/i.test(msg)) S.achievements.analogia = true;
-      if (replyImage.base64) { S.achievements.foto = true; earnBadge('foto', '📸', '¡Mandaste foto!'); }
+      if (replyImage.base64) S.achievements.foto = true;
 
-      // Badges
+      // Streak (silencioso — sin badge en primer mensaje)
       if (msg.length > 8) {
         S.streak++;
-        if (S.streak === 1) { earnBadge('intentaste', '💪', '¡Intentaste!'); }
-        if (S.streak % 3 === 0) { earnBadge('racha', '🔥', '¡Racha de pensador!'); }
         updateStreak();
       }
-      if (/\?/.test(msg) && msg.length > 15 && !S._preguntaBadge) {
-        S._preguntaBadge = true;
-        earnBadge('detective', '🔍', '¡Buena pregunta!');
-        S.achievements.preguntaste = true;
+
+      // Badges de ESFUERZO REAL (triggers pedagógicos)
+      // 1. Razonamiento: respuesta con conector lógico + largo suficiente
+      const REASONING_RE = /\b(porque|entonces|si .+ entonces|o sea que|eso quiere decir|creo que .+ porque|ya que|por eso|significa que|me parece que)\b/i;
+      if (msg.length > 40 && REASONING_RE.test(msg) && !S._razonamientoBadge) {
+        S._razonamientoBadge = true;
+        earnBadge('razonamiento', '🧠', '¡Razonaste en voz alta!');
       }
+
+      // 2. Autocorrección: el alumno se corrige solo
+      const SELF_CORRECT_RE = /\b(ah no|espera|me equivoqué|en realidad|no.*eso.*sino|quise decir|perdón.*es|ah espera|no no|mal yo)\b/i;
+      if (SELF_CORRECT_RE.test(msg) && S.streak >= 2 && !S._autocorreccionBadge) {
+        S._autocorreccionBadge = true;
+        earnBadge('autocorreccion', '🔄', '¡Te corregiste solo!');
+      }
+
+      // 3. Persistencia: lleva 5+ respuestas en el mismo tema
+      if (S.streak >= 5 && !S._persistenciaBadge) {
+        S._persistenciaBadge = true;
+        earnBadge('persistencia', '💪', '¡No te rendiste!');
+      }
+
+      // Features: reconocimiento inline (sin toast, solo tracking)
+      if (replyImage.base64 && !S._fotoBadge) { S._fotoBadge = true; }
     }
 
     // Resetear timer de inactividad con cada mensaje
@@ -2765,13 +2753,13 @@ function earnBadge(type, icon, label) {
   S.badges.push({ type, icon, label, time: Date.now() });
   S.xp = S.badges.length;
   updateXPBar();
-  showCeleb(`${icon} ${label}`, null, `+1 ${icon} medalla`);
+  showCeleb(icon, label);
 
   // Check for level up
   const prev = getLevel(S.xp - 1);
   const curr = getLevel(S.xp);
   if (curr.index > prev.index) {
-    setTimeout(() => showCeleb(`🎉 ¡Nivel arriba!`, `Ahora sos ${curr.icon} ${curr.name}`, ''), 3800);
+    setTimeout(() => showCeleb('🎉', `¡Nivel arriba! Ahora sos ${curr.icon} ${curr.name}`), 3200);
   }
 }
 
@@ -2791,7 +2779,7 @@ function updateXPBar() {
 }
 
 function gainXP() {
-  earnBadge('intentaste', '💪', '¡Intentaste!');
+  // Ya no da badge trivial — el XP se gana via badges pedagógicos
   S.achievements.intentaste = true;
 }
 
@@ -2803,21 +2791,27 @@ function updateStreak() {
 }
 
 let _celebTimer = null;
-function showCeleb(title, sub, badgeText) {
+let _lastCelebTime = 0;
+const CELEB_COOLDOWN_MS = 30000; // mínimo 30s entre celebraciones
+
+function showCeleb(icon, title) {
   const c = $('celeb');
   if (!c) return;
-  $('celebTitle').textContent = title || '🎉 ¡Bien ahí!';
-  const b = $('celebBadge');
-  if (b) b.textContent = badgeText || '+1 medalla';
-  // Forzar display directo — el sistema de clases tiene conflictos de timing
-  c.style.display = 'block';
+  // Cooldown: no mostrar badges muy seguido
+  const now = Date.now();
+  if (now - _lastCelebTime < CELEB_COOLDOWN_MS) return;
+  _lastCelebTime = now;
+
+  $('celebIcon').textContent = icon || '🧠';
+  $('celebTitle').textContent = title || '¡Bien ahí!';
+  c.style.display = 'flex';
   c.classList.add('visible');
   if (_celebTimer) clearTimeout(_celebTimer);
   _celebTimer = setTimeout(() => {
     c.style.display = '';
     c.classList.remove('visible');
     _celebTimer = null;
-  }, 4500);
+  }, 2500);
 }
 
 /* ── Mapa de Logros ── */
@@ -3345,10 +3339,10 @@ function clearSessions() {
     <div style="color:rgba(255,255,255,0.55);font-size:0.92rem;margin:-4px 0 12px;font-style:italic">Tu profe particular que nunca se cansa de explicarte</div>
     <ul class="onb-points">
       <li>Te hago preguntas para que VOS descubras las respuestas y te saques mejor nota.</li>
+      <li>¿Te cuesta un tema? Pedime que lo dibuje y te armo una imagen solo para vos. ✨</li>
       <li>¿Tenés la tarea en papel? Sacale una foto y la resolvemos juntos, paso a paso.</li>
       <li>Decime tu peli o serie favorita y te explico el tema como si fuera una escena de ahí.</li>
       <li>¿Tenés prueba? Activá Práctica y te preparo con preguntas como las del examen.</li>
-      <li>¿Querés saber algo re loco? Probá Curiosidades y exploramos datos increíbles juntos.</li>
     </ul>
     <button class="onb-btn" id="onb-close-btn">¡Dale, arranquemos!</button>
   </div>
