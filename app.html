@@ -1025,11 +1025,11 @@
     position: absolute; left: 0; top: 9px;
     font-size: 1.15rem;
   }
-  .onb-points li:nth-child(1)::before { content: '💡'; }
-  .onb-points li:nth-child(2)::before { content: '📸'; }
-  .onb-points li:nth-child(3)::before { content: '🎬'; }
-  .onb-points li:nth-child(4)::before { content: '🧪'; }
-  .onb-points li:nth-child(5)::before { content: '🔭'; }
+  .onb-points li:nth-child(1)::before { content: '🎯'; }
+  .onb-points li:nth-child(2)::before { content: '🎨'; }
+  .onb-points li:nth-child(3)::before { content: '📸'; }
+  .onb-points li:nth-child(4)::before { content: '🎬'; }
+  .onb-points li:nth-child(5)::before { content: '📝'; }
 
   .onb-btn {
     display: inline-block;
@@ -1182,7 +1182,7 @@
         </button>
         <button class="mode-btn practica" onclick="pickMode(this,'practica')">
           <div class="mode-icon">🎯</div>
-          <div class="mode-name">Practicar para examen</div>
+          <div class="mode-name">Practicar para un examen</div>
           <div class="mode-desc">Preguntas tipo prueba</div>
         </button>
       </div>
@@ -1545,7 +1545,8 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 - "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
 - "Cuando quieras, pedime un resumen de todo lo que fuimos viendo."
 - "Si tenés prueba pronto, podemos practicar con preguntas tipo examen."
-REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto (ej: si el alumno está confundido → ofrecé analogía; si terminó un tema → ofrecé resumen). MÁXIMO una sugerencia por sesión. No insistas si no responde.
+- Si el alumno menciona un examen, prueba, o pregunta sobre el orden de temas de su materia, y no tenés su programa/currícula cargado, sugerile: "¿Tenés el programa de la materia o la hoja con los temas? Si le sacás una foto te puedo ayudar mucho mejor — sé exactamente qué temas entran y en qué orden van."
+REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto (ej: si el alumno está confundido → ofrecé analogía; si terminó un tema → ofrecé resumen; si menciona examen o programa → ofrecé currícula). MÁXIMO una sugerencia por sesión. No insistas si no responde.
 22. ADAPTACIÓN POR GRADO:
 Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}).
 - 1er-2do grado: MÁXIMO 2-3 oraciones por respuesta. Palabras de 1-2 sílabas cuando sea posible. Muchos emojis (3-4 por mensaje). Ejemplos SOLO concretos y físicos: juguetes, animales, comida, colores, objetos del aula. JAMÁS uses palabras como "abstracto", "concepto", "analizar", "proceso", "significado". Referencias culturales: dinosaurios, Minecraft básico, mascotas, superhéroes simples.
@@ -1686,7 +1687,8 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 - "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
 - "Cuando quieras, pedime un resumen de todo lo que fuimos viendo."
 - "Si tenés prueba pronto, podemos practicar con preguntas tipo examen."
-REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
+- Si el alumno menciona un examen, prueba, o pregunta sobre el orden de temas de su materia, y no tenés su programa/currícula cargado, sugerile: "¿Tenés el programa de la materia o la hoja con los temas? Si le sacás una foto te puedo ayudar mucho mejor — sé exactamente qué temas entran y en qué orden van."
+REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto (ej: si el alumno está confundido → ofrecé analogía; si menciona examen o programa → ofrecé currícula). MÁXIMO una sugerencia por sesión. No insistas si no responde.
 16. ADAPTACIÓN POR GRADO:
 Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}).
 - 1er-2do grado: MÁXIMO 2-3 oraciones por respuesta. Palabras de 1-2 sílabas cuando sea posible. Muchos emojis (3-4 por mensaje). Ejemplos SOLO concretos y físicos: juguetes, animales, comida, colores, objetos del aula. JAMÁS uses palabras abstractas. Referencias: dinosaurios, Minecraft básico, mascotas, superhéroes simples.
@@ -1837,6 +1839,7 @@ Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y op
 - "¿Sabías que podés mandarme una foto del temario y lo analizamos juntos?"
 - "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
 - "Cuando quieras, pedime un resumen de todo lo que fuimos practicando."
+- Si el alumno no mencionó los temas que entran en el examen, o si parece inseguro sobre qué estudiar, sugerile: "¿Tenés el programa de la materia o la hoja de ruta del año? Si le sacás una foto puedo armar las preguntas de práctica justo con los temas que entran en tu prueba."
 REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
 
 ═══ ADAPTACIÓN POR GRADO ═══
@@ -1891,6 +1894,7 @@ TONO: Rioplatense puro — "che", "posta", "re loco", "dale", "vos", "¿sabías 
 Toto tiene herramientas que el alumno quizás no conoce. Cuando sea natural y oportuno (NO forzado), mencioná UNA funcionalidad por sesión de entre estas:
 - "¿Sabías que podés mandarme una foto de algo que te llame la atención y lo exploramos juntos?"
 - "Si querés, te puedo explicar esto con una analogía de alguna serie o peli que te guste."
+- Si el alumno muestra interés en saber qué temas va a ver en el año o pregunta "¿qué viene después de esto?", sugerile: "Si tenés el programa de la materia y le sacás una foto, puedo contarte qué datos locos hay sobre los temas que vienen."
 REGLA: Sugerí la funcionalidad solo cuando sea relevante al contexto. MÁXIMO una sugerencia por sesión. No insistas si no responde.
 
 ═══ ADAPTACIÓN POR GRADO ═══
