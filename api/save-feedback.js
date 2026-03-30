@@ -24,7 +24,7 @@ export default async function handler(req, res) {
   const githubToken = process.env.GITHUB_TOKEN;
   if (!githubToken) return res.status(500).json({ error: 'GITHUB_TOKEN no configurado' });
 
-  if (!alumno || !padre || !intakeOut || !analystOut || !metricsOut) {
+  if ((!alumno && !padre) || !intakeOut || !analystOut || !metricsOut) {
     return res.status(400).json({ error: 'Faltan campos requeridos' });
   }
 
