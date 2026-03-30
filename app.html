@@ -3136,19 +3136,10 @@ function sendSessionEmail(trigger) {
     conversacion:    transcript || '(sin mensajes registrados)'
   };
 
-  // Enviar reporte de sesión al backend
-  fetch('/api/email', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-    .then(r => r.json())
-    .then(d => console.log('[Toto] Email sesión enviado OK —', trigger, d))
-    .catch(err => console.warn('[Toto] Error enviando email sesión:', err));
-
-  // Análisis post-sesión: 2 llamadas separadas (cada una con su propio budget de 10s)
+  // Análisis post-sesión
   const totoMsgCount = transcript ? (transcript.match(/\[Toto\]/g) || []).length : 0;
   console.log('[Toto] Análisis check:', { totoMsgCount, transcriptLen: transcript?.length });
+
   if (transcript && totoMsgCount >= 2) {
     const analyzePayload = {
       alumno_nombre: S.name || 'Sin nombre',
@@ -3159,7 +3150,7 @@ function sendSessionEmail(trigger) {
       fecha: now.toLocaleString('es-AR')
     };
 
-    // Paso 1: guardar transcript en GitHub
+    // Paso 1: guardar transcript en GitHub → obtener fileName
     fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -3168,8 +3159,20 @@ function sendSessionEmail(trigger) {
       .then(r => r.json())
       .then(data => {
         console.log('[Toto] Transcript guardado', data);
-        // Paso 2: análisis con Claude + email (llamada separada)
-        analyzePayload.fileName = data.file;
+        const fileName = data.file;
+
+        // Paso 2a: reporte de sesión con link a GitHub
+        fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, fileName })
+        })
+          .then(r => r.json())
+          .then(d => console.log('[Toto] Email sesión enviado OK —', trigger, d))
+          .catch(err => console.warn('[Toto] Error enviando email sesión:', err));
+
+        // Paso 2b: análisis con Claude Haiku + email de análisis
+        analyzePayload.fileName = fileName;
         return fetch('/api/analyze-report', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -3179,6 +3182,16 @@ function sendSessionEmail(trigger) {
       .then(r => r.json())
       .then(data => console.log('[Toto] Análisis + email OK', data))
       .catch(err => console.warn('[Toto] Error análisis:', err));
+  } else {
+    // Sesión corta (< 2 mensajes de Toto): solo reporte de sesión, sin análisis
+    fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(r => r.json())
+      .then(d => console.log('[Toto] Email sesión enviado OK —', trigger, d))
+      .catch(err => console.warn('[Toto] Error enviando email sesión:', err));
   }
 }
 

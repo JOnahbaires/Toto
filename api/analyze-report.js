@@ -89,7 +89,7 @@ CAMBIOS AL PROMPT: [sugerencias concretas o "Ninguno"]`;
         if (getRes.ok) {
           const fileData = await getRes.json();
           const updatedContent = `# Análisis Post-Sesión — ${fecha || ''}
-## status: done — analizado por IA
+## status: pending
 
 ## Datos
 - **Alumno:** ${alumno_nombre || 'Sin nombre'}

@@ -20,7 +20,8 @@ export default async function handler(req, res) {
     const {
       alumno_nombre, mood, materia, tarea, fecha,
       duracion_total, tiempo_promedio, total_mensajes,
-      pistas, xp, subio_foto, conversacion, edad, grado
+      pistas, xp, subio_foto, conversacion, edad, grado,
+      fileName
     } = req.body;
 
     if (!alumno_nombre || !conversacion) {
@@ -53,8 +54,8 @@ export default async function handler(req, res) {
       </table>
 
       <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
-      <h2 style="font-size:1rem;color:#7c6fff;margin-bottom:12px;">💬 Conversación completa</h2>
-      ${formatConversation(conversacion, alumno_nombre)}
+      <h2 style="font-size:1rem;color:#7c6fff;margin-bottom:12px;">💬 Conversación</h2>
+      ${formatConversation(conversacion, alumno_nombre, 30, fileName)}
     </div>
     <div style="background:#f9f9f9;padding:14px 24px;text-align:center;font-size:0.75rem;color:#999;">
       Toto el Tutor — Reporte automático
@@ -95,12 +96,14 @@ function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function formatConversation(transcript, alumnoName) {
+function formatConversation(transcript, alumnoName, maxMessages, fileName) {
   if (!transcript) return '<p style="color:#999;">Sin mensajes registrados</p>';
-  // Split por el patrón [Nombre]: que indica inicio de mensaje
   const messages = transcript.split(/(?=^\[)/m).filter(m => m.trim());
+  const total = messages.length;
+  const limit = maxMessages || total;
+  const shown = messages.slice(0, limit);
   let html = '';
-  for (const msg of messages) {
+  for (const msg of shown) {
     const trimmed = msg.trim();
     if (!trimmed) continue;
     const isToto = trimmed.startsWith('[Toto]');
@@ -111,6 +114,13 @@ function formatConversation(transcript, alumnoName) {
     html += `<div style="background:${bgColor};border-radius:8px;padding:10px 14px;margin-bottom:8px;">
       <div style="font-size:0.75rem;font-weight:700;color:${labelColor};margin-bottom:4px;">${label}</div>
       <div style="font-size:0.88rem;line-height:1.5;color:#333;">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
+    </div>`;
+  }
+  if (total > limit && fileName) {
+    const githubUrl = `https://github.com/JOnahbaires/Toto/blob/main/${fileName}`;
+    html += `<div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:14px 16px;margin-top:8px;text-align:center;">
+      <p style="margin:0 0 10px;font-size:0.85rem;color:#555;">Se muestran los primeros ${limit} de ${total} mensajes.</p>
+      <a href="${githubUrl}" style="display:inline-block;background:#7c6fff;color:#fff;text-decoration:none;padding:8px 18px;border-radius:6px;font-size:0.85rem;font-weight:600;">Ver conversación completa en GitHub →</a>
     </div>`;
   }
   return html || '<p style="color:#999;">Sin mensajes registrados</p>';
