@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Toto — Feedback & Dashboard</title>
+  <title>Toto Orchestrator</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -196,35 +196,6 @@
       background: linear-gradient(135deg, #7c3aed, #6d28d9);
       box-shadow: 0 4px 12px rgba(124,58,237,0.3);
     }
-    .btn-dashboard {
-      background: linear-gradient(135deg, #10b981, #059669);
-      box-shadow: 0 4px 12px rgba(16,185,129,0.3);
-    }
-    .reg-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .reg-metric-card {
-      background: #0c0f1a; border: 1px solid #1e293b; border-radius: 12px;
-      padding: 16px; text-align: center;
-    }
-    .reg-metric-value { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-    .reg-metric-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-    .reg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .reg-table th {
-      text-align: left; padding: 10px 12px; color: #64748b; font-weight: 600;
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
-      border-bottom: 1px solid #1e293b;
-    }
-    .reg-table td { padding: 10px 12px; border-bottom: 1px solid #1e293b15; color: #cbd5e1; }
-    .reg-table tr:hover td { background: #1e293b30; }
-    .reg-table tr.is-test td { opacity: 0.4; }
-    .reg-badge {
-      display: inline-block; padding: 2px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 600;
-    }
-    .reg-badge.activated { background: #10b98120; color: #34d399; }
-    .reg-badge.pending { background: #f59e0b15; color: #fbbf24; }
-    .reg-badge.test { background: #64748b15; color: #64748b; }
-    .reg-toggle-tests { background: none; border: 1px solid #334155; border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #94a3b8; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-    .reg-toggle-tests:hover { border-color: #475569; color: #cbd5e1; }
 
     /* Responsive */
     @media (max-width: 640px) {
@@ -241,7 +212,7 @@
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">T</div>
-    <div class="login-title">Toto — Feedback & Dashboard</div>
+    <div class="login-title">Toto Orchestrator</div>
     <div class="login-subtitle">Herramienta interna — ingresá tu PIN</div>
     <input type="password" id="pin-input" class="login-input" placeholder="PIN" maxlength="20"
       onkeydown="if(event.key==='Enter') doLogin()">
@@ -256,17 +227,34 @@
     <div class="header-left">
       <div class="header-logo">T</div>
       <div>
-        <div class="header-title">Toto — Feedback & Dashboard</div>
-        <div class="header-desc" id="header-desc">Intake → Analyst → Metrics</div>
+        <div class="header-title">Toto Orchestrator</div>
+        <div class="header-desc" id="header-desc">PM → Dev → QA</div>
       </div>
     </div>
     <div class="tab-bar">
+      <button class="tab-btn" data-tab="dev" onclick="switchTab('dev')">⚡ Dev Pipeline</button>
       <button class="tab-btn active" data-tab="feedback" onclick="switchTab('feedback')">📥 Feedback</button>
-      <button class="tab-btn" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+      <button class="tab-btn" data-tab="review" onclick="switchTab('review')">🧠 Review</button>
     </div>
   </div>
 
   <div class="content">
+    <!-- ═══════ TAB: DEV PIPELINE ═══════ -->
+    <div class="tab-content" id="tab-dev">
+      <div class="card" id="dev-card">
+        <div class="label-sm">Describí la iniciativa</div>
+        <textarea id="dev-initiative" class="input-area" rows="4"
+          placeholder="Ej: Fix del encoding en la descarga de sesión..."></textarea>
+        <div class="flex-between mt-14">
+          <span id="dev-status" style="font-size:12px;color:#475569">Sonnet 4 para los 3 agentes</span>
+          <button class="btn-primary" id="dev-run-btn" onclick="runDevPipeline()">Lanzar Pipeline</button>
+        </div>
+      </div>
+      <div id="dev-agents"></div>
+      <div id="dev-greg" style="display:none"></div>
+      <div id="dev-history"></div>
+    </div>
+
     <!-- ═══════ TAB: FEEDBACK ═══════ -->
     <div class="tab-content active" id="tab-feedback">
 
@@ -379,33 +367,29 @@
       <div id="fb-clipboard" style="display:none"></div>
     </div>
 
-    <!-- ═══════ TAB: DASHBOARD ═══════ -->
-    <div class="tab-content" id="tab-dashboard">
-      <div class="card">
-        <div class="flex-between mb-18">
-          <div class="label-sm" style="margin-bottom:0">Registros Beta</div>
+    <!-- ═══════ TAB: REVIEW ═══════ -->
+    <div class="tab-content" id="tab-review">
+      <div class="card" id="review-card">
+        <div class="flex-between mb-12">
+          <div class="label-sm" style="margin-bottom:0">Pegá filas de feedback (TSV)</div>
+          <span id="review-row-count" style="display:none;font-size:12px;color:#f59e0b;background:#f59e0b15;padding:3px 10px;border-radius:20px;font-weight:500"></span>
+        </div>
+        <textarea id="review-data" class="input-area" rows="6"
+          placeholder="Copiá las filas de tu Google Sheet y pegalas acá (Ctrl+V).&#10;Podés incluir la fila de headers — se detecta y se ignora automáticamente."
+          style="font-family:'JetBrains Mono',monospace;font-size:13px"
+          oninput="updateReviewCount()"></textarea>
+        <div class="flex-between mt-14">
+          <span id="review-status" style="font-size:12px;color:#475569">Sonnet 4 — dos análisis en paralelo</span>
           <div class="flex-row gap-8">
-            <button class="reg-toggle-tests" id="reg-toggle-tests-btn" onclick="toggleTestRows()">Mostrar tests</button>
-            <button class="btn-primary btn-dashboard" id="reg-refresh-btn" onclick="loadRegistros()">Actualizar</button>
+            <button class="btn-secondary" id="review-reset-btn" style="display:none" onclick="resetReview()">Nuevo análisis</button>
+            <button class="btn-primary btn-review" id="review-run-btn" onclick="runReview()">Analizar feedback</button>
           </div>
         </div>
-        <div id="reg-loading" style="display:none; text-align:center; padding:24px; color:#64748b;">
-          <span class="spinner" style="border-top-color:#10b981"></span> Cargando registros...
-        </div>
-        <div id="reg-error" style="display:none; text-align:center; padding:16px; color:#ef4444; font-size:13px;"></div>
-        <div id="reg-metrics" class="reg-metrics" style="display:none"></div>
-        <div id="reg-table-wrap" style="display:none; overflow-x:auto;">
-          <table class="reg-table">
-            <thead><tr>
-              <th>Fecha</th><th>Padre/Madre</th><th>Hijo/a</th><th>Edad</th><th>Grado</th><th>Estado</th>
-            </tr></thead>
-            <tbody id="reg-tbody"></tbody>
-          </table>
-        </div>
-        <div id="reg-empty" style="display:none; text-align:center; padding:32px; color:#475569; font-size:14px;">
-          No hay registros todavía.
-        </div>
       </div>
+      <div id="review-dashboard"></div>
+      <div id="review-view-toggle" style="display:none"></div>
+      <div id="review-output"></div>
+      <div id="review-brief" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -416,10 +400,117 @@
 // ═══════════════════════════════════════════
 let AUTH_PIN = null; // guardado en memoria tras login exitoso
 let fbProcessedCount = 0;
+let devHistory = [];
 
 // ═══════════════════════════════════════════
 // CONSTANTES — AGENTES
 // ═══════════════════════════════════════════
+
+const AGENTS = {
+  pm: {
+    name: "PM", emoji: "📋", color: "#2563eb", borderColor: "#bfdbfe",
+    system: `Sos el Product Manager de "Toto el Tutor", una app educativa para niños de primaria deployada en toto-rust.vercel.app (v0.1.0).
+
+CONTEXTO DEL PRODUCTO:
+- App de tutoría con IA. El niño ingresa nombre, estado emocional y su tarea/duda. Toto guía con pistas sin dar respuestas directas.
+- Sistema de estrellas y gamificación. Panel admin de sesiones.
+- Stack: Single-file index.html + api/chat.js (proxy serverless) + Vercel. Sin DB todavía (localStorage).
+- Usuarios: niños de primaria (10-12 años), padres, docentes, admin.
+- AI: claude-haiku-4-5 via Anthropic API (max_tokens: 600, 2 retries)
+- Email: EmailJS para reportes de sesión
+
+TU ROL:
+Recibís briefs del Orquestador y los convertís en documentos de requerimientos que el Dev puede ejecutar sin ambigüedades.
+
+DADO UN BRIEF, PRODUCÍS:
+1. User Stories: "Como [usuario], quiero [acción] para [beneficio]"
+2. Criterios de aceptación concretos y verificables por story
+3. Prioridad: Must Have / Should Have / Nice to Have
+4. Dependencias con otras features o sistemas
+5. Riesgos identificados
+6. Alcance: qué SÍ y qué NO incluye
+
+REGLAS:
+- Si el brief tiene ambigüedades, señalalas pero intentá resolverlas con tu mejor criterio.
+- Cada user story debe completarse en máximo 1 semana de desarrollo.
+- Si una story es muy grande, partila en stories más chicas.
+- El output debe pasarse directamente al Dev sin más aclaraciones.
+- Español rioplatense, claro y sin jerga innecesaria.`
+  },
+  dev: {
+    name: "Dev", emoji: "💻", color: "#059669", borderColor: "#a7f3d0",
+    system: `Sos el Desarrollador Senior de "Toto el Tutor", una app educativa deployada en Vercel (toto-rust.vercel.app, v0.1.0).
+
+CONTEXTO TÉCNICO:
+- Stack: Single-file index.html (TODA la app: frontend + lógica + estilos + logo base64)
+- Backend: api/chat.js (proxy serverless hacia Anthropic API, claude-haiku-4-5, max_tokens: 600, 2 retries con delays 3s/6s)
+- Config: vercel.json
+- Hosting: Vercel, repo: github.com/JOnahbaires/Toto (público, rama main)
+- Storage: localStorage (solo nombre del estudiante persiste entre sesiones)
+- Email: EmailJS (service_kudmo6n, template_ji0mjoo, key KG28xVpC7Fq4vVJfa) → jonah.baires@gmail.com
+- Fotos: base64 en primer mensaje, luego solo resumen textual
+- Jonah no sabe programar. Todas las instrucciones deben ser paso a paso, con copy-paste exacto.
+
+RESTRICCIONES:
+- Single-file constraint: TODOS los cambios van en index.html
+- Simple > complejo: localStorage sobre DB, inline sobre pipelines
+- HTML edits: Usar Python str.replace() para bloques multilínea (no sed)
+- Mobile: triggers de click poco confiables; usar signals conversacionales
+
+TU ROL:
+1. Analizás los requerimientos del PM
+2. Proponés la solución técnica más simple que funcione
+3. Escribís el código completo con comentarios en español
+4. Dás instrucciones de implementación paso a paso para Jonah
+5. Listás qué hay que testear después
+
+FORMATO DE RESPUESTA:
+- Primero: qué vas a hacer y por qué (2-3 líneas en simple)
+- Luego: el código completo o el cambio exacto (antes/después)
+- Finalmente: instrucciones de deploy paso a paso
+
+REGLAS:
+- Código siempre completo, nunca fragmentos sueltos sin contexto.
+- Preferí soluciones que no requieran cambiar la arquitectura.
+- Nunca sobre-ingenierices. La solución más simple que funcione.
+- Español rioplatense en comentarios y explicaciones.`
+  },
+  qa: {
+    name: "QA", emoji: "🧪", color: "#d97706", borderColor: "#fde68a",
+    system: `Sos el QA Tester de "Toto el Tutor", una app educativa para niños de primaria en toto-rust.vercel.app.
+
+CONTEXTO DEL PRODUCTO:
+- App de tutoría con IA. El niño ingresa nombre, estado emocional y su tarea/duda. Toto guía con pistas sin dar respuestas directas.
+- Sistema de estrellas y gamificación. Panel admin de sesiones.
+- Stack: Single-file index.html, Vercel, localStorage, EmailJS, claude-haiku-4-5
+- Usuarios reales: niños de primaria (10-12 años), padres, docentes, admin.
+
+TU ROL:
+Recibís el output del Dev (qué se cambió y por qué) y producís:
+1. Test plan específico para el cambio realizado
+2. Casos de prueba en formato tabla:
+   - Happy path (flujo ideal)
+   - Edge cases (límites y casos extremos)
+   - Casos trampa (lo que haría un niño que no sigue instrucciones)
+3. Casos de regresión (features existentes que podrían romperse)
+4. Criterio de aprobación: qué tiene que pasar para dar PASS
+5. Instrucciones para Greg (ejecutor web con Claude in Chrome) si aplica
+
+FORMATO DE REPORTE:
+| Test ID | Caso | Pasos | Resultado esperado | Severidad si falla |
+
+SEVERIDADES:
+- 🔴 Crítico: Feature principal rota
+- 🟡 Medio: Funciona parcialmente o en algunos browsers
+- 🟢 Bajo: Cosmético o edge case menor
+
+REGLAS:
+- Siempre testear desde la perspectiva del usuario real (especialmente el niño).
+- Un bug no encontrado en QA es un bug que llega al niño.
+- Si algo es ambiguo (¿bug o feature?), reportalo igual con la pregunta.
+- Español rioplatense en los reportes.`
+  }
+};
 
 const FEEDBACK_AGENTS = {
   intake: {
@@ -510,6 +601,16 @@ REGLAS:
   }
 };
 
+const STRATEGIST_SYSTEM = `Sos el Estratega de producto de "Toto el Tutor", una app de tutoría socrática con IA para niños de primaria (10-12 años) en Buenos Aires.
+
+CONTEXTO: MVP en validación con ~5 familias. Meta: 70 familias pagando. Métrica paramount: "¿El niño vuelve mañana?"
+Roadmap: Fase 1 (validación), Fase 2 (dashboard padres + Google Classroom), Fase 3 (monetización).
+
+PRINCIPIOS NO NEGOCIABLES: Método socrático inviolable. Scope freeze hasta validar core loop. Simple > complejo.
+
+PRODUCÍS: 1) Patrones detectados, 2) Top 3 iteraciones sugeridas, 3) Señales de alerta, 4) Brief listo para Dev Pipeline.
+Español rioplatense, directo y sin relleno.`;
+
 const SHEET_COLUMNS = [
   "Fecha","Alumno","Padre/Fuente","Canal(es)","Feedback crudo",
   "Resumen","Cita clave","Emoción","Tema","Subtemas","Contexto de uso",
@@ -560,6 +661,7 @@ async function doLogin() {
     AUTH_PIN = pin;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    document.getElementById('headers-area').value = SHEET_COLUMNS.join('\t');
 
   } catch (err) {
     errEl.textContent = err.message;
@@ -599,7 +701,7 @@ async function callAgent(agentOrSystem, prompt) {
 // TABS
 // ═══════════════════════════════════════════
 
-const TAB_DESCS = { feedback: 'Intake → Analyst → Metrics', dashboard: 'Registros Beta — Google Forms' };
+const TAB_DESCS = { dev: 'PM → Dev → QA', feedback: 'Intake → Analyst → Metrics', review: 'Análisis estratégico del feedback acumulado' };
 
 function switchTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -607,7 +709,6 @@ function switchTab(tabId) {
   document.getElementById('tab-' + tabId).classList.add('active');
   document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
   document.getElementById('header-desc').textContent = TAB_DESCS[tabId];
-  if (tabId === 'dashboard' && !_registrosData) loadRegistros();
 }
 
 // ═══════════════════════════════════════════
@@ -830,8 +931,117 @@ function showCopyModal(text) {
 }
 
 // ═══════════════════════════════════════════
+// DEV PIPELINE
+// ═══════════════════════════════════════════
+
+async function runDevPipeline() {
+  const initiative = document.getElementById('dev-initiative').value.trim();
+  if (!initiative) return;
+
+  const btn = document.getElementById('dev-run-btn');
+  const statusEl = document.getElementById('dev-status');
+  const agentsEl = document.getElementById('dev-agents');
+  const gregEl = document.getElementById('dev-greg');
+
+  btn.disabled = true; btn.textContent = 'Ejecutando...';
+  document.getElementById('dev-card').classList.add('glowing');
+  agentsEl.innerHTML = ''; gregEl.style.display = 'none';
+  agentOutputs = {};
+
+  const agents = ['pm', 'dev', 'qa'];
+  const outputs = {};
+
+  try {
+    // PM
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${AGENTS.pm.color}"></span>${AGENTS.pm.emoji} PM está trabajando...</span>`;
+    renderAgentCard('dev-agents', 'pm', AGENTS.pm, null, null, true, true);
+    outputs.pm = await callAgent(AGENTS.pm, `BRIEF DEL ORQUESTADOR:\n\n${initiative}\n\nProducí el documento de requerimientos completo.`);
+    agentOutputs.pm = outputs.pm;
+    renderAgentCard('dev-agents', 'pm', AGENTS.pm, outputs.pm, null, false, false);
+
+    // Dev
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${AGENTS.dev.color}"></span>${AGENTS.dev.emoji} Dev está trabajando...</span>`;
+    renderAgentCard('dev-agents', 'dev', AGENTS.dev, null, null, true, true);
+    outputs.dev = await callAgent(AGENTS.dev, `REQUERIMIENTOS DEL PM:\n\n${outputs.pm}\n\nAnalizá estos requerimientos y producí tu solución técnica completa.`);
+    agentOutputs.dev = outputs.dev;
+    renderAgentCard('dev-agents', 'dev', AGENTS.dev, outputs.dev, null, false, true);
+
+    // QA
+    statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:${AGENTS.qa.color}"></span>${AGENTS.qa.emoji} QA está trabajando...</span>`;
+    renderAgentCard('dev-agents', 'qa', AGENTS.qa, null, null, true, true);
+    outputs.qa = await callAgent(AGENTS.qa, `CONTEXTO DE LA INICIATIVA:\n${initiative}\n\nOUTPUT DEL DEV:\n${outputs.dev}\n\nProducí el test plan completo.`);
+    agentOutputs.qa = outputs.qa;
+    renderAgentCard('dev-agents', 'qa', AGENTS.qa, outputs.qa, null, false, true);
+
+    // Greg prompt
+    gregEl.style.display = 'block';
+    gregEl.innerHTML = `
+      <div class="card" style="margin-top:10px">
+        <div class="flex-row gap-10" style="margin-bottom:12px">
+          <div class="agent-icon" style="background:#7c3aed20">🖱️</div>
+          <span style="font-weight:600;font-size:14px;color:#f1f5f9">Prompt para Greg</span>
+          <span style="font-size:12px;color:#7c3aed;background:#7c3aed15;padding:2px 8px;border-radius:4px">Claude in Chrome</span>
+        </div>
+        <button class="btn-primary btn-greg" onclick="copyGregPrompt()">Copiar prompt de Greg al clipboard</button>
+      </div>`;
+
+    statusEl.innerHTML = '<span class="status-ok">✓ Pipeline completo</span>';
+
+    // Historial
+    devHistory.unshift({ date: new Date().toLocaleString(), initiative: initiative.slice(0, 80), outputs });
+    if (devHistory.length > 10) devHistory.pop();
+    renderDevHistory();
+
+  } catch (err) {
+    statusEl.innerHTML = `<span class="status-error">Error: ${escHtml(err.message)}</span>`;
+  }
+  btn.disabled = false; btn.textContent = 'Lanzar Pipeline';
+  document.getElementById('dev-card').classList.remove('glowing');
+}
+
+function copyGregPrompt() {
+  const initiative = document.getElementById('dev-initiative').value.trim();
+  const qaOut = agentOutputs.qa || '';
+  const prompt = `Necesito que verifiques un cambio reciente en producción de Toto el Tutor.\n\nCONTEXTO: ${initiative.slice(0, 200)}\n\nTEST PLAN DEL QA:\n${qaOut.slice(0, 2000)}\n\nINSTRUCCIONES:\n1. Andá a https://toto-rust.vercel.app\n2. Ejecutá los casos de prueba\n3. Para cada caso: PASS o FAIL con evidencia\n4. Resumen final: cuántos PASS, cuántos FAIL`;
+  copyText(prompt, document.querySelector('#dev-greg button'));
+}
+
+function renderDevHistory() {
+  const el = document.getElementById('dev-history');
+  if (devHistory.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div style="margin-top:32px"><h3 style="font-size:13px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px">Historial</h3>${
+    devHistory.map((item, i) => `<div style="padding:10px 16px;background:#111827;border:1px solid #1e293b;border-radius:10px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="loadDevHistory(${i})"><span style="font-size:13px;color:#cbd5e1">${escHtml(item.initiative)}...</span><span style="font-size:11px;color:#475569">${item.date}</span></div>`).join('')
+  }</div>`;
+}
+
+function loadDevHistory(idx) {
+  const item = devHistory[idx];
+  if (!item) return;
+  document.getElementById('dev-initiative').value = item.initiative;
+  document.getElementById('dev-agents').innerHTML = '';
+  agentOutputs = { ...item.outputs };
+  ['pm', 'dev', 'qa'].forEach(id => {
+    if (item.outputs[id]) renderAgentCard('dev-agents', id, AGENTS[id], item.outputs[id], null, false, id === 'pm');
+  });
+}
+
+// ═══════════════════════════════════════════
 // FEEDBACK PIPELINE
 // ═══════════════════════════════════════════
+
+function toggleHeaders() {
+  const area = document.getElementById('headers-area');
+  const btn = document.getElementById('headers-toggle-btn');
+  if (area.style.display === 'none') {
+    area.style.display = 'block';
+    btn.textContent = '▾ Ocultar headers';
+    btn.style.background = '#22c55e20'; btn.style.borderColor = '#22c55e40'; btn.style.color = '#22c55e';
+  } else {
+    area.style.display = 'none';
+    btn.textContent = '▸ Mostrar headers para el Sheet';
+    btn.style.background = '#0ea5e920'; btn.style.borderColor = '#0ea5e940'; btn.style.color = '#0ea5e9';
+  }
+}
 
 window._fbCategory = 'padre';
 window._fbFormat = 'whatsapp';
@@ -1031,77 +1241,233 @@ function toggleEspOtro() {
 }
 
 // ═══════════════════════════════════════════
-// DASHBOARD — REGISTROS BETA
+// REVIEW TAB
 // ═══════════════════════════════════════════
 
-let _registrosData = null;
-let _showTests = false;
+function updateReviewCount() {
+  const raw = document.getElementById('review-data').value.trim();
+  const el = document.getElementById('review-row-count');
+  if (!raw) { el.style.display = 'none'; return; }
+  const lines = raw.split('\n').filter(l => l.trim());
+  const count = lines[0]?.startsWith('Fecha') ? lines.length - 1 : lines.length;
+  el.style.display = 'inline';
+  el.textContent = `${count} fila${count > 1 ? 's' : ''} detectada${count > 1 ? 's' : ''}${count < 3 ? ' — análisis preliminar' : ''}`;
+}
 
-async function loadRegistros() {
-  const loading = document.getElementById('reg-loading');
-  const error = document.getElementById('reg-error');
-  const metrics = document.getElementById('reg-metrics');
-  const tableWrap = document.getElementById('reg-table-wrap');
-  const empty = document.getElementById('reg-empty');
-  const btn = document.getElementById('reg-refresh-btn');
-  loading.style.display = 'block';
-  error.style.display = 'none';
-  metrics.style.display = 'none';
-  tableWrap.style.display = 'none';
-  empty.style.display = 'none';
-  btn.disabled = true;
+async function runReview() {
+  const raw = document.getElementById('review-data').value.trim();
+  if (!raw) return;
+
+  const lines = raw.split('\n').filter(l => l.trim());
+  const dataLines = lines[0]?.startsWith('Fecha') ? lines.slice(1) : lines;
+  if (dataLines.length === 0) return;
+
+  const HEADERS = SHEET_COLUMNS;
+  const rows = dataLines.map(line => {
+    const cells = line.split('\t');
+    const row = {};
+    HEADERS.forEach((h, i) => { row[h] = cells[i]?.trim() || '—'; });
+    return row;
+  });
+
+  const btn = document.getElementById('review-run-btn');
+  const statusEl = document.getElementById('review-status');
+  const outputEl = document.getElementById('review-output');
+  const dashEl = document.getElementById('review-dashboard');
+  const toggleEl = document.getElementById('review-view-toggle');
+  const briefEl = document.getElementById('review-brief');
+
+  btn.disabled = true; btn.textContent = 'Analizando...';
+  document.getElementById('review-card').classList.add('glowing');
+  outputEl.innerHTML = ''; dashEl.innerHTML = ''; toggleEl.style.display = 'none'; briefEl.style.display = 'none';
+  statusEl.innerHTML = `<span class="flex-row gap-8"><span class="spinner" style="border-top-color:#f59e0b"></span>🧠 Generando resumen ejecutivo + análisis estratégico...</span>`;
+
+  // Dashboard
+  renderDashboard(dashEl, rows);
+
+  // Build feedback summary
+  const summary = rows.map((r, i) => `--- FEEDBACK ${i+1} ---
+Fecha: ${r.Fecha} | Alumno: ${r.Alumno} | Fuente: ${r['Padre/Fuente']}
+Feedback crudo: ${r['Feedback crudo']}
+Resumen: ${r.Resumen}
+Emoción: ${r['Emoción']} | Tema: ${r.Tema} | Subtemas: ${r.Subtemas}
+Categoría: ${r['Categoría']} | Prioridad: ${r.Prioridad} | Accionable: ${r.Accionable}
+Acción sugerida: ${r['Acción sugerida']}
+Fase roadmap: ${r['Fase roadmap']} | Feature relacionada: ${r['Feature relacionada']}
+Impacto métrica paramount: ${r['Impacto métrica paramount']}
+Señal de alerta: ${r['Señal de alerta']}
+Hipótesis: ${r['Hipótesis']}`).join('\n\n');
+
   try {
-    const res = await fetch('/api/get-registros', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pin: AUTH_PIN })
-    });
-    if (res.status === 401) throw new Error('PIN invalido');
-    if (!res.ok) { const d = await res.json().catch(()=>({})); throw new Error(d.error || 'Error ' + res.status); }
-    _registrosData = await res.json();
-    renderRegistros();
+    const [strategic, exec] = await Promise.all([
+      callAgent(STRATEGIST_SYSTEM, `Analizá el siguiente conjunto de ${rows.length} feedback(s) procesado(s) de Toto el Tutor y producí tu análisis estratégico completo.\n\nFEEDBACKS:\n${summary}`),
+      callAgent(STRATEGIST_SYSTEM, `Analizá este conjunto de ${rows.length} feedback(s) de Toto el Tutor y escribí un resumen ejecutivo para Jonah, el founder (no técnico).
+
+El resumen debe:
+1. Empezar con "Lo que te están diciendo los usuarios:" — 2-3 oraciones
+2. "Lo que está funcionando:" — máximo 3 puntos concretos
+3. "Lo que hay que mejorar:" — máximo 3 puntos, ordenados por urgencia
+4. "Mi recomendación:" — UNA acción concreta para esta semana
+
+NO uses jerga técnica. Escribí como un WhatsApp largo pero bien estructurado. Español rioplatense.
+
+FEEDBACKS:\n${summary}`)
+    ]);
+
+    agentOutputs.strategic = strategic;
+    agentOutputs.exec = exec;
+
+    // View toggle
+    toggleEl.style.display = 'block';
+    toggleEl.innerHTML = `
+      <div style="display:flex;gap:4px;background:#1e293b;border-radius:10px;padding:3px;margin-bottom:16px;width:fit-content">
+        <button class="tab-btn active" id="view-exec" onclick="switchReviewView('exec')" style="font-family:'DM Sans',sans-serif">📝 Para vos</button>
+        <button class="tab-btn" id="view-strategic" onclick="switchReviewView('strategic')" style="font-family:'DM Sans',sans-serif">🧠 Estratégico</button>
+      </div>`;
+
+    renderReviewOutput('exec', exec, strategic);
+
+    // Brief
+    const briefMatch = strategic.match(/BRIEF LISTO PARA DEV PIPELINE[\s\S]*$/i);
+    if (briefMatch) {
+      briefEl.style.display = 'block';
+      briefEl.innerHTML = `
+        <div class="info-banner" style="background:#6366f110;border:1px solid #6366f130;margin-top:10px">
+          <span style="font-size:18px">⚡</span>
+          <div style="flex:1">
+            <strong style="color:#818cf8;font-size:13px">Brief listo para Dev Pipeline</strong>
+            <p style="font-size:12px;color:#64748b;margin-top:2px">Copiá y pegalo en la tab "Dev Pipeline" para arrancar el sprint.</p>
+          </div>
+          <button class="btn-primary" style="white-space:nowrap;padding:8px 18px;font-size:13px" onclick="copyText(agentOutputs.strategic.match(/BRIEF LISTO PARA DEV PIPELINE[\\s\\S]*$/i)?.[0] || '', this)">Copiar brief</button>
+        </div>`;
+    }
+
+    statusEl.innerHTML = '<span class="status-ok">✓ Análisis completo</span>';
+    document.getElementById('review-reset-btn').style.display = 'inline-block';
+
   } catch (err) {
-    error.textContent = err.message;
-    error.style.display = 'block';
+    statusEl.innerHTML = `<span class="status-error">Error: ${escHtml(err.message)}</span>`;
   }
-  loading.style.display = 'none';
-  btn.disabled = false;
+  btn.disabled = false; btn.textContent = 'Analizar feedback';
+  document.getElementById('review-card').classList.remove('glowing');
 }
 
-function renderRegistros() {
-  if (!_registrosData) return;
-  const { registros, metrics: m } = _registrosData;
-  const metricsEl = document.getElementById('reg-metrics');
-  metricsEl.innerHTML = `
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#10b981">${m.reales}</div><div class="reg-metric-label">Registros reales</div></div>
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#34d399">${m.activados}</div><div class="reg-metric-label">Activaron Toto</div></div>
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#fbbf24">${m.tasaActivacion}%</div><div class="reg-metric-label">Tasa activacion</div></div>
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#a5b4fc">${m.registrosHoy}</div><div class="reg-metric-label">Hoy</div></div>
-  `;
-  metricsEl.style.display = 'grid';
-  const filtered = _showTests ? registros : registros.filter(r => !isTestRow(r));
-  if (filtered.length === 0) {
-    document.getElementById('reg-table-wrap').style.display = 'none';
-    document.getElementById('reg-empty').style.display = 'block';
-    return;
-  }
-  const tbody = document.getElementById('reg-tbody');
-  tbody.innerHTML = filtered.map(r => {
-    const test = isTestRow(r);
-    const badge = test ? '<span class="reg-badge test">Test</span>'
-      : r.activated ? '<span class="reg-badge activated">Activado</span>'
-      : '<span class="reg-badge pending">Pendiente</span>';
-    const rowClass = test ? ' class="is-test"' : '';
-    const fechaCorta = r.fecha.replace(/(\d+)\/(\d+)\/(\d+)\s+(.+)/, '$1/$2 $4');
-    return `<tr${rowClass}><td style="white-space:nowrap;font-family:'JetBrains Mono',monospace;font-size:12px">${escHtml(fechaCorta)}</td><td>${escHtml(r.nombrePadre)}</td><td><strong>${escHtml(r.nombreHijo)}</strong></td><td style="text-align:center">${r.edad}</td><td>${escHtml(r.grado)}</td><td>${badge}</td></tr>`;
-  }).join('');
-  document.getElementById('reg-table-wrap').style.display = 'block';
-  document.getElementById('reg-empty').style.display = 'none';
-  document.getElementById('reg-toggle-tests-btn').textContent = _showTests ? 'Ocultar tests' : 'Mostrar tests';
+function switchReviewView(view) {
+  document.getElementById('view-exec').classList.toggle('active', view === 'exec');
+  document.getElementById('view-strategic').classList.toggle('active', view === 'strategic');
+  renderReviewOutput(view, agentOutputs.exec, agentOutputs.strategic);
 }
 
-function toggleTestRows() { _showTests = !_showTests; renderRegistros(); }
-function isTestRow(r) { const n = ((r.nombrePadre||'') + ' ' + (r.nombreHijo||'')).toLowerCase(); return r.edad >= 90 || n.includes('test'); }
+function renderReviewOutput(view, exec, strategic) {
+  const el = document.getElementById('review-output');
+  if (view === 'exec') {
+    el.innerHTML = `
+      <div class="agent-card" style="border:1px solid #22c55e40">
+        <div class="agent-header clickable" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <div class="flex-row gap-12">
+            <div class="agent-icon" style="background:#22c55e20">📝</div>
+            <div>
+              <span style="font-weight:600;font-size:14px;color:#f1f5f9">Resumen para vos</span>
+              <span style="margin-left:8px;font-size:12px;color:#64748b">en lenguaje simple</span>
+              <span style="margin-left:10px" class="status-ok">✓ Listo</span>
+            </div>
+          </div>
+          <div class="flex-row gap-8">
+            <button class="btn-copy" style="background:#22c55e20;border:1px solid #22c55e40;color:#22c55e;font-weight:600" onclick="event.stopPropagation();copyText(agentOutputs.exec, this)">📋 Copiar</button>
+          </div>
+        </div>
+        <div style="padding:20px 24px;background:#0f172a;border-top:1px solid #1e293b">${renderMarkdown(exec)}</div>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div class="agent-card" style="border:1px solid #f59e0b40">
+        <div class="agent-header clickable" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <div class="flex-row gap-12">
+            <div class="agent-icon" style="background:#f59e0b20">🧠</div>
+            <div>
+              <span style="font-weight:600;font-size:14px;color:#f1f5f9">Análisis estratégico</span>
+              <span style="margin-left:8px;font-size:12px;color:#64748b">patrones + brief para Dev Pipeline</span>
+              <span style="margin-left:10px" class="status-ok">✓ Listo</span>
+            </div>
+          </div>
+          <button class="btn-copy" onclick="event.stopPropagation();copyText(agentOutputs.strategic, this)">Copiar todo</button>
+        </div>
+        <div style="padding:16px 20px;max-height:600px;overflow-y:auto;background:#0e1525;border-top:1px solid #1e293b">${renderMarkdown(strategic)}</div>
+      </div>`;
+  }
+}
+
+function renderDashboard(container, rows) {
+  const total = rows.length;
+  if (!total) return;
+
+  const emo = { positiva: 0, negativa: 0, mixta: 0, neutra: 0 };
+  rows.forEach(r => {
+    const e = (r['Emoción'] || '').toLowerCase();
+    if (e.includes('positiv')) emo.positiva++;
+    else if (e.includes('negativ')) emo.negativa++;
+    else if (e.includes('mixt')) emo.mixta++;
+    else emo.neutra++;
+  });
+
+  const temas = {};
+  rows.forEach(r => { const t = (r.Tema || 'otro').trim(); temas[t] = (temas[t] || 0) + 1; });
+  const topTemas = Object.entries(temas).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  const prio = { crítica: 0, alta: 0, media: 0, baja: 0 };
+  rows.forEach(r => {
+    const p = (r.Prioridad || '').toLowerCase();
+    if (p.includes('crít')) prio.crítica++;
+    else if (p.includes('alta')) prio.alta++;
+    else if (p.includes('media')) prio.media++;
+    else if (p.includes('baja')) prio.baja++;
+  });
+
+  const imp = { positivo: 0, negativo: 0, neutro: 0, nd: 0 };
+  rows.forEach(r => {
+    const i = (r['Impacto métrica paramount'] || '').toLowerCase();
+    if (i.includes('positiv')) imp.positivo++;
+    else if (i.includes('negativ')) imp.negativo++;
+    else if (i.includes('neutr')) imp.neutro++;
+    else imp.nd++;
+  });
+
+  function bar(label, val, tot, color, emoji) {
+    const pct = tot > 0 ? Math.round((val / tot) * 100) : 0;
+    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:13px;color:#cbd5e1">${emoji} ${escHtml(label)}</span><span style="font-size:12px;color:#64748b;font-weight:600">${val} <span style="color:#475569">(${pct}%)</span></span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+  }
+
+  const card = s => `<div style="background:#111827;border:1px solid #1e293b;border-radius:14px;padding:18px 20px;flex:1 1 200px;min-width:0">${s}</div>`;
+  const title = t => `<p style="font-size:12px;color:#64748b;font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.04em">${t}</p>`;
+
+  const temaColors = ["#6366f1","#0ea5e9","#8b5cf6","#ec4899","#14b8a6"];
+  const temaEmojis = ["🥇","🥈","🥉","4️⃣","5️⃣"];
+
+  container.innerHTML = `
+    <div style="margin-bottom:24px;animation:slideIn 0.4s ease-out">
+      <div class="flex-row gap-8" style="margin-bottom:14px">
+        <span style="font-size:16px">📊</span>
+        <h3 style="font-size:13px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em">Dashboard — ${total} feedback${total > 1 ? 's' : ''}</h3>
+      </div>
+      <div class="dashboard-grid" style="display:flex;flex-wrap:wrap;gap:12px">
+        ${card(title('Emoción') + bar('Positiva', emo.positiva, total, '#22c55e', '😊') + bar('Mixta', emo.mixta, total, '#f59e0b', '😐') + bar('Negativa', emo.negativa, total, '#ef4444', '😟') + bar('Neutra', emo.neutra, total, '#64748b', '😶'))}
+        ${card(title('Temas frecuentes') + topTemas.map(([t, c], i) => bar(t, c, total, temaColors[i], temaEmojis[i])).join(''))}
+        ${card(title('Prioridad') + bar('Crítica', prio.crítica, total, '#ef4444', '🔴') + bar('Alta', prio.alta, total, '#f97316', '🟠') + bar('Media', prio.media, total, '#f59e0b', '🟡') + bar('Baja', prio.baja, total, '#22c55e', '🟢'))}
+        ${card(title('Impacto en retención') + bar('Positivo', imp.positivo, total, '#22c55e', '⬆️') + bar('Negativo', imp.negativo, total, '#ef4444', '⬇️') + bar('Neutro', imp.neutro, total, '#64748b', '➡️') + bar('Sin dato', imp.nd, total, '#334155', '❓'))}
+      </div>
+    </div>`;
+}
+
+function resetReview() {
+  document.getElementById('review-data').value = '';
+  document.getElementById('review-output').innerHTML = '';
+  document.getElementById('review-dashboard').innerHTML = '';
+  document.getElementById('review-view-toggle').style.display = 'none';
+  document.getElementById('review-brief').style.display = 'none';
+  document.getElementById('review-reset-btn').style.display = 'none';
+  document.getElementById('review-row-count').style.display = 'none';
+  document.getElementById('review-status').innerHTML = '<span style="color:#475569">Sonnet 4 — dos análisis en paralelo</span>';
+}
 
 // Focus en el input de PIN al cargar
 window.addEventListener('load', () => document.getElementById('pin-input')?.focus());
