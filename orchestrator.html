@@ -369,15 +369,9 @@
 
     <!-- ═══════ TAB: REVIEW ═══════ -->
     <div class="tab-content" id="tab-review">
-      <div class="info-banner" style="background:#f59e0b10;border:1px solid #f59e0b30">
-        <span class="icon">📋</span>
-        <div class="body">
-          <strong style="color:#f59e0b">Cómo usar:</strong> Abrí tu Google Sheet de feedback, seleccioná todas las filas con datos (podés incluir la fila de headers, se ignora automáticamente), copiá con Ctrl+C y pegá acá abajo.
-        </div>
-      </div>
       <div class="card" id="review-card">
         <div class="flex-between mb-12">
-          <div class="label-sm" style="margin-bottom:0">Pegá las filas del Sheet</div>
+          <div class="label-sm" style="margin-bottom:0">Pegá filas de feedback (TSV)</div>
           <span id="review-row-count" style="display:none;font-size:12px;color:#f59e0b;background:#f59e0b15;padding:3px 10px;border-radius:20px;font-weight:500"></span>
         </div>
         <textarea id="review-data" class="input-area" rows="6"
@@ -1136,15 +1130,6 @@ async function runFeedbackPipeline() {
     const ap = parseAgentOutput(analystOut, ["CATEGORIA","PRIORIDAD","ACCIONABLE","ACCION_SUGERIDA","FASE_ROADMAP","FEATURE_RELACIONADA","IMPACTO_METRICA","SEÑAL_ALERTA"]);
     const mp = parseAgentOutput(metricsOut, ["TAGS_METRICAS","SEÑAL_CUANTIFICABLE","COMPARACION_TEMPORAL","HIPOTESIS","RECOMENDACION_SEGUIMIENTO"]);
 
-    const clean = v => (v||'—').replace(/[\t\n\r]/g,' ').replace(/\s+/g,' ').trim();
-    const row = [
-      new Date().toLocaleDateString('es-AR'), clean(alumno), clean(padre), clean(canalesStr), clean(contenidoPlano),
-      clean(ip.RESUMEN), clean(ip.CITA_CLAVE), clean(ip.EMOCION), clean(ip.TEMA), clean(ip.SUBTEMAS), clean(ip.CONTEXTO_USO),
-      clean(ap.CATEGORIA), clean(ap.PRIORIDAD), clean(ap.ACCIONABLE), clean(ap.ACCION_SUGERIDA), clean(ap.FASE_ROADMAP),
-      clean(ap.FEATURE_RELACIONADA), clean(ap.IMPACTO_METRICA), clean(ap.SEÑAL_ALERTA),
-      clean(mp.TAGS_METRICAS), clean(mp.SEÑAL_CUANTIFICABLE), clean(mp.COMPARACION_TEMPORAL), clean(mp.HIPOTESIS), clean(mp.RECOMENDACION_SEGUIMIENTO)
-    ].join('\t');
-
     // Guardar datos para el botón "Guardar en repo"
     window._lastFeedbackData = {
       alumno, padre,
@@ -1161,12 +1146,10 @@ async function runFeedbackPipeline() {
 
     clipEl.style.display = 'block';
     clipEl.innerHTML = `
-      <div class="info-banner" style="background:#0ea5e910;border:1px solid #0ea5e930;margin-top:10px">
-        <span class="icon">📋</span>
+      <div class="info-banner" style="background:#22c55e10;border:1px solid #22c55e30;margin-top:10px">
+        <span class="icon">✅</span>
         <div class="body">
-          <strong style="color:#22c55e">Feedback procesado.</strong> Hacé click en el campo de abajo, seleccioná todo con <strong style="color:#e2e8f0">Ctrl+A</strong> (o ⌘A) y después <strong style="color:#e2e8f0">Ctrl+C</strong> (o ⌘C). Pegá en tu Google Sheet.
-          <textarea readonly onclick="this.select()" onfocus="this.select()" rows="3"
-            style="width:100%;margin-top:8px;background:#0c0f1a;border:1px solid #22c55e40;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;line-height:1.5;cursor:text">${escHtml(row)}</textarea>
+          <strong style="color:#22c55e">Feedback procesado.</strong>
           <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <button id="fb-save-btn" onclick="saveFeedback()"
               style="background:linear-gradient(135deg,#7c3aed,#6366f1);color:white;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 12px rgba(99,102,241,0.3)">
@@ -1177,13 +1160,12 @@ async function runFeedbackPipeline() {
         </div>
       </div>`;
 
-    copyText(row, null);
     fbProcessedCount++;
     const countEl = document.getElementById('fb-count');
     countEl.style.display = 'inline';
     countEl.textContent = `${fbProcessedCount} procesado${fbProcessedCount > 1 ? 's' : ''} en esta sesión`;
 
-    statusEl.innerHTML = '<span class="status-ok">✓ Feedback procesado y copiado al clipboard</span>';
+    statusEl.innerHTML = '<span class="status-ok">✓ Feedback procesado — guardalo en repo</span>';
     document.getElementById('fb-reset-btn').style.display = 'inline-block';
 
   } catch (err) {
