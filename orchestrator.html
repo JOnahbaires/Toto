@@ -124,6 +124,14 @@
       border-radius: 10px; padding: 10px 20px; font-size: 14px;
       font-weight: 600; cursor: pointer;
     }
+    .fb-pill {
+      background: #1e293b; color: #94a3b8; border: 1px solid #1e293b;
+      border-radius: 20px; padding: 6px 14px; font-size: 13px;
+      font-weight: 500; cursor: pointer; transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .fb-pill:hover { background: #273548; border-color: #334155; color: #cbd5e1; }
+    .fb-pill.active { background: #6366f120; border-color: #6366f1; color: #a5b4fc; }
     .btn-copy {
       background: #1e293b; border: none; border-radius: 6px;
       padding: 5px 12px; font-size: 12px; color: #94a3b8; cursor: pointer;
@@ -249,53 +257,103 @@
 
     <!-- ═══════ TAB: FEEDBACK ═══════ -->
     <div class="tab-content active" id="tab-feedback">
-      <div class="info-banner" style="background:#0ea5e910;border:1px solid #0ea5e930">
-        <span class="icon">💡</span>
-        <div class="body">
-          <strong style="color:#0ea5e9">Setup inicial:</strong> Creá un Google Sheet nuevo. Copiá los headers de abajo y pegalos en la fila 1. Después, cada feedback procesado genera una fila lista para copiar y pegar.
-          <div style="margin-top:8px">
-            <button onclick="toggleHeaders()" id="headers-toggle-btn"
-              style="background:#0ea5e920;border:1px solid #0ea5e940;border-radius:6px;padding:6px 14px;font-size:12px;color:#0ea5e9;cursor:pointer;font-weight:600">
-              ▸ Mostrar headers para el Sheet
-            </button>
-          </div>
-          <textarea id="headers-area" style="display:none;width:100%;margin-top:8px;background:#0c0f1a;border:1px solid #0ea5e940;border-radius:6px;padding:8px 10px;color:#e2e8f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;line-height:1.5;cursor:text" rows="2" readonly
-            onclick="this.select()" onfocus="this.select()"></textarea>
-        </div>
-      </div>
 
       <div class="card" id="fb-card">
         <div class="flex-between mb-18">
           <div class="label-sm" style="margin-bottom:0">Cargar feedback individual</div>
           <span id="fb-count" style="display:none;font-size:12px;color:#22c55e;background:#22c55e15;padding:3px 10px;border-radius:20px;font-weight:500"></span>
         </div>
-        <div class="grid-2 mb-12">
-          <div>
-            <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Alumno</label>
-            <input type="text" id="fb-alumno" class="input-text" placeholder="Nombre del alumno" style="border-radius:8px;padding:10px 14px">
+        <!-- TIPO DE FUENTE -->
+        <div class="mb-12">
+          <label style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:block">Tipo de fuente</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="fb-pill active" id="fb-cat-padre" onclick="setFbCategory('padre')">👨‍👩‍👦 Padre</button>
+            <button class="fb-pill" id="fb-cat-nino" onclick="setFbCategory('nino')">🧒 Niño</button>
+            <button class="fb-pill" id="fb-cat-especialista" onclick="setFbCategory('especialista')">🎓 Especialista</button>
           </div>
-          <div>
-            <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Padre / Fuente</label>
-            <input type="text" id="fb-padre" class="input-text" placeholder="Nombre del padre o fuente" style="border-radius:8px;padding:10px 14px">
+        </div>
+
+        <!-- CAMPOS: PADRE -->
+        <div id="fb-fields-padre">
+          <div class="grid-2 mb-12">
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Nombre del padre</label>
+              <input type="text" id="fb-nombre-padre" class="input-text" placeholder="Requerido" style="border-radius:8px;padding:10px 14px">
+            </div>
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Nombre del niño <span style="color:#475569;font-size:11px">(opcional)</span></label>
+              <input type="text" id="fb-nombre-nino-p" class="input-text" placeholder="Nombre del niño" style="border-radius:8px;padding:10px 14px">
+            </div>
+          </div>
+          <div class="grid-2 mb-12">
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Edad <span style="color:#475569;font-size:11px">(opcional)</span></label>
+              <input type="text" id="fb-edad-p" class="input-text" placeholder="Ej: 11" style="border-radius:8px;padding:10px 14px">
+            </div>
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Grado <span style="color:#475569;font-size:11px">(opcional)</span></label>
+              <input type="text" id="fb-grado-p" class="input-text" placeholder="Ej: 6to" style="border-radius:8px;padding:10px 14px">
+            </div>
           </div>
         </div>
-        <div class="mb-12">
-          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:6px">
-            <span>💬</span> WhatsApp Texto <span id="fb-wa-check" style="color:#22c55e;font-size:11px;display:none">✓</span>
-          </label>
-          <textarea id="fb-whatsapp" class="input-area" rows="3" placeholder="Pegá el mensaje de WhatsApp acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+
+        <!-- CAMPOS: NIÑO -->
+        <div id="fb-fields-nino" style="display:none">
+          <div class="grid-2 mb-12">
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Nombre del niño</label>
+              <input type="text" id="fb-nombre-nino" class="input-text" placeholder="Requerido" style="border-radius:8px;padding:10px 14px">
+            </div>
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Edad <span style="color:#475569;font-size:11px">(opcional)</span></label>
+              <input type="text" id="fb-edad-n" class="input-text" placeholder="Ej: 11" style="border-radius:8px;padding:10px 14px">
+            </div>
+          </div>
+          <div class="mb-12">
+            <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Grado <span style="color:#475569;font-size:11px">(opcional)</span></label>
+            <input type="text" id="fb-grado-n" class="input-text" placeholder="Ej: 6to" style="border-radius:8px;padding:10px 14px;max-width:200px">
+          </div>
         </div>
-        <div class="mb-12">
-          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:6px">
-            <span>🎙️</span> WhatsApp Audio (transcripción) <span id="fb-audio-check" style="color:#22c55e;font-size:11px;display:none">✓</span>
-          </label>
-          <textarea id="fb-audio" class="input-area" rows="3" placeholder="Transcribí o pegá el contenido del audio acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+
+        <!-- CAMPOS: ESPECIALISTA -->
+        <div id="fb-fields-especialista" style="display:none">
+          <div class="grid-2 mb-12">
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Nombre del especialista</label>
+              <input type="text" id="fb-nombre-esp" class="input-text" placeholder="Requerido" style="border-radius:8px;padding:10px 14px">
+            </div>
+            <div>
+              <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Especialidad</label>
+              <select id="fb-especialidad" class="input-text" onchange="toggleEspOtro()" style="border-radius:8px;padding:10px 14px;cursor:pointer">
+                <option value="">Seleccioná...</option>
+                <option value="Crianza">Crianza</option>
+                <option value="Neurodesarrollo">Neurodesarrollo</option>
+                <option value="Pedagogía">Pedagogía</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div id="fb-otro-wrapper" class="mb-12" style="display:none">
+            <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Especificá la especialidad</label>
+            <input type="text" id="fb-especialidad-otro" class="input-text" placeholder="Ej: Psicopedagogía" style="border-radius:8px;padding:10px 14px">
+          </div>
         </div>
+
+        <!-- FEEDBACK -->
         <div class="mb-12">
-          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:6px">
-            <span>📧</span> Email (reporte EmailJS) <span id="fb-email-check" style="color:#22c55e;font-size:11px;display:none">✓</span>
-          </label>
-          <textarea id="fb-email" class="input-area" rows="3" placeholder="Pegá el contenido del email de reporte acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+          <label style="font-size:12px;color:#64748b;margin-bottom:4px;display:block">Feedback</label>
+          <textarea id="fb-contenido" class="input-area" rows="5" placeholder="Pegá o escribí el feedback acá..." style="border-radius:8px;padding:10px 14px"></textarea>
+        </div>
+
+        <!-- FORMATO DE RECEPCIÓN -->
+        <div class="mb-18">
+          <label style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:block">Formato de recepción</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="fb-pill active" id="fb-fmt-whatsapp" onclick="setFbFormat('whatsapp')">💬 WhatsApp</button>
+            <button class="fb-pill" id="fb-fmt-email" onclick="setFbFormat('email')">📧 Email</button>
+            <button class="fb-pill" id="fb-fmt-cara" onclick="setFbFormat('cara')">🗣️ Cara a cara</button>
+            <button class="fb-pill" id="fb-fmt-telefono" onclick="setFbFormat('telefono')">📞 Teléfono</button>
+          </div>
         </div>
         <div class="flex-between">
           <span id="fb-status" style="font-size:12px;color:#475569">Intake → Analyst → Metrics</span>
@@ -991,24 +1049,43 @@ function toggleHeaders() {
   }
 }
 
-// Checkmarks para campos con contenido
-['fb-whatsapp', 'fb-audio', 'fb-email'].forEach(id => {
-  document.getElementById(id)?.addEventListener('input', function() {
-    const checkId = id.replace('fb-', 'fb-') + '-check';
-    const map = { 'fb-whatsapp': 'fb-wa-check', 'fb-audio': 'fb-audio-check', 'fb-email': 'fb-email-check' };
-    const checkEl = document.getElementById(map[id]);
-    if (checkEl) checkEl.style.display = this.value.trim() ? 'inline' : 'none';
-  });
-});
+window._fbCategory = 'padre';
+window._fbFormat = 'whatsapp';
 
 async function runFeedbackPipeline() {
-  const alumno = document.getElementById('fb-alumno').value.trim();
-  const padre = document.getElementById('fb-padre').value.trim();
-  const whatsapp = document.getElementById('fb-whatsapp').value.trim();
-  const audio = document.getElementById('fb-audio').value.trim();
-  const email = document.getElementById('fb-email').value.trim();
+  const cat = window._fbCategory || 'padre';
+  const fmt = window._fbFormat || 'whatsapp';
+  const contenido = document.getElementById('fb-contenido').value.trim();
 
-  if (!alumno || !padre || (!whatsapp && !audio && !email)) return;
+  let alumno = '', padre = '', extraInfo = '';
+  if (cat === 'padre') {
+    padre = document.getElementById('fb-nombre-padre').value.trim();
+    alumno = document.getElementById('fb-nombre-nino-p').value.trim();
+    const edad = document.getElementById('fb-edad-p').value.trim();
+    const grado = document.getElementById('fb-grado-p').value.trim();
+    if (edad || grado) extraInfo = [edad && `Edad: ${edad}`, grado && `Grado: ${grado}`].filter(Boolean).join(' | ');
+  } else if (cat === 'nino') {
+    alumno = document.getElementById('fb-nombre-nino').value.trim();
+    const edad = document.getElementById('fb-edad-n').value.trim();
+    const grado = document.getElementById('fb-grado-n').value.trim();
+    if (edad || grado) extraInfo = [edad && `Edad: ${edad}`, grado && `Grado: ${grado}`].filter(Boolean).join(' | ');
+  } else {
+    padre = document.getElementById('fb-nombre-esp').value.trim();
+    const espVal = document.getElementById('fb-especialidad').value;
+    if (espVal === 'Otro') {
+      const otro = document.getElementById('fb-especialidad-otro').value.trim();
+      if (otro) padre = `${padre} (${otro})`;
+    } else if (espVal) {
+      padre = `${padre} (${espVal})`;
+    }
+  }
+
+  if (!contenido || (!padre && !alumno)) return;
+
+  const fmtLabels = { whatsapp: 'WhatsApp', email: 'Email', cara: 'Cara a cara', telefono: 'Teléfono' };
+  const catLabels = { padre: 'Padre', nino: 'Niño', especialista: 'Especialista' };
+  const canalesStr = fmtLabels[fmt] || fmt;
+  const contenidoPlano = contenido;
 
   const btn = document.getElementById('fb-run-btn');
   const statusEl = document.getElementById('fb-status');
@@ -1020,16 +1097,17 @@ async function runFeedbackPipeline() {
   agentsEl.innerHTML = ''; clipEl.style.display = 'none';
   agentOutputs = {};
 
-  // Build context
-  const parts = []; const canales = [];
-  if (whatsapp) { parts.push(`[WhatsApp Texto]\n${whatsapp}`); canales.push('WhatsApp Texto'); }
-  if (audio) { parts.push(`[WhatsApp Audio — transcripción]\n${audio}`); canales.push('WhatsApp Audio'); }
-  if (email) { parts.push(`[Email / Reporte EmailJS]\n${email}`); canales.push('Email'); }
-  const canalesStr = canales.join(' + ');
-  const contenido = parts.join('\n\n');
-  const contenidoPlano = [whatsapp, audio, email].filter(Boolean).join(' | ');
-
-  const feedbackContext = `ALUMNO: ${alumno}\nPADRE/FUENTE: ${padre}\nCANALES: ${canalesStr}\nFECHA: ${new Date().toLocaleDateString('es-AR')}\n\nFEEDBACK CRUDO:\n${contenido}`;
+  const feedbackContext = [
+    `TIPO_FUENTE: ${catLabels[cat]}`,
+    `ALUMNO: ${alumno || '—'}`,
+    `PADRE/FUENTE: ${padre || '—'}`,
+    extraInfo && `INFO_ADICIONAL: ${extraInfo}`,
+    `CANAL: ${canalesStr}`,
+    `FECHA: ${new Date().toLocaleDateString('es-AR')}`,
+    '',
+    'FEEDBACK CRUDO:',
+    contenido
+  ].filter(Boolean).join('\n');
 
   try {
     // Intake
@@ -1150,20 +1228,34 @@ async function saveFeedback() {
 }
 
 function resetFeedback() {
-  // Mantener alumno y padre
-  document.getElementById('fb-whatsapp').value = '';
-  document.getElementById('fb-audio').value = '';
-  document.getElementById('fb-email').value = '';
+  document.getElementById('fb-contenido').value = '';
   document.getElementById('fb-agents').innerHTML = '';
   document.getElementById('fb-clipboard').style.display = 'none';
   document.getElementById('fb-reset-btn').style.display = 'none';
   document.getElementById('fb-status').innerHTML = '<span style="color:#475569">Intake → Analyst → Metrics</span>';
   window._lastFeedbackData = null;
-  ['fb-wa-check','fb-audio-check','fb-email-check'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
   agentOutputs = {};
+}
+
+function setFbCategory(cat) {
+  window._fbCategory = cat;
+  ['padre', 'nino', 'especialista'].forEach(c => {
+    document.getElementById(`fb-cat-${c}`)?.classList.toggle('active', c === cat);
+    const fields = document.getElementById(`fb-fields-${c}`);
+    if (fields) fields.style.display = c === cat ? 'block' : 'none';
+  });
+}
+
+function setFbFormat(fmt) {
+  window._fbFormat = fmt;
+  ['whatsapp', 'email', 'cara', 'telefono'].forEach(f => {
+    document.getElementById(`fb-fmt-${f}`)?.classList.toggle('active', f === fmt);
+  });
+}
+
+function toggleEspOtro() {
+  const val = document.getElementById('fb-especialidad').value;
+  document.getElementById('fb-otro-wrapper').style.display = val === 'Otro' ? 'block' : 'none';
 }
 
 // ═══════════════════════════════════════════
