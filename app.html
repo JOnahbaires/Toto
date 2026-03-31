@@ -2672,14 +2672,6 @@ async function callTutor(userMsg, isFirst) {
       sendSessionEmail('[SESSION_END] conversacional');
     }
 
-    if (isFirst && !S.isPersonalTopic) {
-      showCeleb(
-        S.mode === 'tema' ? '💡 ¡Vamos a aprender juntos!' : '¡Arrancamos, crack! 🚀',
-        S.mode === 'tema' ? 'Preguntar es el primer paso para entender.' : 'Toto ya sabe de qué va. ¡A pensar!',
-        ''
-      );
-    }
-
   } catch (err) {
     loader.remove();
     showErr('Error de red. Revisá tu conexión a internet 🌐');
