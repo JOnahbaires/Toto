@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const safePrompt = `Simple educational illustration for children, cute cartoon style, colorful, no text, white background: ${prompt}`;
+    const safePrompt = `Simple educational illustration for children, cute cartoon style, colorful, absolutely no text, no labels, no words, no letters, no captions, no annotations, white background: ${prompt}`;
     const response = await fetch('https://fal.run/fal-ai/flux/schnell', {
       method: 'POST',
       headers: {
