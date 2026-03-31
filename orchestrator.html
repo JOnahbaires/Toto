@@ -6,7 +6,7 @@
   <title>Toto — Feedback & Dashboard</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -226,12 +226,511 @@
     .reg-toggle-tests { background: none; border: 1px solid #334155; border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #94a3b8; cursor: pointer; font-family: 'DM Sans', sans-serif; }
     .reg-toggle-tests:hover { border-color: #475569; color: #cbd5e1; }
 
+    /* ══════════════════════════════════════════════════════════
+       DASHBOARD — GLASSMORPHISM (all scoped to #tab-dashboard)
+       ══════════════════════════════════════════════════════════ */
+
+    #tab-dashboard {
+      position: relative;
+      background: linear-gradient(160deg, #080c18 0%, #0d1424 100%);
+      border-radius: 20px;
+      padding: 32px 24px 48px;
+      overflow: hidden;
+      font-family: 'Manrope', 'DM Sans', sans-serif;
+    }
+
+    /* Background orbs */
+    #tab-dashboard .dash-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #tab-dashboard .dash-orb--purple {
+      width: 500px; height: 500px;
+      background: #8b7cff;
+      filter: blur(150px);
+      opacity: 0.12;
+      top: -100px; left: -120px;
+    }
+    #tab-dashboard .dash-orb--cyan {
+      width: 450px; height: 450px;
+      background: #22d3ee;
+      filter: blur(150px);
+      opacity: 0.10;
+      top: 300px; right: -150px;
+    }
+    #tab-dashboard .dash-orb--green {
+      width: 400px; height: 400px;
+      background: #4ade80;
+      filter: blur(150px);
+      opacity: 0.08;
+      bottom: 200px; left: 30%;
+    }
+
+    /* All dashboard content above orbs */
+    #tab-dashboard .dash-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Glass card base */
+    #tab-dashboard .glass-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* Dashboard header */
+    #tab-dashboard .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    #tab-dashboard .dash-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #tab-dashboard .dash-title {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      background: linear-gradient(135deg, #8b7cff, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+    #tab-dashboard .dash-countdown {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #fbbf24;
+      white-space: nowrap;
+    }
+    #tab-dashboard .dash-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #tab-dashboard .dash-refresh-btn {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      padding: 8px 18px;
+      color: #e8eaf0;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #tab-dashboard .dash-refresh-btn:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.18);
+    }
+    #tab-dashboard .dash-refresh-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    #tab-dashboard .dash-status {
+      font-size: 12px;
+      color: #6b7394;
+    }
+
+    /* Section headers */
+    #tab-dashboard .dash-section-title {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      color: #e8eaf0;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #tab-dashboard .dash-section-title .accent-line {
+      width: 3px;
+      height: 18px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* KPI grid */
+    #tab-dashboard .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    #tab-dashboard .kpi-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    #tab-dashboard .kpi-card:hover {
+      transform: translateY(-2px);
+    }
+    #tab-dashboard .kpi-card--purple { box-shadow: 0 0 30px rgba(139,124,255,0.10); }
+    #tab-dashboard .kpi-card--purple:hover { border-color: rgba(139,124,255,0.25); }
+    #tab-dashboard .kpi-card--green { box-shadow: 0 0 30px rgba(74,222,128,0.10); }
+    #tab-dashboard .kpi-card--green:hover { border-color: rgba(74,222,128,0.25); }
+    #tab-dashboard .kpi-card--gold { box-shadow: 0 0 30px rgba(251,191,36,0.10); }
+    #tab-dashboard .kpi-card--gold:hover { border-color: rgba(251,191,36,0.25); }
+    #tab-dashboard .kpi-card--cyan { box-shadow: 0 0 30px rgba(34,211,238,0.10); }
+    #tab-dashboard .kpi-card--cyan:hover { border-color: rgba(34,211,238,0.25); }
+
+    #tab-dashboard .kpi-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6b7394;
+      margin-bottom: 8px;
+    }
+    #tab-dashboard .kpi-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    #tab-dashboard .kpi-target {
+      font-size: 12px;
+      color: #6b7394;
+      margin-bottom: 10px;
+    }
+    #tab-dashboard .kpi-bar-track {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    #tab-dashboard .kpi-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s ease;
+    }
+    #tab-dashboard .kpi-bar-fill--purple {
+      background: linear-gradient(90deg, #8b7cff, #a78bfa);
+      box-shadow: 0 0 10px rgba(139,124,255,0.4);
+    }
+    #tab-dashboard .kpi-bar-fill--green {
+      background: linear-gradient(90deg, #4ade80, #86efac);
+      box-shadow: 0 0 10px rgba(74,222,128,0.4);
+    }
+    #tab-dashboard .kpi-bar-fill--gold {
+      background: linear-gradient(90deg, #fbbf24, #fcd34d);
+      box-shadow: 0 0 10px rgba(251,191,36,0.4);
+    }
+    #tab-dashboard .kpi-bar-fill--cyan {
+      background: linear-gradient(90deg, #22d3ee, #67e8f9);
+      box-shadow: 0 0 10px rgba(34,211,238,0.4);
+    }
+
+    /* Registros table (glass) */
+    #tab-dashboard .dash-table-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    #tab-dashboard .dash-toggle-tests {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #6b7394;
+      cursor: pointer;
+      font-family: 'Manrope', sans-serif;
+      transition: all 0.15s;
+    }
+    #tab-dashboard .dash-toggle-tests:hover {
+      background: rgba(255,255,255,0.10);
+      color: #e8eaf0;
+    }
+    #tab-dashboard .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-family: 'Manrope', sans-serif;
+    }
+    #tab-dashboard .dash-table th {
+      text-align: left;
+      padding: 10px 12px;
+      color: #6b7394;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    #tab-dashboard .dash-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: #e8eaf0;
+    }
+    #tab-dashboard .dash-table tr:hover td {
+      background: rgba(255,255,255,0.03);
+    }
+    #tab-dashboard .dash-table tr.is-test td {
+      opacity: 0.35;
+    }
+    #tab-dashboard .dash-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      backdrop-filter: blur(8px);
+    }
+    #tab-dashboard .dash-badge--activado {
+      background: rgba(74,222,128,0.12);
+      color: #4ade80;
+    }
+    #tab-dashboard .dash-badge--pendiente {
+      background: rgba(251,191,36,0.12);
+      color: #fbbf24;
+    }
+    #tab-dashboard .dash-badge--test {
+      background: rgba(107,115,148,0.15);
+      color: #6b7394;
+    }
+
+    /* Phase cards */
+    #tab-dashboard .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    #tab-dashboard .phase-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    #tab-dashboard .phase-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    #tab-dashboard .phase-card-title {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: #e8eaf0;
+    }
+    #tab-dashboard .phase-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    #tab-dashboard .phase-badge--completada {
+      background: rgba(74,222,128,0.15);
+      color: #4ade80;
+    }
+    #tab-dashboard .phase-badge--en-curso {
+      background: rgba(139,124,255,0.15);
+      color: #8b7cff;
+    }
+    #tab-dashboard .phase-badge--adelantado {
+      background: rgba(251,191,36,0.15);
+      color: #fbbf24;
+    }
+    #tab-dashboard .phase-badge--pendiente {
+      background: rgba(107,115,148,0.10);
+      color: #4a5068;
+    }
+    #tab-dashboard .phase-date {
+      font-size: 11px;
+      color: #6b7394;
+      margin-bottom: 10px;
+    }
+    #tab-dashboard .phase-item {
+      font-size: 13px;
+      color: #e8eaf0;
+      padding: 3px 0;
+      line-height: 1.5;
+    }
+    #tab-dashboard .phase-item--done { color: #6b7394; }
+    #tab-dashboard .phase-item--pending { color: #e8eaf0; }
+
+    /* Content table */
+    #tab-dashboard .content-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      font-family: 'Manrope', sans-serif;
+    }
+    #tab-dashboard .content-table th {
+      text-align: left;
+      padding: 8px 10px;
+      color: #6b7394;
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    #tab-dashboard .content-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: #e8eaf0;
+    }
+    #tab-dashboard .content-table tr:hover td {
+      background: rgba(255,255,255,0.03);
+    }
+    #tab-dashboard .platform-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    #tab-dashboard .platform-badge--ig { background: rgba(225,48,108,0.15); color: #E1306C; }
+    #tab-dashboard .platform-badge--tk { background: rgba(34,211,238,0.15); color: #22d3ee; }
+    #tab-dashboard .platform-badge--wa { background: rgba(37,211,102,0.15); color: #25D366; }
+    #tab-dashboard .content-status--published { color: #4ade80; }
+    #tab-dashboard .content-status--pending { color: #fbbf24; }
+
+    /* Social KPIs */
+    #tab-dashboard .social-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    /* Assets grid */
+    #tab-dashboard .assets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    #tab-dashboard .asset-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    #tab-dashboard .asset-title {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: #e8eaf0;
+      margin-bottom: 8px;
+    }
+    #tab-dashboard .asset-detail {
+      font-size: 12px;
+      color: #6b7394;
+      margin-bottom: 4px;
+    }
+    #tab-dashboard .asset-status {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    #tab-dashboard .asset-status--active {
+      background: rgba(74,222,128,0.15);
+      color: #4ade80;
+    }
+    #tab-dashboard .asset-status--pending {
+      background: rgba(251,191,36,0.12);
+      color: #fbbf24;
+    }
+
+    /* Notes */
+    #tab-dashboard .notes-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px;
+      color: #e8eaf0;
+      line-height: 1.6;
+    }
+    #tab-dashboard .notes-item:last-child { border-bottom: none; }
+    #tab-dashboard .notes-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #8b7cff;
+      margin-right: 8px;
+    }
+
+    /* Loading / error states in dashboard */
+    #tab-dashboard .dash-loading {
+      text-align: center;
+      padding: 24px;
+      color: #6b7394;
+      font-size: 13px;
+    }
+    #tab-dashboard .dash-error {
+      text-align: center;
+      padding: 16px;
+      color: #ef4444;
+      font-size: 13px;
+    }
+    #tab-dashboard .dash-empty {
+      text-align: center;
+      padding: 32px;
+      color: #4a5068;
+      font-size: 14px;
+    }
+
     /* Responsive */
+    @media (max-width: 900px) {
+      #tab-dashboard .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      #tab-dashboard .social-grid { grid-template-columns: repeat(2, 1fr); }
+      #tab-dashboard .phase-grid { grid-template-columns: 1fr; }
+      #tab-dashboard .assets-grid { grid-template-columns: 1fr; }
+    }
     @media (max-width: 640px) {
       .app-header { flex-direction: column; gap: 12px; padding: 16px 20px; }
       .grid-2 { grid-template-columns: 1fr; }
       .content { padding: 20px 16px; }
       .dashboard-grid { flex-direction: column; }
+      #tab-dashboard { padding: 20px 14px 36px; }
+      #tab-dashboard .kpi-grid { grid-template-columns: 1fr 1fr; }
+      #tab-dashboard .social-grid { grid-template-columns: 1fr 1fr; }
+      #tab-dashboard .dash-title { font-size: 22px; }
+      #tab-dashboard .dash-header { flex-direction: column; align-items: flex-start; }
+      #tab-dashboard .content-table { font-size: 11px; }
     }
   </style>
 </head>
@@ -381,31 +880,324 @@
 
     <!-- ═══════ TAB: DASHBOARD ═══════ -->
     <div class="tab-content" id="tab-dashboard">
-      <div class="card">
-        <div class="flex-between mb-18">
-          <div class="label-sm" style="margin-bottom:0">Registros Beta</div>
-          <div class="flex-row gap-8">
-            <button class="reg-toggle-tests" id="reg-toggle-tests-btn" onclick="toggleTestRows()">Mostrar tests</button>
-            <button class="btn-primary btn-dashboard" id="reg-refresh-btn" onclick="loadRegistros()">Actualizar</button>
+      <!-- Background orbs -->
+      <div class="dash-orb dash-orb--purple"></div>
+      <div class="dash-orb dash-orb--cyan"></div>
+      <div class="dash-orb dash-orb--green"></div>
+
+      <div class="dash-content">
+
+        <!-- ──── 1. DASHBOARD HEADER ──── -->
+        <div class="dash-header">
+          <div class="dash-header-left">
+            <div class="dash-title">Toto Beta 2</div>
+            <div class="dash-countdown" id="dash-countdown"></div>
+          </div>
+          <div class="dash-header-right">
+            <span class="dash-status" id="dash-status"></span>
+            <button class="dash-refresh-btn" id="dash-refresh-btn" onclick="loadRegistros()">Actualizar</button>
           </div>
         </div>
-        <div id="reg-loading" style="display:none; text-align:center; padding:24px; color:#64748b;">
-          <span class="spinner" style="border-top-color:#10b981"></span> Cargando registros...
+
+        <!-- ──── 2. KPIs ──── -->
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-card--purple">
+            <div class="kpi-label">Inscriptos</div>
+            <div class="kpi-value" style="color:#8b7cff" id="kpi-inscriptos">—</div>
+            <div class="kpi-target">Meta: 10 familias</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--purple" id="kpi-bar-inscriptos" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card kpi-card--green">
+            <div class="kpi-label">Activados</div>
+            <div class="kpi-value" style="color:#4ade80" id="kpi-activados">—</div>
+            <div class="kpi-target">Meta: 75%</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--green" id="kpi-bar-activados" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card kpi-card--gold">
+            <div class="kpi-label">Sesiones Totales</div>
+            <div class="kpi-value" style="color:#fbbf24">0</div>
+            <div class="kpi-target">Meta: 60 sesiones</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--gold" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card kpi-card--cyan">
+            <div class="kpi-label">Retorno 2+</div>
+            <div class="kpi-value" style="color:#22d3ee">0</div>
+            <div class="kpi-target">Meta: 8 chicos</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--cyan" style="width:0%"></div></div>
+          </div>
         </div>
-        <div id="reg-error" style="display:none; text-align:center; padding:16px; color:#ef4444; font-size:13px;"></div>
-        <div id="reg-metrics" class="reg-metrics" style="display:none"></div>
-        <div id="reg-table-wrap" style="display:none; overflow-x:auto;">
-          <table class="reg-table">
-            <thead><tr>
-              <th>Fecha</th><th>Padre/Madre</th><th>Hijo/a</th><th>Edad</th><th>Grado</th><th>Estado</th>
-            </tr></thead>
-            <tbody id="reg-tbody"></tbody>
-          </table>
+
+        <!-- ──── 3. REGISTROS BETA ──── -->
+        <div class="glass-card">
+          <div class="dash-section-title">
+            <span class="accent-line" style="background:#8b7cff"></span>
+            Registros Beta
+          </div>
+          <div class="dash-table-controls">
+            <span class="dash-status" id="reg-count-status"></span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="dash-toggle-tests" id="reg-toggle-tests-btn" onclick="toggleTestRows()">Mostrar tests</button>
+            </div>
+          </div>
+          <div id="reg-loading" class="dash-loading" style="display:none">
+            <span class="spinner" style="border-top-color:#8b7cff"></span> Cargando registros...
+          </div>
+          <div id="reg-error" class="dash-error" style="display:none"></div>
+          <div id="reg-table-wrap" style="display:none; overflow-x:auto;">
+            <table class="dash-table">
+              <thead><tr>
+                <th>Fecha</th><th>Padre/Madre</th><th>Hijo/a</th><th>Edad</th><th>Grado</th><th>Estado</th>
+              </tr></thead>
+              <tbody id="reg-tbody"></tbody>
+            </table>
+          </div>
+          <div id="reg-empty" class="dash-empty" style="display:none">
+            No hay registros todavía.
+          </div>
         </div>
-        <div id="reg-empty" style="display:none; text-align:center; padding:32px; color:#475569; font-size:14px;">
-          No hay registros todavía.
+
+        <!-- ──── 4. FASES DEL PLAN ──── -->
+        <div class="dash-section-title" style="margin-top:4px">
+          <span class="accent-line" style="background:#4ade80"></span>
+          Fases del Plan
         </div>
-      </div>
+        <div class="phase-grid">
+          <!-- Fase 1 -->
+          <div class="phase-card">
+            <div class="phase-card-header">
+              <span class="phase-card-title">Fase 1: Fundaciones</span>
+              <span class="phase-badge phase-badge--completada">COMPLETADA</span>
+            </div>
+            <div class="phase-date">25 — 27 mar</div>
+            <div class="phase-item phase-item--done">&#10003; Deploy landing V4</div>
+            <div class="phase-item phase-item--done">&#10003; Formulario inscripcion activo</div>
+            <div class="phase-item phase-item--done">&#10003; 3 posts fundacionales IG</div>
+            <div class="phase-item phase-item--done">&#10003; 2 TikToks fundacionales</div>
+            <div class="phase-item phase-item--done">&#10003; Dashboard de metricas</div>
+            <div class="phase-item phase-item--done">&#10003; Link beta activo</div>
+          </div>
+          <!-- Fase 2 -->
+          <div class="phase-card">
+            <div class="phase-card-header">
+              <span class="phase-card-title">Fase 2: Contenido</span>
+              <span class="phase-badge phase-badge--en-curso">EN CURSO</span>
+            </div>
+            <div class="phase-date">28 — 30 mar</div>
+            <div class="phase-item phase-item--pending">&#9675; 3 posts IG (ALERTA + ESCENA)</div>
+            <div class="phase-item phase-item--pending">&#9675; 2-3 TikToks (ALERTA + SOLUCION)</div>
+            <div class="phase-item phase-item--done">&#10003; Mensaje WhatsApp definitivo</div>
+            <div class="phase-item phase-item--pending">&#9675; Secuencia onboarding padres</div>
+          </div>
+          <!-- Fase 3 -->
+          <div class="phase-card">
+            <div class="phase-card-header">
+              <span class="phase-card-title">Fase 3: Lanzamiento</span>
+              <span class="phase-badge phase-badge--adelantado">ADELANTADO</span>
+            </div>
+            <div class="phase-date">31 mar — 1 abr</div>
+            <div class="phase-item phase-item--done">&#10003; Enviar mensaje WhatsApp (27 mar)</div>
+            <div class="phase-item phase-item--pending">&#9675; Story IG beta abierta</div>
+            <div class="phase-item phase-item--pending">&#9675; TikTok de lanzamiento</div>
+            <div class="phase-item phase-item--pending">&#9675; Onboarding inscriptos</div>
+          </div>
+          <!-- Fase 4 -->
+          <div class="phase-card">
+            <div class="phase-card-header">
+              <span class="phase-card-title">Fase 4: Seguimiento</span>
+              <span class="phase-badge phase-badge--pendiente">PENDIENTE</span>
+            </div>
+            <div class="phase-date">2 — 3 abr</div>
+            <div class="phase-item phase-item--pending">&#9675; Follow-up no activados</div>
+            <div class="phase-item phase-item--pending">&#9675; Contenido refuerzo redes</div>
+            <div class="phase-item phase-item--pending">&#9675; Actualizar metricas finales</div>
+            <div class="phase-item phase-item--pending">&#9675; Reporte ronda 2</div>
+          </div>
+        </div>
+
+        <!-- ──── 5. CONTENIDO PUBLICADO ──── -->
+        <div class="glass-card">
+          <div class="dash-section-title">
+            <span class="accent-line" style="background:#fbbf24"></span>
+            Contenido Publicado
+          </div>
+          <div style="overflow-x:auto">
+            <table class="content-table">
+              <thead><tr>
+                <th>Fecha</th><th>Plataforma</th><th>Tipo</th><th>Pilar</th><th>Titulo</th><th>Estado</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">25 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Carrusel</td><td>PROBLEMA</td>
+                  <td>5 senales de que tu hijo necesita otra forma de estudiar</td>
+                  <td class="content-status--published">Publicado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">25 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Reel</td><td>ESCENA</td>
+                  <td>POV: Tu hijo dice no entiendo nada</td>
+                  <td class="content-status--published">Publicado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">25 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Story</td><td>SOCIAL PROOF</td>
+                  <td>Detras de escena creando Toto</td>
+                  <td class="content-status--published">Publicado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">25 mar</td>
+                  <td><span class="platform-badge platform-badge--tk">TK</span></td>
+                  <td>Video</td><td>PROBLEMA</td>
+                  <td>Cuando tu hijo no quiere hacer la tarea</td>
+                  <td class="content-status--published">Publicado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">25 mar</td>
+                  <td><span class="platform-badge platform-badge--tk">TK</span></td>
+                  <td>Video</td><td>SOLUCION</td>
+                  <td>Y si la IA le ensenara a pensar en vez de copiar?</td>
+                  <td class="content-status--published">Publicado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">27 mar</td>
+                  <td><span class="platform-badge platform-badge--wa">WA</span></td>
+                  <td>Mensaje</td><td>LANZAMIENTO</td>
+                  <td>Mensaje beta 2 a grupo Scholem</td>
+                  <td class="content-status--published">Enviado</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">28 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Carrusel</td><td>ALERTA</td>
+                  <td>ChatGPT le hace la tarea a tu hijo (y es un problema)</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">28 mar</td>
+                  <td><span class="platform-badge platform-badge--tk">TK</span></td>
+                  <td>Video</td><td>ALERTA</td>
+                  <td>Tu hijo usa ChatGPT para la tarea? Mira esto</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">29 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Reel</td><td>ESCENA</td>
+                  <td>Mama puedo usar Toto? vs Mama no quiero estudiar</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">29 mar</td>
+                  <td><span class="platform-badge platform-badge--tk">TK</span></td>
+                  <td>Video</td><td>SOLUCION</td>
+                  <td>Diferencia entre ChatGPT y Toto para estudiar</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">30 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Carrusel</td><td>ESCENA</td>
+                  <td>Que pasa en 15 min con Toto (paso a paso real)</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">30 mar</td>
+                  <td><span class="platform-badge platform-badge--tk">TK</span></td>
+                  <td>Video</td><td>ALERTA</td>
+                  <td>3 cosas que tu hijo pierde si solo copia con IA</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+                <tr>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:11px;white-space:nowrap">31 mar</td>
+                  <td><span class="platform-badge platform-badge--ig">IG</span></td>
+                  <td>Story</td><td>LANZAMIENTO</td>
+                  <td>Beta abierta — ultimos lugares</td>
+                  <td class="content-status--pending">Pendiente</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ──── 6. REDES SOCIALES ──── -->
+        <div class="dash-section-title">
+          <span class="accent-line" style="background:#22d3ee"></span>
+          Redes Sociales
+        </div>
+        <div class="social-grid">
+          <div class="kpi-card kpi-card--purple">
+            <div class="kpi-label">Seguidores IG</div>
+            <div class="kpi-value" style="color:#8b7cff">0</div>
+            <div class="kpi-target">Meta: 50</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--purple" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card kpi-card--cyan">
+            <div class="kpi-label">Seguidores TikTok</div>
+            <div class="kpi-value" style="color:#22d3ee">0</div>
+            <div class="kpi-target">Meta: 30</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--cyan" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card kpi-card--gold">
+            <div class="kpi-label">Views TikTok</div>
+            <div class="kpi-value" style="color:#fbbf24">0</div>
+            <div class="kpi-target">Meta: 1,000</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--gold" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card kpi-card--green">
+            <div class="kpi-label">Engagement IG</div>
+            <div class="kpi-value" style="color:#4ade80">0%</div>
+            <div class="kpi-target">Meta: 5%</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-fill--green" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <!-- ──── 7. ASSETS WEB ──── -->
+        <div class="dash-section-title">
+          <span class="accent-line" style="background:#8b7cff"></span>
+          Assets Web
+        </div>
+        <div class="assets-grid">
+          <div class="asset-card">
+            <div class="asset-title">Landing Principal</div>
+            <div class="asset-detail">totoeltutor.com.ar</div>
+            <span class="asset-status asset-status--active">ACTIVA</span>
+          </div>
+          <div class="asset-card">
+            <div class="asset-title">One-Pager A/B</div>
+            <div class="asset-detail">V3-A / V3-B</div>
+            <span class="asset-status asset-status--pending">PENDIENTE DEPLOY</span>
+          </div>
+          <div class="asset-card">
+            <div class="asset-title">Formulario Beta</div>
+            <div class="asset-detail">Google Forms integrado</div>
+            <span class="asset-status asset-status--active">ACTIVO</span>
+          </div>
+        </div>
+
+        <!-- ──── 8. NOTAS DEL EQUIPO ──── -->
+        <div class="glass-card">
+          <div class="dash-section-title">
+            <span class="accent-line" style="background:#fbbf24"></span>
+            Notas del Equipo
+          </div>
+          <div class="notes-item">
+            <span class="notes-date">27 mar</span>
+            Mensaje WhatsApp ENVIADO al grupo de padres Scholem. Texto final aprobado por Jonah. Incluye link directo a totoeltutor.com.ar y formulario de inscripcion.
+          </div>
+          <div class="notes-item">
+            <span class="notes-date">25 mar 10:30</span>
+            Dashboard creado con metricas en tiempo real. Conectado a Google Forms via API. Tracking de inscriptos, activados y tasa de activacion.
+          </div>
+          <div class="notes-item">
+            <span class="notes-date">25 mar</span>
+            Decisiones: Landing V4 como version principal. 5 piezas de contenido fundacional publicadas (3 IG + 2 TK). Link beta activo y formulario recibiendo registros.
+          </div>
+        </div>
+
+      </div><!-- /dash-content -->
     </div>
   </div>
 </div>
@@ -1102,6 +1894,39 @@ function renderRegistros() {
 
 function toggleTestRows() { _showTests = !_showTests; renderRegistros(); }
 function isTestRow(r) { const n = ((r.nombrePadre||'') + ' ' + (r.nombreHijo||'')).toLowerCase(); return r.edad >= 90 || n.includes('test'); }
+
+function updateKPIs() {
+  if (!_registrosData) return;
+  const { metrics: m } = _registrosData;
+  document.getElementById('kpi-inscriptos').textContent = m.reales;
+  document.getElementById('kpi-bar-inscriptos').style.width = Math.min(100, (m.reales / 10) * 100) + '%';
+  document.getElementById('kpi-activados').textContent = m.activados;
+  const tasa = m.tasaActivacion || 0;
+  document.getElementById('kpi-bar-activados').style.width = Math.min(100, (tasa / 75) * 100) + '%';
+}
+
+// ── Countdown ──
+function updateDashCountdown() {
+  const el = document.getElementById('dash-countdown');
+  if (!el) return;
+  const deadline = new Date('2026-04-04T23:59:59-03:00');
+  const now = new Date();
+  const diff = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+  el.innerHTML = '<span style="font-family:JetBrains Mono,monospace;font-size:20px;font-weight:700;color:#fbbf24">' + Math.max(0, diff) + '</span> <span style="font-size:12px;color:#6b7394">dias para lanzamiento</span>';
+}
+updateDashCountdown();
+setInterval(updateDashCountdown, 60000);
+
+// ── Patch renderRegistros to also update KPIs ──
+const _origRenderRegistros = renderRegistros;
+renderRegistros = function() { _origRenderRegistros(); updateKPIs(); };
+
+// ── Auto-load dashboard on tab switch ──
+const _origSwitchTab = switchTab;
+switchTab = function(tabId) {
+  _origSwitchTab(tabId);
+  if (tabId === 'dashboard' && !_registrosData && AUTH_PIN) loadRegistros();
+};
 
 // Focus en el input de PIN al cargar
 window.addEventListener('load', () => document.getElementById('pin-input')?.focus());
