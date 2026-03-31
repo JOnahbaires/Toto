@@ -1832,16 +1832,16 @@ let _showTests = false;
 async function loadRegistros() {
   const loading = document.getElementById('reg-loading');
   const error = document.getElementById('reg-error');
-  const metrics = document.getElementById('reg-metrics');
   const tableWrap = document.getElementById('reg-table-wrap');
   const empty = document.getElementById('reg-empty');
-  const btn = document.getElementById('reg-refresh-btn');
-  loading.style.display = 'block';
-  error.style.display = 'none';
-  metrics.style.display = 'none';
-  tableWrap.style.display = 'none';
-  empty.style.display = 'none';
-  btn.disabled = true;
+  const btn = document.getElementById('dash-refresh-btn');
+  const statusEl = document.getElementById('dash-status');
+  if (loading) loading.style.display = 'block';
+  if (error) error.style.display = 'none';
+  if (tableWrap) tableWrap.style.display = 'none';
+  if (empty) empty.style.display = 'none';
+  if (btn) btn.disabled = true;
+  if (statusEl) statusEl.textContent = 'Cargando...';
   try {
     const res = await fetch('/api/get-registros', {
       method: 'POST',
@@ -1852,25 +1852,22 @@ async function loadRegistros() {
     if (!res.ok) { const d = await res.json().catch(()=>({})); throw new Error(d.error || 'Error ' + res.status); }
     _registrosData = await res.json();
     renderRegistros();
+    if (statusEl) {
+      const r = _registrosData.metrics.reales;
+      statusEl.textContent = r + ' registro' + (r !== 1 ? 's' : '') + ' real' + (r !== 1 ? 'es' : '');
+      statusEl.style.color = '#4ade80';
+    }
   } catch (err) {
-    error.textContent = err.message;
-    error.style.display = 'block';
+    if (error) { error.textContent = err.message; error.style.display = 'block'; }
+    if (statusEl) { statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = '#f87171'; }
   }
-  loading.style.display = 'none';
-  btn.disabled = false;
+  if (loading) loading.style.display = 'none';
+  if (btn) btn.disabled = false;
 }
 
 function renderRegistros() {
   if (!_registrosData) return;
-  const { registros, metrics: m } = _registrosData;
-  const metricsEl = document.getElementById('reg-metrics');
-  metricsEl.innerHTML = `
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#10b981">${m.reales}</div><div class="reg-metric-label">Registros reales</div></div>
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#34d399">${m.activados}</div><div class="reg-metric-label">Activaron Toto</div></div>
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#fbbf24">${m.tasaActivacion}%</div><div class="reg-metric-label">Tasa activacion</div></div>
-    <div class="reg-metric-card"><div class="reg-metric-value" style="color:#a5b4fc">${m.registrosHoy}</div><div class="reg-metric-label">Hoy</div></div>
-  `;
-  metricsEl.style.display = 'grid';
+  const { registros } = _registrosData;
   const filtered = _showTests ? registros : registros.filter(r => !isTestRow(r));
   if (filtered.length === 0) {
     document.getElementById('reg-table-wrap').style.display = 'none';
