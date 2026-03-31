@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="cara-toto.png">
 <title>Toto el Tutor &mdash; Que la tarea los una, no los separe</title>
 <meta name="description" content="Toto el Tutor: el tutor de tarea socr&aacute;tico que ense&ntilde;a a pensar. Gratis, sin descarga, 100% socr&aacute;tico. Para chicos de primaria en Buenos Aires.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1390,14 +1391,18 @@ body {
   <div class="deco-shape deco-ring" id="deco4" style="bottom: 10%; right: 5%; width: 180px; height: 180px;"></div>
   <div class="scene-inner" style="text-align: center;">
     <div class="turn-question">
-      <p class="mono text-dim" style="font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; opacity: 0;" id="turn-label">
-        Plot twist
+      <p class="mono" style="font-size: 0.85rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; color: rgba(255,255,255,0.4); opacity: 0;" id="turn-label">
+        Conoc&eacute; a
       </p>
-      <h2 class="headline-xl" id="turn-headline" style="color: #fff;">
-        &iquest;Y si hubiera un tutor que no le da la respuesta&hellip; sino que le ense&ntilde;a a encontrarla?
-      </h2>
-      <p class="body-lg" style="color: #fff; max-width: 650px; margin: 32px auto 0; opacity: 0;" id="turn-sub">
-        Conoc&eacute; a <strong style="color: #c084fc; font-size: 1.15em; text-shadow: 0 0 30px rgba(192,132,252,0.5);">Toto</strong> &mdash; el primer tutor socr&aacute;tico pensado para chicas y chicos de CABA y AMBA.
+      <div id="turn-headline" style="opacity: 0; transform: translateY(30px);">
+        <!-- Cara de Toto — grande, sin marco -->
+        <img src="cara-toto-logo.png" alt="Toto" style="width: 450px; max-width: 85vw; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 8px 30px rgba(139,92,246,0.35));">
+        <!-- Logotipo — pegado a la cara -->
+        <img src="logotipo-solo-toto.png" alt="Toto el Tutor" style="max-width: 400px; width: 80%; height: auto; margin: -80px auto 0; position: relative; z-index: 1; display: block; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));">
+      </div>
+      <p style="max-width: 600px; margin: 12px auto 0; font-family: 'DM Sans', sans-serif; font-size: clamp(1.1rem, 2vw, 1.5rem); color: #fff; line-height: 1.6; text-shadow: 0 2px 12px rgba(0,0,0,0.5); opacity: 0;" id="turn-sub">
+        El primer tutor socr&aacute;tico de IA para chicas y chicos
+        <span style="display: inline-block; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff; padding: 6px 20px; border-radius: 100px; font-weight: 700; font-size: 1em; margin-left: 6px; vertical-align: baseline; box-shadow: 0 4px 16px rgba(139,92,246,0.4);">en nivel primario</span>
       </p>
     </div>
   </div>
@@ -1438,8 +1443,8 @@ body {
       <div class="hw-number">4</div>
       <div class="hw-panel-inner">
         <img src="hw-step4-reporte.jpg" alt="Madre recibiendo el reporte" class="hw-img" loading="lazy">
-        <h3 class="hw-title">Vos recib&iacute;s el reporte</h3>
-        <p class="hw-desc">Despu&eacute;s de cada sesi&oacute;n, te llega un resumen: qu&eacute; hizo, d&oacute;nde se trab&oacute;, c&oacute;mo se sinti&oacute;. Sin tener que estar encima.</p>
+        <h3 class="hw-title">Toto te hace participar de la tarea</h3>
+        <p class="hw-desc">Le pide a tu hijo que te pregunte un dato o completen algo juntos. Preserva el v&iacute;nculo. Y despu&eacute;s te env&iacute;a el reporte de la sesi&oacute;n.</p>
       </div>
     </div>
   </div>
@@ -1531,7 +1536,7 @@ body {
       <div class="child-card">
         <img src="child-familia-real.jpg" alt="Familia tranquila después de la tarea" class="child-card-img" loading="lazy">
         <h3>Sin tensi&oacute;n familiar</h3>
-        <p>La tarea deja de ser territorio de pelea. El padre descansa, el hijo trabaja con un tutor paciente.</p>
+        <p>La tarea deja de ser territorio de pelea. Vos pod&eacute;s ser el padre que apoya, no el que examina.</p>
         <div class="child-quote">&laquo;Mam&aacute;, ya termin&eacute; la tarea con Toto&raquo;</div>
       </div>
     </div>
@@ -1588,7 +1593,11 @@ body {
     <!-- AIJ Illustration — borderless, animated -->
     <div class="aij-illustration" style="opacity: 0;" id="aijIllustration">
       <div class="aij-illustration-frame">
-        <video src="aij-hero-animated-v2.mp4" autoplay loop muted playsinline style="max-width: 100%; border-radius: 20px; filter: drop-shadow(0 20px 60px rgba(139,92,246,0.2));" id="aijHeroVideo"></video>
+        <video autoplay loop muted playsinline style="max-width: 100%; border-radius: 20px; filter: drop-shadow(0 20px 60px rgba(139,92,246,0.2));" id="aijHeroVideo">
+          <source src="aij-hero-animated-v4.mp4" type="video/mp4">
+          <source src="aij-hero-animated-v3.mp4" type="video/mp4">
+          <source src="aij-hero-animated-v2.mp4" type="video/mp4">
+        </video>
       </div>
     </div>
 
@@ -1604,7 +1613,7 @@ body {
             <li>Construye pensamiento cr&iacute;tico</li>
             <li>Gamifica el esfuerzo, no el atajo</li>
             <li>Habla como un tutor que entiende</li>
-            <li>Reporta al padre despu&eacute;s</li>
+            <li>Te informa para que acompa&ntilde;es</li>
           </ul>
         </div>
       </div>
