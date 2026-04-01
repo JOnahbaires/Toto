@@ -1979,7 +1979,8 @@ let S = {
   practiceQuestionCount: 0,
   initialImageContext: null,
   isPersonalTopic: false,
-  imageCount: 0
+  imageCount: 0,
+  parentEmail: ''
 };
 
 // Detectar si el mensaje es sobre temas personales/emocionales (no académicos)
@@ -2004,6 +2005,7 @@ setTimeout(initMoodCarousel, 0);
       if (alumno.nombre) localStorage.setItem('toto_nombre', alumno.nombre);
       if (alumno.edad)   localStorage.setItem('toto_edad', String(alumno.edad));
       if (alumno.grado)  localStorage.setItem('toto_grado', alumno.grado);
+      if (alumno.emailPadre) S.parentEmail = alumno.emailPadre;
       window.history.replaceState({}, '', window.location.pathname);
     }
   } catch(e) { /* token inválido → onboarding normal */ }
@@ -2914,7 +2916,53 @@ async function finishSession() {
   farewell.innerHTML = farewellMsg;
   $('chatZone').appendChild(farewell);
 
-  // 6. Mostrar logros DEBAJO del farewell + botón nueva sesión
+  // 6. Opt-in flashcards para el padre (solo si hay parentEmail)
+  if (S.parentEmail && S.task && !S.isPersonalTopic) {
+    const flashBlock = document.createElement('div');
+    flashBlock.className = 'bubble tutor';
+    flashBlock.style.cssText = 'margin-top:12px;';
+    flashBlock.innerHTML = `
+      <div style="margin-bottom:10px;">🎴 ¿Mandamos 5 tarjetas de repaso a tu mamá o papá para que repasen juntos?</div>
+      <div style="display:flex;gap:8px;">
+        <button id="btnFlashcardsSi" style="flex:1;padding:10px;background:#7c6fff;color:#fff;border:none;border-radius:8px;font-size:0.9rem;cursor:pointer;font-weight:bold;">Sí, mandá 🚀</button>
+        <button id="btnFlashcardsNo" style="flex:1;padding:10px;background:#f0f0f0;color:#666;border:none;border-radius:8px;font-size:0.9rem;cursor:pointer;">No gracias</button>
+      </div>
+      <div id="flashcardsStatus" style="margin-top:8px;font-size:0.85rem;color:#888;display:none;"></div>
+    `;
+    $('chatZone').appendChild(flashBlock);
+    $('btnFlashcardsSi').onclick = async () => {
+      $('btnFlashcardsSi').disabled = true;
+      $('btnFlashcardsNo').disabled = true;
+      $('flashcardsStatus').style.display = 'block';
+      $('flashcardsStatus').textContent = 'Generando tarjetas…';
+      try {
+        const r = await fetch('/api/flashcards', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            alumno_nombre: S.name,
+            grado: S.grade,
+            materia: S.subject,
+            tarea: S.task,
+            parent_email: S.parentEmail,
+            fecha: new Date().toLocaleDateString('es-AR')
+          })
+        });
+        if (r.ok) {
+          $('flashcardsStatus').textContent = '✅ ¡Listo! Las tarjetas ya están en camino.';
+        } else {
+          $('flashcardsStatus').textContent = 'No se pudieron enviar. Intentalo más tarde.';
+        }
+      } catch(e) {
+        $('flashcardsStatus').textContent = 'No se pudieron enviar. Intentalo más tarde.';
+      }
+    };
+    $('btnFlashcardsNo').onclick = () => {
+      flashBlock.innerHTML = '<span style="color:#aaa;font-size:0.85rem;">OK, ¡hasta la próxima! 👋</span>';
+    };
+  }
+
+  // 7. Mostrar logros DEBAJO del farewell + botón nueva sesión
   const endBlock = document.createElement('div');
   endBlock.className = 'session-end-block';
   endBlock.id = 'sessionEndBlock';

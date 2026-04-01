@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   const idBeta = nombreAlumno.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
-  const tokenData = { nombre: nombreAlumno, grado, edad: Number(edad), idBeta, tester: false };
+  const tokenData = { nombre: nombreAlumno, grado, edad: Number(edad), idBeta, tester: false, emailPadre };
   const token = Buffer.from(JSON.stringify(tokenData)).toString('base64');
   const link = `https://app.totoeltutor.com.ar/app.html?token=${token}`;
 
