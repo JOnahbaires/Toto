@@ -2006,7 +2006,10 @@ setTimeout(initMoodCarousel, 0);
       if (alumno.nombre) localStorage.setItem('toto_nombre', alumno.nombre);
       if (alumno.edad)   localStorage.setItem('toto_edad', String(alumno.edad));
       if (alumno.grado)  localStorage.setItem('toto_grado', alumno.grado);
-      if (alumno.emailPadre) S.parentEmail = alumno.emailPadre;
+      if (alumno.emailPadre) {
+        S.parentEmail = alumno.emailPadre;
+        localStorage.setItem('toto_parent_email', alumno.emailPadre);
+      }
       window.history.replaceState({}, '', window.location.pathname);
     }
   } catch(e) { /* token inválido → onboarding normal */ }
@@ -2025,6 +2028,10 @@ if (savedAge) {
 const savedGrade = localStorage.getItem('toto_grado');
 if (savedGrade) {
   document.getElementById('gradeInput').value = savedGrade;
+}
+const savedParentEmail = localStorage.getItem('toto_parent_email');
+if (savedParentEmail) {
+  S.parentEmail = savedParentEmail;
 }
 
 const SUBJ_MAP = {
