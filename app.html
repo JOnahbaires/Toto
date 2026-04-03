@@ -1878,7 +1878,10 @@ Adaptá tu lenguaje, profundidad, emojis y ejemplos al grado del alumno ({GRADE}
 - 7mo grado: Podés escribir más denso. Vocabulario técnico del tema bienvenido. Emojis solo si el alumno los usa primero. Referencias: actualidad, tecnología, series complejas.
 Si el grado es "no especificado", asumí 5to-6to grado como default.
 
-IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen ayudaría a visualizar una pregunta de práctica (diagrama, mapa, figura geométrica), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, SIN TEXTO NI ETIQUETAS]. IMPORTANTE: la imagen NO debe contener texto ni labels — los modelos de imagen generan texto ilegible. Explicá las partes en el chat. Ejemplo: [GENERAR_IMAGEN: cartoon geometric triangle with marked angles, no text no labels]`
+IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen ayudaría a visualizar una pregunta de práctica, añadí al FINAL de tu mensaje UNA de estas señales:
+- [GENERAR_IMAGEN: descripción en inglés] → para ilustraciones simples SIN texto ni etiquetas (animal, planeta, escena). El modelo NO puede generar texto legible.
+- [GENERAR_IMAGEN_ETIQUETADA: descripción en inglés] → SOLO cuando las etiquetas son clave para entender (ej: diagrama del corazón con ventrículos, mapa con nombres de países, triángulo con ángulos). Usá esta señal con moderación (máximo 2 veces por sesión).
+Explicá siempre las partes en el chat, no dependas solo de la imagen. Ejemplo: [GENERAR_IMAGEN: cartoon geometric triangle] o [GENERAR_IMAGEN_ETIQUETADA: labeled diagram of human heart with ventricles and arteries]`
 
 const PROMPT_EXPLORAR = `Tu nombre es Toto. Sos un guía curioso para chicos en edad escolar de CABA, Argentina.
 Tu personalidad es entusiasta, divertida y re copada — como un amigo que sabe un montón de datos re locos y te los cuenta con onda.
@@ -1952,7 +1955,10 @@ Si cierra: "{NAME}, ¡fue re piola explorar esto con vos! Volvé cuando quieras 
 [SESSION_END]
 Este bloque lo ponés SOLO cuando la sesión terminó naturalmente. Es una señal interna para el sistema, NO se la muestres al alumno.
 
-IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen haría el dato curioso más impactante (animales, planetas, fenómenos naturales, inventos), añadí al FINAL de tu mensaje: [GENERAR_IMAGEN: descripción breve en inglés, SIN TEXTO NI ETIQUETAS]. IMPORTANTE: la imagen NO debe contener texto ni labels — los modelos de imagen generan texto ilegible. Explicá las partes en el chat. Ejemplo: [GENERAR_IMAGEN: cartoon deep sea anglerfish glowing in dark ocean, no text no labels]`
+IMÁGENES EDUCATIVAS (máx 3 por sesión): Si una imagen haría el dato curioso más impactante, añadí al FINAL de tu mensaje UNA de estas señales:
+- [GENERAR_IMAGEN: descripción en inglés] → para ilustraciones simples SIN texto ni etiquetas (animal, planeta, fenómeno natural). El modelo NO puede generar texto legible.
+- [GENERAR_IMAGEN_ETIQUETADA: descripción en inglés] → SOLO cuando las etiquetas son clave para entender (ej: mapa con nombres, diagrama de un sistema). Usá esta señal con moderación (máximo 2 veces por sesión).
+Explicá siempre en el chat, no dependas solo de la imagen. Ejemplo: [GENERAR_IMAGEN: cartoon deep sea anglerfish glowing in dark ocean] o [GENERAR_IMAGEN_ETIQUETADA: labeled map of ancient egypt with nile river and cities]`
 
 /* ════════════════════════════════════════════════════
    STATE
@@ -1982,6 +1988,7 @@ let S = {
   initialImageContext: null,
   isPersonalTopic: false,
   imageCount: 0,
+  ideogramCount: 0,
   parentEmail: '',
   colegio: null
 };
@@ -2635,8 +2642,14 @@ async function callTutor(userMsg, isFirst) {
 
     // Detectar señal de imagen IA
     let imagePrompt = null;
+    let useIdeogram = false;
+    const imgLabeledMatch = reply.match(/\[GENERAR_IMAGEN_ETIQUETADA:\s*(.*?)\]/);
     const imgMatch = reply.match(/\[GENERAR_IMAGEN:\s*(.*?)\]/);
-    if (imgMatch) {
+    if (imgLabeledMatch) {
+      imagePrompt = imgLabeledMatch[1].trim();
+      useIdeogram = S.ideogramCount < 2;
+      reply = reply.replace(/\[GENERAR_IMAGEN_ETIQUETADA:[^\]]*\]/g, '').trim();
+    } else if (imgMatch) {
       imagePrompt = imgMatch[1].trim();
       reply = reply.replace(/\[GENERAR_IMAGEN:[^\]]*\]/g, '').trim();
     }
@@ -2660,6 +2673,7 @@ async function callTutor(userMsg, isFirst) {
     // Generar imagen explicativa si Toto lo indicó y no se superó el límite
     if (imagePrompt && S.imageCount < 3) {
       S.imageCount++;
+      if (useIdeogram) S.ideogramCount++;
       const lastRow = document.querySelector('#chatZone .bubble-row:last-child .bubble.tutor');
       if (lastRow) {
         const placeholder = document.createElement('div');
@@ -2669,7 +2683,7 @@ async function callTutor(userMsg, isFirst) {
         fetch('/api/generate-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: imagePrompt }),
+          body: JSON.stringify({ prompt: imagePrompt, useIdeogram }),
         })
           .then(r => r.json())
           .then(d => {
