@@ -8,14 +8,14 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Email API key not configured' });
   }
 
-  const { nombrePadre, emailPadre, nombreAlumno, edad, grado, whatsapp, emailAlumno } = req.body;
+  const { nombrePadre, emailPadre, nombreAlumno, edad, grado, whatsapp, emailAlumno, colegio } = req.body;
 
   if (!nombrePadre || !emailPadre || !nombreAlumno || !edad || !grado) {
     return res.status(400).json({ error: 'Faltan campos requeridos' });
   }
 
   const idBeta = nombreAlumno.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
-  const tokenData = { nombre: nombreAlumno, grado, edad: Number(edad), idBeta, tester: false, emailPadre, emailAlumno: emailAlumno || '' };
+  const tokenData = { nombre: nombreAlumno, grado, edad: Number(edad), idBeta, tester: false, emailPadre, emailAlumno: emailAlumno || '', colegio: colegio || null };
   const token = Buffer.from(JSON.stringify(tokenData)).toString('base64');
   const link = `https://app.totoeltutor.com.ar/app.html?token=${token}`;
 

@@ -1982,7 +1982,8 @@ let S = {
   initialImageContext: null,
   isPersonalTopic: false,
   imageCount: 0,
-  parentEmail: ''
+  parentEmail: '',
+  colegio: null
 };
 
 // Detectar si el mensaje es sobre temas personales/emocionales (no académicos)
@@ -2011,6 +2012,10 @@ setTimeout(initMoodCarousel, 0);
         S.parentEmail = alumno.emailPadre;
         localStorage.setItem('toto_parent_email', alumno.emailPadre);
       }
+      if (alumno.colegio) {
+        S.colegio = alumno.colegio;
+        localStorage.setItem('toto_colegio', alumno.colegio);
+      }
       window.history.replaceState({}, '', window.location.pathname);
     }
   } catch(e) { /* token inválido → onboarding normal */ }
@@ -2033,6 +2038,10 @@ if (savedGrade) {
 const savedParentEmail = localStorage.getItem('toto_parent_email');
 if (savedParentEmail) {
   S.parentEmail = savedParentEmail;
+}
+const savedColegio = localStorage.getItem('toto_colegio');
+if (savedColegio) {
+  S.colegio = savedColegio;
 }
 
 const SUBJ_MAP = {
@@ -2938,7 +2947,8 @@ async function finishSession() {
   farewell.innerHTML = farewellMsg;
   $('chatZone').appendChild(farewell);
 
-  // 5b. Micro-encuesta: voz del alumno
+  // 5b. Micro-encuesta: voz del alumno — cerrar overlay para que no tape los botones
+  closeSummary();
   const feedbackBlock = document.createElement('div');
   feedbackBlock.className = 'system-tip';
   feedbackBlock.style.cssText = 'text-align:center; max-width:360px; padding:16px;';
@@ -2994,7 +3004,8 @@ async function finishSession() {
             materia: S.subject,
             tarea: S.task,
             parent_email: S.parentEmail,
-            fecha: new Date().toLocaleDateString('es-AR')
+            fecha: new Date().toLocaleDateString('es-AR'),
+            colegio: S.colegio || null
           })
         });
         if (r.ok) {

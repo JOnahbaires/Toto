@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'API keys not configured' });
   }
 
-  const { alumno_nombre, grado, materia, tarea, parent_email, fecha } = req.body;
+  const { alumno_nombre, grado, materia, tarea, parent_email, fecha, colegio } = req.body;
   if (!parent_email || !alumno_nombre || !tarea) {
     return res.status(400).json({ error: 'Faltan campos requeridos' });
   }
@@ -30,6 +30,22 @@ export default async function handler(req, res) {
     sociales: 'Ciencias Sociales',
     otra: 'Otra materia'
   }[materia] || materia || 'la materia';
+
+  // Currícula contextual por colegio/grado/materia (1er bimestre 2026)
+  const CURRICULA = {
+    'scholem_6': {
+      matematica: 'Números naturales sin restricción de cifras, ordenamiento en recta numérica. Cálculos estimativos de multiplicación y división. Relación c=d·q+r con r<d. Jerarquía de operaciones en operaciones combinadas. Problemas de varios pasos (caps. 1-3 y 5 del libro El libro de mate 6).',
+      lengua: 'Los mitos: origen y características. Lectura de "El mar y la serpiente" de Paula Bombara. Sustantivos y adjetivos: género y número. Construcción sustantiva (N, MD, MI). Respuesta de carpeta: estructura, conectores, vocabulario.',
+      naturales: 'Modelo de partículas. Estados de la materia y cambios de estado. Calor y temperatura: definiciones y diferencias. Uso de termómetros. Equilibrio térmico. (cap. 5 del libro Insignia Ciencias Naturales)',
+      ingles: 'Vocabulario Wild West (barrel, handcuffs) — Super Minds Unit 5. Materials and containers (cardboard, glass, leather) — Own it 3 Unit 6. Gramática: made of / used for; Present Simple Passive; Past Simple Passive. Writing: a review.',
+      judaicos: 'Meguilá de Esther y la película "Una noche con el rey". Nacimiento de Moshé y su historia. Pesaj y el Seder. Época romana en Judea, destrucción del Segundo Templo y el exilio. Proyecto Mi Historia Familiar (museo Anu).'
+    }
+  };
+
+  const colegioKey = colegio === 'scholem' ? `scholem_${grado}` : null;
+  const curriculaContext = colegioKey && CURRICULA[colegioKey]?.[materia]
+    ? `\n\nCONTEXTO CURRICULAR REAL (${colegio === 'scholem' ? 'Scholem Aleijem' : 'Colegio'}, ${grado}° grado, 1er bimestre 2026):\n${CURRICULA[colegioKey][materia]}`
+    : `\n\nUsá el currículo CABA 2025-2026 para ${grado}° grado de ${materiaLabel}.`;
 
   // Generar flashcards con Claude Haiku
   let flashcards = [];
@@ -47,10 +63,10 @@ export default async function handler(req, res) {
         messages: [{
           role: 'user',
           content: `Sos un asistente educativo para primaria argentina.
-El alumno se llama ${alumno_nombre}, está en ${grado}° grado, y trabajó hoy en: "${tarea}" (materia: ${materiaLabel}).
+El alumno se llama ${alumno_nombre}, está en ${grado}° grado, y trabajó hoy en: "${tarea}" (materia: ${materiaLabel}).${curriculaContext}
 
 Generá exactamente 5 flashcards de repaso para que el padre las use con el hijo.
-Basate en el tema "${tarea}" y en el currículo CABA 2025 para ${grado}° grado de ${materiaLabel}.
+Basate ESPECÍFICAMENTE en el tema "${tarea}" y en el contexto curricular indicado arriba.
 
 Respondé ÚNICAMENTE con un array JSON válido, sin texto adicional, sin markdown:
 [
