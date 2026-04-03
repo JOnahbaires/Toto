@@ -79,16 +79,7 @@ CAMBIOS AL PROMPT: [sugerencias concretas o "Ninguno"]`;
     // Actualizar archivo en GitHub con el análisis (si tenemos fileName y token)
     let githubUpdated = false;
     if (githubToken && fileName) {
-      try {
-        const getRes = await fetch(`https://api.github.com/repos/JOnahbaires/Toto/contents/${fileName}`, {
-          headers: {
-            'Authorization': `Bearer ${githubToken}`,
-            'Accept': 'application/vnd.github+json',
-          },
-        });
-        if (getRes.ok) {
-          const fileData = await getRes.json();
-          const updatedContent = `# Análisis Post-Sesión — ${fecha || ''}
+      const fullContent = `# Análisis Post-Sesión — ${fecha || ''}
 ## status: pending
 
 ## Datos
@@ -106,20 +97,40 @@ ${analysis}
 
 ${transcript}
 `;
-          const updateRes = await fetch(`https://api.github.com/repos/JOnahbaires/Toto/contents/${fileName}`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${githubToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/vnd.github+json',
-            },
-            body: JSON.stringify({
-              message: `analysis: add scores (${fileName.split('/').pop()})`,
-              content: Buffer.from(updatedContent).toString('base64'),
-              sha: fileData.sha,
-            }),
-          });
-          githubUpdated = updateRes.ok;
+      try {
+        // Intentar obtener el archivo existente para actualizar
+        const getRes = await fetch(`https://api.github.com/repos/JOnahbaires/Toto/contents/${fileName}`, {
+          headers: {
+            'Authorization': `Bearer ${githubToken}`,
+            'Accept': 'application/vnd.github+json',
+          },
+        });
+
+        const putBody = {
+          message: `analysis: add scores (${fileName.split('/').pop()})`,
+          content: Buffer.from(fullContent).toString('base64'),
+        };
+
+        if (getRes.ok) {
+          // Archivo existe → actualizar con SHA
+          const fileData = await getRes.json();
+          putBody.sha = fileData.sha;
+        }
+        // Si no existe (404) → crear desde cero sin SHA
+
+        const putRes = await fetch(`https://api.github.com/repos/JOnahbaires/Toto/contents/${fileName}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${githubToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github+json',
+          },
+          body: JSON.stringify(putBody),
+        });
+        githubUpdated = putRes.ok;
+        if (!putRes.ok) {
+          const errData = await putRes.json().catch(() => ({}));
+          console.warn('[Toto] GitHub PUT failed:', errData.message);
         }
       } catch (e) {
         console.warn('[Toto] GitHub update failed:', e);
@@ -134,7 +145,7 @@ ${transcript}
 <h1 style="margin:0;font-size:1.3rem;">🔬 Análisis — ${esc(alumno_nombre)} (${esc(materia)})</h1></div>
 <div style="padding:24px;font-size:0.9rem;line-height:1.7;color:#333;white-space:pre-wrap;">${esc(analysis)}</div>
 <div style="background:#f9f9f9;padding:14px 24px;text-align:center;font-size:0.75rem;color:#999;">
-Análisis por Claude Haiku — GitHub: ${githubUpdated ? '✅' : '⏳'}</div>
+Análisis por Claude Haiku — GitHub: ${githubUpdated ? '✅ Guardado' : '❌ ARCHIVO NO GUARDADO EN REPO'}</div>
 </div></body></html>`;
 
     await fetch('https://api.resend.com/emails', {
