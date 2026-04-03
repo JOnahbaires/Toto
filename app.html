@@ -614,6 +614,7 @@
   }
   .bubble.kid .bname { font-size: var(--fs-xs); color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; text-align: right; }
   .bubble-img { max-width: 200px; border-radius: 10px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); display: block; }
+  .system-tip { text-align: center; font-size: var(--fs-sm); color: var(--text-dim); opacity: 0.6; padding: 12px 16px; margin: 12px auto; max-width: 340px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.08); }
 
   /* tutor bubble name with tiny logo */
   .toto-bname-logo { height: 18px; width: auto; vertical-align: middle; }
@@ -2408,6 +2409,19 @@ async function sendReply() {
       if (replyImage.base64 && !S._fotoBadge) { S._fotoBadge = true; }
     }
 
+    // Timer suave: recordar descanso después de 30 min activos
+    if (S.sessionStartTime && !S._timeReminderShown) {
+      const elapsed = Date.now() - new Date(S.sessionStartTime).getTime();
+      if (elapsed > 30 * 60 * 1000) {
+        S._timeReminderShown = true;
+        const tip = document.createElement('div');
+        tip.className = 'system-tip';
+        tip.textContent = 'Llevás 30 minutos con Toto. Si querés, podés tomar un descanso y volver después 💪';
+        $('chatZone').appendChild(tip);
+        scrollDown();
+      }
+    }
+
     // Resetear timer de inactividad con cada mensaje
     resetInactivityTimer();
 
@@ -2924,6 +2938,33 @@ async function finishSession() {
   farewell.innerHTML = farewellMsg;
   $('chatZone').appendChild(farewell);
 
+  // 5b. Micro-encuesta: voz del alumno
+  const feedbackBlock = document.createElement('div');
+  feedbackBlock.className = 'system-tip';
+  feedbackBlock.style.cssText = 'text-align:center; max-width:360px; padding:16px;';
+  feedbackBlock.innerHTML = `
+    <div style="margin-bottom:10px; font-size:0.95rem; opacity:0.8;">¿Cómo te fue hoy?</div>
+    <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+      <button class="feedback-btn" data-fb="re_bien" style="padding:8px 14px; border:1px solid rgba(255,255,255,0.12); border-radius:20px; background:rgba(16,185,129,0.1); color:#10b981; cursor:pointer; font-size:0.85rem;">Re bien 🔥</button>
+      <button class="feedback-btn" data-fb="bien" style="padding:8px 14px; border:1px solid rgba(255,255,255,0.12); border-radius:20px; background:rgba(124,111,255,0.1); color:#7c6fff; cursor:pointer; font-size:0.85rem;">Bien 👍</button>
+      <button class="feedback-btn" data-fb="maso" style="padding:8px 14px; border:1px solid rgba(255,255,255,0.12); border-radius:20px; background:rgba(255,255,255,0.05); color:#999; cursor:pointer; font-size:0.85rem;">Maso 🤷</button>
+      <button class="feedback-btn" data-fb="no_gusto" style="padding:8px 14px; border:1px solid rgba(255,255,255,0.12); border-radius:20px; background:rgba(255,107,138,0.1); color:#ff6b8a; cursor:pointer; font-size:0.85rem;">No me gustó 😕</button>
+    </div>
+  `;
+  $('chatZone').appendChild(feedbackBlock);
+  feedbackBlock.querySelectorAll('.feedback-btn').forEach(btn => {
+    btn.onclick = function() {
+      S.sessionFeedback = this.dataset.fb;
+      feedbackBlock.innerHTML = '<div style="font-size:0.9rem; opacity:0.6;">¡Gracias! Tu opinión nos ayuda a mejorar 💜</div>';
+      // Guardar en session log si existe
+      try {
+        const logs = JSON.parse(localStorage.getItem('toto_sessions') || '[]');
+        const session = logs.find(s => s.id === S.sessionId);
+        if (session) { session.studentFeedback = S.sessionFeedback; localStorage.setItem('toto_sessions', JSON.stringify(logs)); }
+      } catch(e) {}
+    };
+  });
+
   // 6. Opt-in flashcards para el padre (solo si hay parentEmail)
   if (S.parentEmail && S.task && !S.isPersonalTopic) {
     const flashBlock = document.createElement('div');
@@ -3012,7 +3053,7 @@ function resetSession() {
   S = { ...S, mode: S.mode, subject: S.subject, xp: 0, name: S.name, mood: S.mood,
         phase: 'setup', task:'', attempt:'', history:[], hints:0, streak:0, badges:[], _preguntaBadge: false,
         achievements: { intentaste: false, preguntaste: false, analogia: false, completaste: false, foto: false },
-        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null, isPersonalTopic: false };
+        imageBase64:null, imageType:null, messageCount:0, sessionId:null, sessionStartTime:null, practiceQuestionCount:0, initialImageContext:null, isPersonalTopic: false, _timeReminderShown: false };
   updateXPBar();
   _pendingAchievements = null;
   _pendingBadges = null;

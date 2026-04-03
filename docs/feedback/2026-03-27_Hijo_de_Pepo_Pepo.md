@@ -3,7 +3,7 @@ fecha: 2026-03-27
 alumno: Hijo de Pepo
 fuente: Pepo
 canales: WhatsApp Texto
-status: pending_discussion
+status: discussed
 categoria: insight_pedagógico
 prioridad: alta
 fase_roadmap: Fase 1

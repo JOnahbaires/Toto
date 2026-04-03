@@ -1,5 +1,6 @@
-# 🚀 TOTO EL TUTOR (TotalTutor) — ROADMAP PRIORIZADO (Marzo 2026)
-> Versión comprimida. Actualizado: 19 marzo 2026.
+# 🚀 TOTO EL TUTOR (TotalTutor) — ROADMAP PRIORIZADO (Abril 2026)
+> Versión comprimida. Actualizado: 2 abril 2026.
+> Integra insights de "Mitos EdTech" (Raffaghelli et al., 2024) — pedagogía digital crítica.
 
 ---
 
@@ -27,6 +28,14 @@
 | Pruebas de práctica (Practice Test Mode) | 🟡 Media | ✅ Done — PROMPT_PRACTICA + checkpoints cada 5 preguntas |
 | Inglés como materia | 🟡 Media | ✅ Done — detección por regex, pool de preguntas, responde en inglés |
 | Modo exploración sin tarea específica (Explore Mode) | 🟡 Media | Pendiente |
+| **Reframe landing — pedagogía crítica** | 🔴 Alta | ✅ Done — Sprint 0 Mitos EdTech (2 abr) |
+| **Sección Transparencia en landing** | 🔴 Alta | ✅ Done — IA, datos, método explícitos |
+| **Momento Familia en landing** | 🔴 Alta | ✅ Done — flashcards como vínculo familiar |
+| **Timer suave 30 min** | 🟡 Media | ✅ Done — anti-extractivismo atencional |
+| **Voz del alumno en cierre sesión** | 🟡 Media | ✅ Done — micro-encuesta post-sesión |
+| Modificaciones a prompts (escalación, emocional, mundos) | 🟡 Media | Pendiente — post 2 semanas de datos Beta 2 |
+| Decisión modelo: routing Sonnet/Haiku | 🔴 Alta | Pendiente — análisis de costo listo |
+| Estrategia contenido IG/TikTok (6 pilares pedagógicos) | 🟡 Media | Pendiente |
 
 ---
 
@@ -35,11 +44,15 @@
 
 | Feature | Prioridad | Notas |
 |---------|-----------|-------|
+| **Política de datos** | 🔴 Alta | **BLOQUEANTE** — debe completarse ANTES de schema Neon |
 | Login (child + parent account) | 🔴 Alta | Requiere backend |
-| Dashboard padres (sessions, XP, reportes) | 🔴 Alta | Requiere backend |
+| Dashboard padres **cualitativo** | 🔴 Alta | Resúmenes narrativos + voz alumno, no solo XP/métricas |
 | **Google Classroom integration** | 🔴 Alta | **MÁXIMA PRIORIDAD ESTRATÉGICA** — 1 teacher = ~35 alumnos automáticos |
 | Reportes mensuales automáticos (email) | 🟡 Media | Base lista: Resend backend implementado |
 | Alertas de frustración/patrones (NLP simple) | 🟡 Media | Base parcial: análisis post-sesión ya detecta patrones |
+| Parametrización de dialecto (rioplatense/neutro) | 🟡 Media | Diseño en Fase 2, activación en Fase 3 |
+| Modo Revisión (alumno trabaja solo, Toto revisa después) | 🟡 Media | 5to modo — anti-delegación de inteligencia |
+| Vocabulario B2B académico (pedagogía crítica) | 🟢 Baja | Documento para pitch a colegios |
 
 ---
 
@@ -62,6 +75,9 @@ SCHOOL:  $299/mes — usuarios ilimitados, teacher dashboard, analytics anonimiz
 | Teacher dashboard | SCHOOL |
 | Reportes anonimizados por clase | SCHOOL |
 | Sistema de badges completo | BASIC+ |
+| **Timer configurable por padre** (20/30/45/sin límite) | BASIC+ |
+| **Exportabilidad de datos del hijo** | **TODOS** (ético: nunca detrás de paywall) |
+| **Dialecto regional activo** (rioplatense/neutro/otros) | TODOS |
 
 ---
 
@@ -140,13 +156,19 @@ Tablas mínimas:
 ## 📌 LO QUE NO HACEMOS (SCOPE FREEZE)
 
 Hasta validar el core loop con familias, NO se agrega:
-- ❌ Backend/PostgreSQL
+- ⏸️ Backend/PostgreSQL → Neon en Fase 2 (con política de datos primero)
 - ❌ Gift cards / redención de XP (v3)
 - ❌ Videollamadas con tutores humanos
 - ❌ Certificaciones formales
 - ❌ Educación especial
 - ❌ Otras edades o niveles
-- ❌ Expansión regional/idiomas
+- ⏸️ Expansión regional/idiomas → Parametrización dialectal diseñada en Fase 2, activa en Fase 3
+
+**Principios (Mitos EdTech):**
+- ✅ Transparencia radical: datos, IA, método — siempre explícitos
+- ✅ Acompañamiento, no solucionismo — Toto no "enseña", acompaña
+- ✅ Codiseño con familias — feedback es parte del diseño, no buzón
+- ❌ NUNCA gamificación adictiva, tracking invasivo, monetización de datos
 
 **Razón:** Scope creep mata MVPs. Validar primero, escalar después.
 

@@ -3,7 +3,7 @@ fecha: 2026-03-30
 alumno: 
 fuente: Andrea Szpektor (Crianza)
 canales: WhatsApp
-status: pending_discussion
+status: discussed
 categoria: insight_pedagógico
 prioridad: alta
 fase_roadmap: Fase 2
