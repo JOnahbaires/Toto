@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/flashcards.js": {
+      "includeFiles": "docs/curricula/**"
+    }
+  },
   "rewrites": [
     { "source": "/api/chat", "destination": "/chat.js" },
     { "source": "/api/flashcards", "destination": "/api/flashcards.js" },
