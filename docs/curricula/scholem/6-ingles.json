@@ -1,1 +1,17 @@
-[]
+[
+  { "tema": "wild west vocabulary", "pregunta": "¿Qué significa 'barrel' en inglés?", "respuesta": "Barril. Un barrel es un recipiente cilíndrico grande para guardar líquidos." },
+  { "tema": "wild west vocabulary", "pregunta": "¿Qué son 'handcuffs'?", "respuesta": "Esposas (las que usa la policía para sujetar las muñecas de alguien). Vienen siempre en par." },
+  { "tema": "materials and containers", "pregunta": "¿De qué material es una botella de vino? Usá 'made of'.", "respuesta": "It's made of glass. (Está hecha de vidrio.)" },
+  { "tema": "materials and containers", "pregunta": "¿Qué diferencia hay entre 'cardboard' y 'leather'?", "respuesta": "Cardboard es cartón (material de papel prensado, como las cajas). Leather es cuero (material animal, como en zapatos o cinturones)." },
+  { "tema": "made of used for", "pregunta": "¿Cuál es la diferencia entre 'made of' y 'used for'?", "respuesta": "'Made of' describe el material: 'It's made of wood.' 'Used for' describe la función: 'It's used for cutting.' (Está hecho de madera / Se usa para cortar.)" },
+  { "tema": "made of used for", "pregunta": "Describí un lápiz usando 'made of' y 'used for'.", "respuesta": "It's made of wood and graphite. It's used for writing and drawing." },
+  { "tema": "present simple passive", "pregunta": "¿Cómo se forma el Present Simple Passive?", "respuesta": "Con el verbo 'to be' en presente (am/is/are) + el participio pasado del verbo principal. Ejemplo: 'The book is written in Spanish.'" },
+  { "tema": "present simple passive", "pregunta": "Pasá esta oración a voz pasiva: 'They make shoes in that factory.'", "respuesta": "Shoes are made in that factory. El sujeto pasa a ser el objeto, y se agrega 'are' antes del participio." },
+  { "tema": "past simple passive", "pregunta": "¿Cómo se forma el Past Simple Passive?", "respuesta": "Con 'was' o 'were' + participio pasado. 'Was' para singular, 'were' para plural. Ejemplo: 'The letter was written yesterday.'" },
+  { "tema": "past simple passive", "pregunta": "Pasá a voz pasiva en pasado: 'Columbus discovered America in 1492.'", "respuesta": "America was discovered by Columbus in 1492. Se usa 'was' porque America es singular." },
+  { "tema": "present simple passive", "pregunta": "¿Por qué se usa la voz pasiva?", "respuesta": "Cuando no sabemos quién hace la acción, o cuando la acción es más importante que la persona que la hace. Ejemplo: 'English is spoken here.'" },
+  { "tema": "writing a review", "pregunta": "¿Qué es una 'review' en inglés?", "respuesta": "Una reseña: un texto donde describís y das tu opinión sobre algo (un libro, una película, un restaurante). Incluye descripción y evaluación." },
+  { "tema": "writing a review", "pregunta": "¿Qué partes tiene una review?", "respuesta": "Generalmente tiene: título, descripción general del objeto reseñado, puntos positivos y negativos, y una recomendación o conclusión final." },
+  { "tema": "wild west vocabulary", "pregunta": "Completá: 'The sheriff used _______ to catch the criminal.'", "respuesta": "Handcuffs. The sheriff used handcuffs to catch the criminal." },
+  { "tema": "materials and containers", "pregunta": "¿Cómo decís en inglés que algo es de cartón? Usá la estructura correcta.", "respuesta": "It's made of cardboard. Por ejemplo: 'The box is made of cardboard.'" }
+]

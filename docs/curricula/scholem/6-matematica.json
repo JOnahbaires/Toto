@@ -1,1 +1,17 @@
-[]
+[
+  { "tema": "numeros naturales", "pregunta": "¿Qué significa descomponer un número como 4.523?", "respuesta": "Separarlo en sus partes: 4.000 + 500 + 20 + 3. Cada parte representa una posición (unidades, decenas, centenas, miles)." },
+  { "tema": "numeros naturales", "pregunta": "¿Cómo se lee el número 1.045.302?", "respuesta": "Un millón cuarenta y cinco mil trescientos dos. Hay que agrupar de a tres cifras desde la derecha para leerlo bien." },
+  { "tema": "recta numerica", "pregunta": "¿Para qué sirve la recta numérica?", "respuesta": "Para ordenar y comparar números. Los números más grandes están más a la derecha, y los más chicos más a la izquierda." },
+  { "tema": "recta numerica", "pregunta": "Si tenés que ubicar el 2.500 entre el 2.000 y el 3.000 en la recta, ¿dónde va?", "respuesta": "Justo en el medio, porque 2.500 está a la misma distancia de 2.000 que de 3.000." },
+  { "tema": "multiplicacion y division", "pregunta": "¿Cómo hacés un cálculo estimativo de 48 × 7?", "respuesta": "Redondás: 50 × 7 = 350. Es una aproximación rápida para saber si tu resultado exacto tiene sentido." },
+  { "tema": "multiplicacion y division", "pregunta": "¿Qué propiedad de la multiplicación dice que 6 × 7 es lo mismo que 7 × 6?", "respuesta": "La propiedad conmutativa: el orden de los factores no cambia el producto." },
+  { "tema": "division con resto", "pregunta": "¿Qué significa la fórmula c × d + r = D?", "respuesta": "Que el cociente (c) por el divisor (d) más el resto (r) da el dividendo (D). Sirve para verificar que una división está bien hecha." },
+  { "tema": "division con resto", "pregunta": "Si dividís 37 entre 5, ¿cuánto da el cociente y el resto?", "respuesta": "Cociente 7 y resto 2, porque 7 × 5 + 2 = 37. El resto siempre tiene que ser menor que el divisor." },
+  { "tema": "division con resto", "pregunta": "¿El resto de una división puede ser mayor que el divisor?", "respuesta": "No. El resto siempre tiene que ser menor que el divisor. Si no, significa que el cociente tiene que ser más grande." },
+  { "tema": "jerarquia de operaciones", "pregunta": "En 3 + 4 × 2, ¿qué operación se resuelve primero?", "respuesta": "Primero la multiplicación: 4 × 2 = 8. Luego la suma: 3 + 8 = 11. Las multiplicaciones y divisiones van antes que sumas y restas." },
+  { "tema": "jerarquia de operaciones", "pregunta": "¿Para qué sirven los paréntesis en una operación combinada?", "respuesta": "Para cambiar el orden: lo que está entre paréntesis se resuelve primero, antes que cualquier otra operación." },
+  { "tema": "jerarquia de operaciones", "pregunta": "¿Cuál es el resultado de (5 + 3) × 2 - 4?", "respuesta": "Primero el paréntesis: 5 + 3 = 8. Luego la multiplicación: 8 × 2 = 16. Finalmente la resta: 16 - 4 = 12." },
+  { "tema": "problemas varios pasos", "pregunta": "¿Qué es lo primero que hacés cuando te dan un problema de varios pasos?", "respuesta": "Leer bien el enunciado, identificar qué datos tenés y qué te están pidiendo. Después organizás los cálculos en orden." },
+  { "tema": "problemas varios pasos", "pregunta": "Una librería tiene 1.248 lápices y los distribuye en cajas de 12. ¿Cuántas cajas completas salen y cuántos lápices sobran?", "respuesta": "1.248 ÷ 12 = 104 cajas exactas, sin resto. Si el resultado no fuera exacto, los que sobran son el resto de la división." },
+  { "tema": "numeros naturales", "pregunta": "¿Cómo ordenás de menor a mayor estos números: 9.870, 10.001, 9.999?", "respuesta": "9.870 — 9.999 — 10.001. Primero mirás la cantidad de cifras; si tienen la misma, comparás de izquierda a derecha." }
+]

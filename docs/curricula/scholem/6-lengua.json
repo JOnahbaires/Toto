@@ -1,1 +1,17 @@
-[]
+[
+  { "tema": "mitos", "pregunta": "¿Qué es un mito?", "respuesta": "Un relato muy antiguo que explica el origen del mundo, de los fenómenos naturales o de las costumbres de un pueblo. Tiene personajes sobrenaturales como dioses o héroes." },
+  { "tema": "mitos", "pregunta": "¿Cuál es la diferencia entre un mito y una leyenda?", "respuesta": "El mito explica el origen de algo (el universo, los astros, la vida) y tiene dioses o seres sobrenaturales. La leyenda mezcla hechos reales con elementos fantásticos y suele estar ubicada en un lugar concreto." },
+  { "tema": "mitos", "pregunta": "¿Qué características tiene un mito?", "respuesta": "Se transmitió oralmente por generaciones, tiene personajes divinos o heroicos, explica algo del mundo natural o cultural, y sucede en un tiempo sagrado o primordial." },
+  { "tema": "el mar y la serpiente", "pregunta": "¿Quién escribió 'El mar y la serpiente'?", "respuesta": "Paula Bombara, una escritora argentina de literatura infantil y juvenil." },
+  { "tema": "el mar y la serpiente", "pregunta": "¿Qué tipo de texto es 'El mar y la serpiente'?", "respuesta": "Es una novela de literatura infantil argentina que se trabaja como lectura cuatrimestral en 6to grado." },
+  { "tema": "sustantivos", "pregunta": "¿Qué es un sustantivo?", "respuesta": "Una palabra que nombra personas, animales, objetos, lugares o ideas. Por ejemplo: niño, perro, ciudad, amor." },
+  { "tema": "sustantivos", "pregunta": "¿Cómo se clasifica el sustantivo según el género?", "respuesta": "En masculino (el libro, el niño) y femenino (la mesa, la niña). Algunos sustantivos son comunes a los dos géneros (el/la estudiante)." },
+  { "tema": "sustantivos", "pregunta": "¿Cómo se forma el plural de los sustantivos que terminan en consonante?", "respuesta": "Se les agrega -es. Por ejemplo: árbol → árboles, camión → camiones." },
+  { "tema": "construccion sustantiva", "pregunta": "¿Qué es el Núcleo (N) de una construcción sustantiva?", "respuesta": "Es el sustantivo principal, la palabra más importante alrededor de la cual se organizan los demás componentes." },
+  { "tema": "construccion sustantiva", "pregunta": "¿Qué es el Modificador Directo (MD)?", "respuesta": "Es la palabra que acompaña directamente al núcleo sin preposición. Puede ser un artículo (el, la, los) o un adjetivo (rojo, grande)." },
+  { "tema": "construccion sustantiva", "pregunta": "¿Qué es el Modificador Indirecto (MI)?", "respuesta": "Es la palabra o grupo de palabras que modifica al núcleo a través de una preposición. Por ejemplo: 'la casa de madera' — 'de madera' es el MI." },
+  { "tema": "construccion sustantiva", "pregunta": "Analizá la construcción sustantiva de 'los zapatos rojos de cuero'.", "respuesta": "Núcleo: zapatos. MD: los (artículo), rojos (adjetivo). MI: de cuero (preposición + sustantivo)." },
+  { "tema": "respuesta de carpeta", "pregunta": "¿Cómo se estructura una respuesta de carpeta?", "respuesta": "Tiene una introducción que retoma la pregunta, un desarrollo con la información organizada, y un cierre. Se usan conectores para unir las ideas." },
+  { "tema": "respuesta de carpeta", "pregunta": "Mencioná 3 conectores que podés usar en una respuesta de carpeta.", "respuesta": "Por ejemplo: 'porque' (causal), 'además' (aditivo), 'sin embargo' (adversativo), 'por lo tanto' (consecutivo). Sirven para relacionar ideas." },
+  { "tema": "adjetivos", "pregunta": "¿Cuál es la función del adjetivo?", "respuesta": "Modificar al sustantivo, es decir, agregarle información: cómo es, cuántos son, cuál es. Por ejemplo: casa grande, tres libros, este chico." }
+]
