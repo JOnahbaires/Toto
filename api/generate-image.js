@@ -103,7 +103,8 @@ export default async function handler(req, res) {
     if (useLabeled) {
       const wikiUrl = findWikipediaSvg(prompt);
       if (wikiUrl) {
-        return res.status(200).json({ type: 'image-url', url: wikiUrl, labels });
+        // Wikipedia images already have their own labels — don't show the legend
+        return res.status(200).json({ type: 'image-url', url: wikiUrl });
       }
 
       if (process.env.ANTHROPIC_API_KEY) {
